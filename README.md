@@ -7,3 +7,4 @@
 | Will Graham | Junior | Tech Lead | wgraham1@terpmail.umd.edu | [Profile](https://www.linkedin.com/in/will-graham-4623022a8/) |
 |      |      |          |       |          |
 |      |      |          |       |          |
+| Mihira Murthy | Freshman | Project Manager | mmurthy1@terpmail.umd.edu | [Profile]() |
