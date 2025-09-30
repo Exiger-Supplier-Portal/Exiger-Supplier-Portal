@@ -5,5 +5,6 @@
 |------|------|----------|-------|----------|
 | Thomas Huitema | Junior | Tech Lead | thuitema@terpmail.umd.edu | [Profile](https://www.linkedin.com/in/thomas-huitema/) |
 | Will Graham | Junior | Tech Lead | wgraham1@terpmail.umd.edu | [Profile](https://www.linkedin.com/in/will-graham-4623022a8/) |
+| Ryan Li | Sophomore | Frontend Engineer | rli8397@terpmail.umd.edu | [Profile](https://www.linkedin.com/in/ryan-li-174139257/)
 |      |      |          |       |          |
 |      |      |          |       |          |
