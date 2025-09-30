@@ -5,5 +5,5 @@
 |------|------|----------|-------|----------|
 | Thomas Huitema | Junior | Tech Lead | thuitema@terpmail.umd.edu | [Profile](https://www.linkedin.com/in/thomas-huitema/) |
 | Will Graham | Junior | Tech Lead | wgraham1@terpmail.umd.edu | [Profile](https://www.linkedin.com/in/will-graham-4623022a8/) |
-|      |      |          |       |          |
+| Rachel Li | Sophomore | Full-Stack Engineer | rli8416@terpmail.umd.edu | [Profile](https://www.linkedin.com/in/rachel-w-li/) |
 |      |      |          |       |          |
