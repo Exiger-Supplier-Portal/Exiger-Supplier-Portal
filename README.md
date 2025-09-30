@@ -12,3 +12,4 @@
 | Miles McDonald | Junior | Full Stack Engineer | mmcdon11@terpmail.umd.edu | [Profile](https://www.linkedin.com/in/miles-mcdonald-86275023b/)|
 | Ryan Li | Sophomore | Frontend Engineer | rli8397@terpmail.umd.edu | [Profile](https://www.linkedin.com/in/ryan-li-174139257/)
 |      |      |          |       |          |
+| Mihira Murthy | Freshman | Project Manager | mmurthy1@terpmail.umd.edu | [Profile]() |
