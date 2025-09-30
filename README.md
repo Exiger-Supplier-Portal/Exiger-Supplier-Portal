@@ -13,3 +13,5 @@
 | Ryan Li | Sophomore | Frontend Engineer | rli8397@terpmail.umd.edu | [Profile](https://www.linkedin.com/in/ryan-li-174139257/)
 | Tanush Kallem | Sophomore | DevOps Engineer | tkallem@terpmail.umd.edu | [Profile](https://www.linkedin.com/in/tanush-kallem-74882b272) |
 | Mihira Murthy | Freshman | Project Manager | mmurthy1@terpmail.umd.edu | [Profile]() |
+|Siddhant Jain      |Sophomore      |Backend Engineer          |jainsid@terpmail.umd.edu       |[Profile](https://www.linkedin.com/in/sidjain88tx/)          |
+
