@@ -17,3 +17,4 @@
 | Mihira Murthy         | Freshman  | Project Manager     | mmurthy1@terpmail.umd.edu | [Profile]()                                                         |
 | Siddhant Jain         | Sophomore | Backend Engineer    | jainsid@terpmail.umd.edu  | [Profile](https://www.linkedin.com/in/sidjain88tx/)                 |
 | Alex Yang             | Sophomore | Backend Engineer    | ayang00@terpmail.umd.edu  | [Profile](https://www.linkedin.com/in/alexyang00/)                  |
+| Amanda Tsai           | Junior    | Shadow              | atsai123@terpmail.umd.edu | [Profile](https://www.linkedin.com/in/amanda-tsai-105935287/)       |
