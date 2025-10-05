@@ -1,0 +1,73 @@
+# =========================
+# Maven
+# =========================
+target/
+pom.xml.tag
+pom.xml.releaseBackup
+pom.xml.versionsBackup
+release.properties
+dependency-reduced-pom.xml
+buildNumber.properties
+.mvn/timing.properties
+.mvn/wrapper/maven-wrapper.jar
+
+# =========================
+# Spring Boot
+# =========================
+# Logs and temporary files
+*.log
+*.tmp
+*.pid
+*.seed
+*.out
+
+# =========================
+# IDEs and Editors
+# =========================
+# IntelliJ IDEA
+.idea/
+*.iml
+*.iws
+
+# VS Code
+.vscode/
+
+# Eclipse
+.project
+.classpath
+.settings/
+bin/
+
+# NetBeans
+/nbproject/private/
+/build/
+/nbbuild/
+/dist/
+/nbdist/
+/.nb-gradle/
+
+# =========================
+# OS Generated Files
+# =========================
+.DS_Store
+Thumbs.db
+
+# =========================
+# Environment / Secrets
+# =========================
+.env
+*.env
+.env.*
+application-*.yml
+application-*.yaml
+application-*.properties
+!application-example.yml   # Allow safe examples
+
+# =========================
+# Docker
+# =========================
+# Docker build artifacts
+*.tar
+*.pid
+docker-compose.override.yml
+
