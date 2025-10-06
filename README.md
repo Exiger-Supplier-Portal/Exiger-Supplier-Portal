@@ -18,3 +18,4 @@
 | Siddhant Jain         | Sophomore | Backend Engineer    | jainsid@terpmail.umd.edu  | [Profile](https://www.linkedin.com/in/sidjain88tx/)                 |
 | Alex Yang             | Sophomore | Backend Engineer    | ayang00@terpmail.umd.edu  | [Profile](https://www.linkedin.com/in/alexyang00/)                  |
 | Amanda Tsai           | Junior    | Shadow              | atsai123@terpmail.umd.edu | [Profile](https://www.linkedin.com/in/amanda-tsai-105935287/)       |
+| Vincent Liu           | Sophomore | Shadow              | vincentl@terpmail.umd.edu | [Profile](https://www.linkedin.com/in/vincent-liu-cs/)              |
