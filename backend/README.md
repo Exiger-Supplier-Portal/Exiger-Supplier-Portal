@@ -1,7 +1,6 @@
 # Getting Started
+This repository contains the Spring Boot backend for the Exiger Supplier Portal. We created a [SpringBoot Starter Guide](https://docs.google.com/document/d/1ay7uyVYoCVsjc5VX_oeq7ehqm0PO-Tt5puqcqty7hDo/edit?tab=t.0#heading=h.sd82n2k14in4).
 
-This repository contains the Spring Boot backend for the Exiger Supplier Portal.
-We created a [SpringBoot Starter Guide](https://docs.google.com/document/d/1ay7uyVYoCVsjc5VX_oeq7ehqm0PO-Tt5puqcqty7hDo/edit?tab=t.0#heading=h.sd82n2k14in4).
 ---
 
 ## Prerequisites
