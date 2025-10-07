@@ -29,6 +29,11 @@
             <version>1.18.42</version>
             <scope>provided</scope>
         </dependency>
+        <dependency>
+            <groupId>com.okta.spring</groupId>
+            <artifactId>okta-spring-boot-starter</artifactId>
+            <version>3.0.6</version>
+        </dependency>
     </dependencies>
 
     <build>
