@@ -20,7 +20,7 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http, ClientRegistrationRepository repo) throws Exception {
         http
             .authorizeHttpRequests(req -> req
-                .requestMatchers("/", "/api/hello").permitAll()
+                .requestMatchers("/", "/api/hello", "/api/auth/login", "/api/auth/status").permitAll()
                 .anyRequest().authenticated()
             )
             .oauth2Login(Customizer.withDefaults())
