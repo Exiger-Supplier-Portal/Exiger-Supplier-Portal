@@ -9,19 +9,19 @@ import org.springframework.security.config.Customizer;
 /**
  * This class configures endpoint access permissions.
  * By default, any anonymous request to any endpoint returns a 401 Unauthorized error.
- * In this example, we require users to be authenticated when accessing /api/whoami using .authenticated().
- * If the user tries to access it without being authenticated, the server returns 401 Unauthorized error
- * We allow anyone to access all other endpoints using .permitAll()
+ * We allow one endpoint, /api/hello, to be accessible to anonymous users
  */
 @Configuration
 public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        return http.authorizeHttpRequests(
-            (req) -> req.requestMatchers("/api/whoami").authenticated()
-                    .requestMatchers("/**").permitAll() // any
+        http
+            .authorizeHttpRequests(req -> req
+                    .requestMatchers("/api/hello").permitAll()
+                    .anyRequest().authenticated()
             )
-            .oauth2ResourceServer((srv) -> srv.jwt(Customizer.withDefaults()))
-            .build();
+            .oauth2Login(Customizer.withDefaults());
+
+        return http.build();
     }
 }
