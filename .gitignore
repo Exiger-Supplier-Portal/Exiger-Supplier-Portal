@@ -67,6 +67,5 @@ application-*.properties
 # =========================
 # Docker build artifacts
 *.tar
-*.pid
 docker-compose.override.yml
 
