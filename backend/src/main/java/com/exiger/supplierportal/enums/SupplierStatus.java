@@ -1,4 +1,4 @@
-package com.exiger.supplierportal.clientsupplier.enums;
+package com.exiger.supplierportal.enums;
 
 /**
  * Represents the different states a supplier can be in.
