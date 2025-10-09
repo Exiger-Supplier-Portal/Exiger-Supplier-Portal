@@ -1,0 +1,39 @@
+
+services:
+  backend:
+    build: ./backend
+    container_name: exiger-backend
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/exigerdb
+      SPRING_DATASOURCE_USERNAME: exiger
+      SPRING_DATASOURCE_PASSWORD: exigerpass
+    depends_on:
+      - db
+
+  frontend:
+    build: ./frontend
+    container_name: exiger-frontend
+    ports:
+      - "3000:3000"
+    environment:
+      NEXT_PUBLIC_API_URL: http://backend:8080
+    depends_on:
+      - backend
+
+  db:
+    image: postgres:16
+    container_name: exiger-db
+    restart: always
+    environment:
+      POSTGRES_DB: exigerdb
+      POSTGRES_USER: exiger
+      POSTGRES_PASSWORD: exigerpass
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+volumes:
+  pgdata:
