@@ -1,4 +1,4 @@
-package com.exiger.supplierportal.auth.controller;
+package com.exiger.supplierportal.controller;
 
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
