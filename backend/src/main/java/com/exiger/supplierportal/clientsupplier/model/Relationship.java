@@ -1,6 +1,6 @@
-package com.exiger.supplierportal.model;
+package com.exiger.supplierportal.clientsupplier.model;
 
-import com.exiger.supplierportal.enums.SupplierStatus;
+import com.exiger.supplierportal.clientsupplier.enums.SupplierStatus;
 import jakarta.persistence.*;
 import lombok.Data;
 import java.io.Serializable;

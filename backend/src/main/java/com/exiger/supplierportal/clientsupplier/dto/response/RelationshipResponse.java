@@ -1,6 +1,6 @@
-package com.exiger.supplierportal.dto.clientsupplier.response;
+package com.exiger.supplierportal.clientsupplier.dto.response;
 
-import com.exiger.supplierportal.enums.SupplierStatus;
+import com.exiger.supplierportal.clientsupplier.enums.SupplierStatus;
 import lombok.Data;
 import jakarta.validation.constraints.NotNull;
 
