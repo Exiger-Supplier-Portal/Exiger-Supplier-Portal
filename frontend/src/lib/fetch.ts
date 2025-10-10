@@ -1,11 +1,11 @@
 type Props = {
     path: string
     method: string
-    headers: Record<string, string>
+    headers?: Record<string, string>
 }
 
 export async function fetchWithAuth <T = unknown> (
-    { path, method, headers }: Props,
+    { path, method, headers = {} }: Props,
     responseFn?: (response:Response) => Promise<T>
 ) : Promise<T>  {
     const url = `${process.env.BACKEND_PORT}${path}`
