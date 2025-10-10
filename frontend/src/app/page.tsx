@@ -9,12 +9,10 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 
-import Link from 'next/link'
-
 export default function Home() {
-
   return (
     <div className="flex min-h-screen w-screen flex-col items-center justify-center p-24">
+      <Button>Hello World</Button>
       <Button variant={"outline"}>Hello World</Button>
       <Card className="w-[350px]">
         <CardHeader>
