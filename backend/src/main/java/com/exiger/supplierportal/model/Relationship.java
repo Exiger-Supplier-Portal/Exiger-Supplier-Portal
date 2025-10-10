@@ -14,7 +14,7 @@ import java.io.Serializable;
 @Data
 @Table(name = "relationship")
 public class Relationship {
-    @Embedded RelationshipID id;
+    @EmbeddedId RelationshipID id;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "supplier_status", nullable = false)

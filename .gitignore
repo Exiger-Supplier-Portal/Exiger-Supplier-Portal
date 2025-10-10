@@ -55,7 +55,6 @@ Thumbs.db
 # =========================
 # Environment / Secrets
 # =========================
-.env
 *.env
 .env.*
 application-*.yml
@@ -68,6 +67,5 @@ application-*.properties
 # =========================
 # Docker build artifacts
 *.tar
-*.pid
 docker-compose.override.yml
 
