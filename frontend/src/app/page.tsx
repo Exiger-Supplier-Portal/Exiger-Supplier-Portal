@@ -15,10 +15,6 @@ export default function Home() {
 
   return (
     <div className="flex min-h-screen w-screen flex-col items-center justify-center p-24">
-      {/* temporary */}
-      <Button asChild>
-        <Link href="/dashboard">Hello World</Link>
-      </Button>
       <Button variant={"outline"}>Hello World</Button>
       <Card className="w-[350px]">
         <CardHeader>
