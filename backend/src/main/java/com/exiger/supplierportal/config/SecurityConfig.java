@@ -7,6 +7,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.oauth2.client.oidc.web.logout.OidcClientInitiatedLogoutSuccessHandler;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.config.Customizer;
+import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
 import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
 import org.springframework.web.cors.CorsConfiguration;
@@ -26,6 +27,14 @@ public class SecurityConfig {
     
     @Value("${cors.allowed.origins}")
     private String corsAllowedOrigins;
+
+    @Value("${app.frontend.dashboard.url}")
+    private String dashboardUrl;
+
+    @Value("${app.frontend.url}")
+    private String frontendUrl;
+
+
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http, ClientRegistrationRepository repo) throws Exception {
         http
@@ -34,9 +43,12 @@ public class SecurityConfig {
                 .requestMatchers("/", "/api/hello").permitAll()
                 .anyRequest().authenticated()
             )
-            .oauth2Login(Customizer.withDefaults())
+            .oauth2Login(oauth2 -> oauth2
+                    .successHandler(customAuthenticationSuccessHandler()))
             .logout((logout) -> logout
                 .logoutSuccessHandler(oidcLogoutSuccessHandler(repo))
+                .invalidateHttpSession(true)
+                .deleteCookies("JSESSIONID")
             );
 
         return http.build();
@@ -73,7 +85,18 @@ public class SecurityConfig {
         OidcClientInitiatedLogoutSuccessHandler successHandler =
             new OidcClientInitiatedLogoutSuccessHandler(repo);
 
-        successHandler.setPostLogoutRedirectUri("{baseUrl}/");
+        successHandler.setPostLogoutRedirectUri(frontendUrl);
         return successHandler;
+    }
+
+    /**
+     * Redirects user back to frontend dashboard after logging in successfully through Okta
+     * @return AuthenticationSuccessHandler - redirecting user to /dashboard
+     */
+    @Bean
+    public AuthenticationSuccessHandler customAuthenticationSuccessHandler() {
+        return (request, response, authentication) -> {
+            response.sendRedirect(dashboardUrl); // Redirect to frontend dashboard
+        };
     }
 }
