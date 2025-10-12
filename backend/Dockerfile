@@ -10,7 +10,14 @@ RUN mvn clean package -DskipTests
 
 FROM eclipse-temurin:20-jre
 WORKDIR /app
+
+
+
 # Copy the built JAR file from the previous stage to the container
 COPY --from=build /app/target/*.jar app.jar
+
+# Copy .env file
+COPY .env .env
+
 EXPOSE 8080
 CMD ["java", "-jar", "app.jar"]
