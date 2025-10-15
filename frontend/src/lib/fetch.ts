@@ -1,24 +1,41 @@
-type Props = {
-    path: string
-    method: string
-    headers?: Record<string, string>
-}
+type HttpMethod = "GET" | "POST" | "PUT" | "PATCH" | "DELETE";
 
-export async function fetchWithAuth <T = unknown> (
-    { path, method, headers = {} }: Props,
-    responseFn?: (response:Response) => Promise<T>
-) : Promise<T>  {
-    const url = `${process.env.BACKEND_PORT}${path}`
+type FetchWithAuthProps<Body = unknown> = {
+  path: string;
+  method: HttpMethod;
+  headers?: Record<string, string>;
+  body?: Body;
+};
+
+export type FetchResult<T> = { ok: true; data: T } | { ok: false; error: string };
+
+export async function fetchWithAuth<TResponse = unknown, TBody = unknown>(
+  { path, method, headers = {}, body }: FetchWithAuthProps<TBody>,
+  responseFn?: (response: Response) => Promise<TResponse>
+): Promise<FetchResult<TResponse>> {
+  const url = `${process.env.NEXT_PUBLIC_BACKEND_URL}${path}`;
+
+  try {
     const response = await fetch(url, {
-        method: method,
-        credentials: 'include',
-        headers: headers,
-    })
+      method,
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json",
+        ...headers,
+      },
+      body: body && method !== "GET" ? JSON.stringify(body) : undefined,
+    });
 
-    if (!response.ok) {
-        throw new Error("Failed to fetch: " + response.statusText)
+    if (response.ok) {
+      const data = responseFn ? await responseFn(response) : await response.json();
+      return { ok: true, data };
+    } else {
+      return { ok: false, error: await response.text() };
     }
-
-    // Default to returning JSON
-    return responseFn ? responseFn(response) : response.json()
+  } catch (err) {
+    return {
+      ok: false,
+      error: "Unknown network error",
+    };
+  }
 }
