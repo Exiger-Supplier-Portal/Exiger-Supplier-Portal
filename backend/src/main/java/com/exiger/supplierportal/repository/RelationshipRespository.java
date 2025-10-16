@@ -29,4 +29,10 @@ public interface RelationshipRespository extends JpaRepository<Relationship, Rel
      * @return A list of Relationship objects where the supplierID matches.
      */
     List<Relationship> findById_SupplierID(Long supplierID);
+
+    /**
+     * Check if a relationship already exists between client and supplier.
+     * Uses Spring Data JPA's automatic query generation.
+     */
+    boolean existsById_ClientIDAndId_SupplierID(Long clientID, Long supplierID);
 }
