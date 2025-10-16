@@ -20,7 +20,7 @@ public interface RelationshipRespository extends JpaRepository<Relationship, Rel
      * @param clientID The ID of the client to look up.
      * @return A list of Relationship objects where the clientID matches.
      */    
-    List<Relationship> findByIdClientID(Long clientID);
+    List<Relationship> findById_ClientID(Long clientID);
 
     /**
      * Finds all Relationship entries for a given supplier.
@@ -28,5 +28,5 @@ public interface RelationshipRespository extends JpaRepository<Relationship, Rel
      * @param supplierID The ID of the supplier to look up.
      * @return A list of Relationship objects where the supplierID matches.
      */
-    List<Relationship> findByIdSupplierID(Long supplierID);
+    List<Relationship> findById_SupplierID(Long supplierID);
 }
