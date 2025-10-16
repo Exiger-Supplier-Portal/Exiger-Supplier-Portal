@@ -6,8 +6,8 @@ import lombok.Data;
 
 /**
  * Represents a client.
- * Primary key is id.
- * The name and email represents the client's company name and contact email, respectively.
+ * Primary key is clientID.
+ * clientName and clientEmail represents the client's company name and contact email, respectively.
  */
 @Entity
 @Data
@@ -15,11 +15,12 @@ import lombok.Data;
 public class Client {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @Column(name = "client_id")
+    private Long clientID;
 
-    @Column(nullable = false)
-    private String name;
+    @Column(name = "client_name", nullable = false)
+    private String clientName;
 
-    @Column(unique = true, nullable = false)
-    private String email;
+    @Column(name = "client_email", unique = true, nullable = false)
+    private String clientEmail;
 }

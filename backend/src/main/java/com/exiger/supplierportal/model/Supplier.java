@@ -5,8 +5,8 @@ import lombok.Data;
 
 /**
  * Represents a supplier.
- * Primary key is id.
- * The name and email represents the supplier's company name and contact email, respectively.
+ * Primary key is supplierID.
+ * supplierName and supplierEmail represents the supplier's company name and contact email, respectively.
  */
 @Entity
 @Data
@@ -14,11 +14,12 @@ import lombok.Data;
 public class Supplier {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @Column(name = "supplier_id")
+    private Long supplierID;
 
-    @Column(nullable = false)
-    private String name;
+    @Column(name = "supplier_name", nullable = false)
+    private String supplierName;
 
-    @Column(unique = true, nullable = false)
-    private String email;
+    @Column(name = "supplier_email", unique = true, nullable = false)
+    private String supplierEmail;
 }
