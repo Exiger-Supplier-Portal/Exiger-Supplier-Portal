@@ -16,7 +16,7 @@ import java.util.List;
 public class ClientService {
 
     @Autowired
-    private ClientService clientRepository;
+    private ClientRepository clientRepository;
 
     /**
      * Retrieves all client IDs from the database.
