@@ -1,9 +1,9 @@
 package com.exiger.supplierportal.repository;
 
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
 import com.exiger.supplierportal.model.Relationship;
 import com.exiger.supplierportal.model.RelationshipID;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 import java.util.List;
 
 /**

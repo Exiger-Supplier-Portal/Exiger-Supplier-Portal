@@ -40,7 +40,7 @@ public class SecurityConfig {
         http
             .cors(cors -> cors.configurationSource(corsConfigurationSource()))
             .authorizeHttpRequests(req -> req
-                .requestMatchers("/", "/api/hello").permitAll()
+                .requestMatchers("/", "/api/hello", "/api/relationships").permitAll()
                 .anyRequest().authenticated()
             )
             .oauth2Login(oauth2 -> oauth2
@@ -49,7 +49,8 @@ public class SecurityConfig {
                 .logoutSuccessHandler(oidcLogoutSuccessHandler(repo))
                 .invalidateHttpSession(true)
                 .deleteCookies("JSESSIONID")
-            );
+            )
+            .csrf(csrf -> csrf.disable()); // Disable CSRF for API endpoints
 
         return http.build();
     }

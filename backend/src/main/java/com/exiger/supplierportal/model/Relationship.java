@@ -7,8 +7,10 @@ import lombok.Data;
 /**
  * Represents a relationship between supplier and client.
  * Primary key is composite and consists of the supplierID and clientID.
- * The supplierStatus indicates the current state of the supplier in the relationship.
+ * The supplierStatus indicates the current state of the supplier in the
+ * relationship.
  */
+
 @Entity
 @Data
 @Table(name = "relationship")
