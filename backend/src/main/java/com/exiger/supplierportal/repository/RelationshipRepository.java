@@ -12,7 +12,7 @@ import java.util.List;
  * and inherits standard CRUD operations from JpaRepository.
  */
 @Repository
-public interface RelationshipRespository extends JpaRepository<Relationship, RelationshipID> {
+public interface RelationshipRepository extends JpaRepository<Relationship, RelationshipID> {
 
     /**
      * Finds all Relationship entries for a given client.
