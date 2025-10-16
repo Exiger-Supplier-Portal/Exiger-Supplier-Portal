@@ -20,10 +20,3 @@ public class Relationship {
     @Column(name = "supplier_status", nullable = false)
     private SupplierStatus status;
 }
-
-@Embeddable
-@Data
-class RelationshipID implements Serializable {
-    private Long supplierID;
-    private Long clientID;
-}
