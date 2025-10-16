@@ -25,7 +25,5 @@ public class Supplier {
   @Column(name = "supplier_name", nullable = false)
   private String supplierName;
 
-  @OneToMany(mappedBy = "id.supplierID", cascade = CascadeType.ALL)
-  private List<Relationship> relationships;
 
 }

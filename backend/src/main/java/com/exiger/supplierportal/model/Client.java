@@ -24,7 +24,5 @@ public class Client {
   @Column(name = "client_name", nullable = false)
   private String clientName;
 
-  @OneToMany(mappedBy = "id.clientID", cascade = CascadeType.ALL)
-  private List<Relationship> relationships;
 
 }
