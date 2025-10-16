@@ -51,6 +51,36 @@ public class RelationshipService {
         // Convert to response DTO
         return convertToResponse(savedRelationship);
     }
+    
+    /**
+     * Retrieves all supplier-client relationships for a specific client.
+     * Converts each Relationship entity into a RelationshipResponse DTO.
+     *
+     * @param clientID The ID of the client to look up.
+     * @return A list of RelationshipResponse objects representing all relationships for the client.
+     */
+    public List<RelationshipResponse> getRelationshipsByClient(Long clientID){
+      // Query all relationships
+      List<Relationship> relationship = relationshipRepository.findById_ClientID(clientID);
+
+      // Convert List to a list of RelationshipResponse DTOs and return
+      return relationship.stream().map(this::convertToResponse).collect(Collectors.toList());
+    }
+
+    /**
+     * Retrieves all supplier-client relationships for a specific supplier.
+     * Converts each Relationship entity into a RelationshipResponse DTO.
+     *
+     * @param supplierID The ID of the supplier to look up.
+     * @return A list of RelationshipResponse objects representing all relationships for the supplier.
+     */
+    public List<RelationshipResponse> getRelationshipsBySupplier(Long supplierID){
+      // Query all relationships
+      List<Relationship> relationship = relationshipRepository.findById_SupplierID(supplierID);
+
+      // Convert List to a list of RelationshipResponse DTOs and return
+      return relationship.stream().map(this::convertToResponse).collect(Collectors.toList());
+    }
 
     /**
      * Convert Relationship entity to RelationshipResponse DTO

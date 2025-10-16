@@ -13,7 +13,7 @@ import java.util.List;
 @Repository
 public interface SupplierRepository extends JpaRepository<Supplier, Long>{
     
-    // Query to return a List of all the clientID
+    // Query to return a List of all the supplierIDs
     @Query("SELECT s.supplierID FROM Supplier s")
     List<Long> findAllSupplierIDs();
 
