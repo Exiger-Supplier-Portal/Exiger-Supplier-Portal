@@ -1,6 +1,6 @@
 package com.exiger.supplierportal.controller;
 
-// import com.exiger.supplierportal.service.RelationshipService; need to update later
+// import com.exiger.supplierportal.service.RelationshipService; add once James/Vincent finishes it
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
