@@ -14,12 +14,13 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 
+import static org.hamcrest.Matchers.containsString;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@SpringBootTest(properties = {"api.token=test-token-123"})
+@SpringBootTest(properties = { "api.token=test-token-123" })
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
 class RelationshipControllerTest {
@@ -51,9 +52,9 @@ class RelationshipControllerTest {
 
         // When & Then
         mockMvc.perform(post("/api/relationships")
-                        .header("Authorization", "Bearer test-token-123")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(request)))
+                .header("Authorization", "Bearer test-token-123")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.clientID").value(1))
                 .andExpect(jsonPath("$.supplierID").value(2))
@@ -70,8 +71,8 @@ class RelationshipControllerTest {
 
         // When & Then
         mockMvc.perform(post("/api/relationships")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(request)))
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isUnauthorized());
     }
 
@@ -85,9 +86,52 @@ class RelationshipControllerTest {
 
         // When & Then
         mockMvc.perform(post("/api/relationships")
-                        .header("Authorization", "Bearer invalid-token")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(request)))
+                .header("Authorization", "Bearer invalid-token")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    void createRelationship_WithDuplicateRelationship_ShouldReturnBadRequest() throws Exception {
+        // Given
+        RelationshipRequest request = new RelationshipRequest();
+        request.setClientID(1L);
+        request.setSupplierID(2L);
+        request.setStatus(SupplierStatus.INVITED);
+
+        // Mock service to throw exception for duplicate relationship
+        when(relationshipService.createRelationship(any(RelationshipRequest.class)))
+                .thenThrow(new IllegalArgumentException("Relationship already exists between client 1 and supplier 2"));
+
+        // When & Then
+        mockMvc.perform(post("/api/relationships")
+                .header("Authorization", "Bearer test-token-123")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isBadRequest())
+                .andExpect(content().string(containsString("Relationship already exists")));
+    }
+
+    @Test
+    void createRelationship_WithSameClientSupplierDifferentStatus_ShouldReturnBadRequest() throws Exception {
+        // Given - Try to create relationship with same client/supplier but different
+        // status
+        RelationshipRequest request = new RelationshipRequest();
+        request.setClientID(1L);
+        request.setSupplierID(2L);
+        request.setStatus(SupplierStatus.ONBOARDING); // Different status
+
+        // Mock service to throw exception for duplicate relationship
+        when(relationshipService.createRelationship(any(RelationshipRequest.class)))
+                .thenThrow(new IllegalArgumentException("Relationship already exists between client 1 and supplier 2"));
+
+        // When & Then
+        mockMvc.perform(post("/api/relationships")
+                .header("Authorization", "Bearer test-token-123")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isBadRequest())
+                .andExpect(content().string(containsString("Relationship already exists")));
     }
 }
