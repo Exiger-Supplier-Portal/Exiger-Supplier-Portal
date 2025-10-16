@@ -1,21 +1,48 @@
 package com.exiger.supplierportal.model;
 
-import jakarta.persistence.Embeddable;
+import jakarta.persistence.*;
 import lombok.Data;
 import java.io.Serializable;
+import java.util.Objects;
 
-/** 
- * Composite primary key for the Relationship entity.
- * 
- * This class is in a separate file because: 
- *  - Java requires public classes to be in their own file
- *  - Other packages (repository, service) need access to this class
- * 
- * Contains the clientId and supplierId that together form the unique identifier for each client-supplier relationship.
+/**
+ * Composite attribute of supplierID and clientID to serve as the id in Relationship
  */
 @Embeddable
 @Data
 public class RelationshipID implements Serializable {
+    @Column(name = "supplier_id")
     private Long supplierID;
+
+    @Column(name = "client_id")
     private Long clientID;
+
+    /**
+     * Override equals() for RelationshipID
+     * @param o   the reference object with which to compare.
+     * @return True if supplierID and clientID of both objects are equal
+     */
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+
+        if (!(o instanceof RelationshipID)) {
+            return false;
+        }
+
+        RelationshipID otherID = (RelationshipID) o;
+        return supplierID.equals(otherID.supplierID) &&
+            clientID.equals(otherID.clientID);
+    }
+
+    /**
+     * Override hashCode() for RelationshipID
+     * @return hash of supplierID and clientID
+     */
+    @Override
+    public int hashCode() {
+        return Objects.hash(supplierID, clientID);
+    }
 }
