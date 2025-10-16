@@ -21,9 +21,3 @@ public class Relationship {
     private SupplierStatus status;
 }
 
-@Embeddable
-@Data
-class RelationshipID implements Serializable {
-    private Long supplierID;
-    private Long clientID;
-}
