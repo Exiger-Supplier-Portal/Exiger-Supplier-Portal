@@ -16,7 +16,8 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Controller for managing relationships between clients and suppliers.
+ * REST Controller for managing supplier-client relationships.
+ * Provides API endpoints for external tools to create relationships using API token authentication.
  */
 @RestController
 @RequestMapping("/api/relationships")
@@ -29,13 +30,18 @@ public class RelationshipController {
     private ApiTokenValidator apiTokenValidator;
 
     /**
-     * Create a new supplier-client relationship using ORM
+     * Creates a new supplier-client relationship using ORM persistence.
+     * 
+     * @param request The relationship data containing clientID, supplierID, and status
+     * @param authHeader The Authorization header containing the API token (Bearer format)
+     * @return ResponseEntity with created relationship data or error message
      */
     @PostMapping
     public ResponseEntity<?> createRelationship(
             @Valid @RequestBody RelationshipRequest request,
             @RequestHeader(value = "Authorization", required = false) String authHeader) {
         
+        // TODO: create a custom exception for invalid API token
         try {
             // Validate API token
             if (authHeader == null) {

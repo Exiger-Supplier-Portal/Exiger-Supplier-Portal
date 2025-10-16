@@ -3,6 +3,10 @@ package com.exiger.supplierportal.config;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+/**
+ * Validates API tokens for external tool authentication.
+ * Provides secure token validation for API endpoints.
+ */
 @Component
 public class ApiTokenValidator {
 
@@ -10,7 +14,10 @@ public class ApiTokenValidator {
     private String validApiToken;
 
     /**
-     * Validate API token from Authorization header
+     * Validates API token from Authorization header.
+     * 
+     * @param authHeader The Authorization header containing the Bearer token
+     * @throws SecurityException if token is missing, invalid format, or doesn't match
      */
     public void validateApiToken(String authHeader) {
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
