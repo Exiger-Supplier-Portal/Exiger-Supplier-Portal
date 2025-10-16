@@ -1,5 +1,6 @@
 package com.exiger.supplierportal.config;
 
+import com.exiger.supplierportal.exception.InvalidApiTokenException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -17,17 +18,17 @@ public class ApiTokenValidator {
      * Validates API token from Authorization header.
      * 
      * @param authHeader The Authorization header containing the Bearer token
-     * @throws SecurityException if token is missing, invalid format, or doesn't match
+     * @throws InvalidApiTokenException if token is missing, invalid format, or doesn't match
      */
     public void validateApiToken(String authHeader) {
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
-            throw new SecurityException("Missing or invalid Authorization header");
+            throw new InvalidApiTokenException("Missing or invalid Authorization header");
         }
 
         String token = authHeader.substring(7); // Remove "Bearer " prefix
         
         if (!validApiToken.equals(token)) {
-            throw new SecurityException("Invalid API token");
+            throw new InvalidApiTokenException("Invalid API token");
         }
     }
 }
