@@ -13,6 +13,7 @@ import org.springframework.security.oauth2.core.oidc.user.OidcUser;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * Controller for managing relationships between clients and suppliers.
@@ -31,13 +32,32 @@ public class RelationshipController {
      * Create a new supplier-client relationship using ORM
      */
     @PostMapping
-    public ResponseEntity<RelationshipResponse> createRelationship(
+    public ResponseEntity<?> createRelationship(
             @Valid @RequestBody RelationshipRequest request,
-            @RequestHeader("Authorization") String authHeader) {
-        apiTokenValidator.validateApiToken(authHeader);
-
-        RelationshipResponse response = relationshipService.createRelationship(request);
-        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+            @RequestHeader(value = "Authorization", required = false) String authHeader) {
+        
+        try {
+            // Validate API token
+            if (authHeader == null) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(Map.of("status", 401, "message", "Authorization header is required"));
+            }
+            
+            apiTokenValidator.validateApiToken(authHeader);
+            
+            RelationshipResponse response = relationshipService.createRelationship(request);
+            return ResponseEntity.status(HttpStatus.CREATED).body(response);
+            
+        } catch (SecurityException e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                .body(Map.of("status", 401, "message", e.getMessage()));
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(Map.of("status", 400, "message", e.getMessage()));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(Map.of("status", 500, "message", "An unexpected error occurred"));
+        }
     }
 
     /**
