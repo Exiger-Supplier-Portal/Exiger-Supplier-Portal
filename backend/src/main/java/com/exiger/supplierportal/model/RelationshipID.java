@@ -11,11 +11,8 @@ import java.util.Objects;
 @Embeddable
 @Data
 public class RelationshipID implements Serializable {
-    @Column(name = "supplier_id")
-    private Long supplierID;
-
-    @Column(name = "client_id")
-    private Long clientID;
+    private String supplierID;
+    private String clientID;
 
     /**
      * Override equals() for RelationshipID

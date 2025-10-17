@@ -51,7 +51,7 @@ public class RelationshipService {
         // Fetch the Client and Supplier entities
         Client client = clientRepository.findById(request.getClientID())
             .orElseThrow(() -> new IllegalArgumentException("Client not found with ID: " + request.getClientID()));
-        
+
         Supplier supplier = supplierRepository.findById(request.getSupplierID())
             .orElseThrow(() -> new IllegalArgumentException("Supplier not found with ID: " + request.getSupplierID()));
 
@@ -80,7 +80,7 @@ public class RelationshipService {
      * @param clientID The ID of the client to look up.
      * @return A list of RelationshipResponse objects representing all relationships for the client.
      */
-    public List<RelationshipResponse> getRelationshipsByClient(Long clientID){
+    public List<RelationshipResponse> getRelationshipsByClient(String clientID){
       // Query all relationships
       List<Relationship> relationship = relationshipRepository.findById_ClientID(clientID);
 
@@ -95,7 +95,7 @@ public class RelationshipService {
      * @param supplierID The ID of the supplier to look up.
      * @return A list of RelationshipResponse objects representing all relationships for the supplier.
      */
-    public List<RelationshipResponse> getRelationshipsBySupplier(Long supplierID){
+    public List<RelationshipResponse> getRelationshipsBySupplier(String supplierID){
       // Query all relationships
       List<Relationship> relationship = relationshipRepository.findById_SupplierID(supplierID);
 

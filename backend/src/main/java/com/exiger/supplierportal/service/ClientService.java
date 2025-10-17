@@ -23,8 +23,7 @@ public class ClientService {
      *
      * @return A list of client IDs.
      */
-    public List<Long> getAllClientIDs() {
+    public List<String> getAllClientIDs() {
         return clientRepository.findAllClientIDs();
     }
 }
-
