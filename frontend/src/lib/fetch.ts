@@ -1,0 +1,41 @@
+type HttpMethod = "GET" | "POST" | "PUT" | "PATCH" | "DELETE";
+
+type FetchWithAuthProps<Body = unknown> = {
+  path: string;
+  method: HttpMethod;
+  headers?: Record<string, string>;
+  body?: Body;
+};
+
+export type FetchResult<T> = { ok: true; data: T } | { ok: false; error: string };
+
+export async function fetchWithAuth<TResponse = unknown, TBody = unknown>(
+  { path, method, headers = {}, body }: FetchWithAuthProps<TBody>,
+  responseFn?: (response: Response) => Promise<TResponse>
+): Promise<FetchResult<TResponse>> {
+  const url = `${process.env.NEXT_PUBLIC_BACKEND_URL}${path}`;
+
+  try {
+    const response = await fetch(url, {
+      method,
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json",
+        ...headers,
+      },
+      body: body && method !== "GET" ? JSON.stringify(body) : undefined,
+    });
+
+    if (response.ok) {
+      const data = responseFn ? await responseFn(response) : await response.json();
+      return { ok: true, data };
+    } else {
+      return { ok: false, error: await response.text() };
+    }
+  } catch (err) {
+    return {
+      ok: false,
+      error: "Unknown network error",
+    };
+  }
+}
