@@ -23,7 +23,7 @@ public class SupplierService {
      *
      * @return A list of supplier IDs.
      */
-    public List<Long> getAllSupplierIDs() {
+    public List<String> getAllSupplierIDs() {
         return supplierRepository.findAllSupplierIDs();
     }
 }

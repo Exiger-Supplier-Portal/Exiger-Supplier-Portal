@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 /**
- * This controller gets client ids connected to a supplier id.
+ * Controller for getting relationships between clients and suppliers.
  */
 @RestController
 public class RelationshipController {
@@ -20,16 +20,17 @@ public class RelationshipController {
         this.relationshipService = relationshipService;
     }
 
-    // should return List<Long>, changed for testing purposes
+    /**
+     * Gets all Relationship entries for a given supplier.
+     * 
+     * @param authentication The Okta authentication object.
+     * @return A list of RelationshipResponse objects where the supplierID matches.
+     */
     @GetMapping("/api/clients")
     public List<RelationshipResponse> getClientsBySupplier(Authentication authentication) {
         OidcUser oidcUser = (OidcUser) authentication.getPrincipal();
         String oktaSub = oidcUser.getAttribute("sub"); // unique okta id
 
-        // TEMP: Hardcoded supplier ID
-        Long supplierId = 337987L;
-
-        // Need to map oktaSub to supplierId
-        return relationshipService.getRelationshipsBySupplier(supplierId);
+        return relationshipService.getRelationshipsBySupplier(oktaSub);
     }
 }

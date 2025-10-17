@@ -20,7 +20,7 @@ public interface RelationshipRepository extends JpaRepository<Relationship, Rela
      * @param clientID The ID of the client to look up.
      * @return A list of Relationship objects where the clientID matches.
      */    
-    List<Relationship> findById_ClientID(Long clientID);
+    List<Relationship> findById_ClientID(String clientID);
 
     /**
      * Finds all Relationship entries for a given supplier.
@@ -28,11 +28,11 @@ public interface RelationshipRepository extends JpaRepository<Relationship, Rela
      * @param supplierID The ID of the supplier to look up.
      * @return A list of Relationship objects where the supplierID matches.
      */
-    List<Relationship> findById_SupplierID(Long supplierID);
+    List<Relationship> findById_SupplierID(String supplierID);
 
     /**
      * Check if a relationship already exists between client and supplier.
      * Uses Spring Data JPA's automatic query generation.
      */
-    boolean existsById_ClientIDAndId_SupplierID(Long clientID, Long supplierID);
+    boolean existsById_ClientIDAndId_SupplierID(String clientID, String supplierID);
 }

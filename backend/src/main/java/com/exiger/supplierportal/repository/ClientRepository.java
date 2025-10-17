@@ -12,9 +12,9 @@ import java.util.List;
  *  the client IDs. Inherits basic CRUD operations from JpaRepository.
  */
 @Repository
-public interface ClientRepository extends JpaRepository<Client, Long>{
+public interface ClientRepository extends JpaRepository<Client, String>{
 
     // Query to return a List of all the clientIDs
     @Query("SELECT c.clientID from Client c")
-    List<Long> findAllClientIDs();
+    List<String> findAllClientIDs();
 }

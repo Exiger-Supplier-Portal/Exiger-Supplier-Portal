@@ -20,7 +20,7 @@ public class Supplier {
   @Id 
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   @Column(name = "supplier_id")
-  private Long supplierID;
+  private String supplierID;
 
   @Column(name = "supplier_name", nullable = false)
   private String supplierName;

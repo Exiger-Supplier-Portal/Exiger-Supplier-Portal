@@ -11,10 +11,10 @@ import java.util.List;
  *  the Supplier IDs. Inherits basic CRUD operations from JpaRepository.
  */
 @Repository
-public interface SupplierRepository extends JpaRepository<Supplier, Long>{
+public interface SupplierRepository extends JpaRepository<Supplier, String>{
     
     // Query to return a List of all the supplierIDs
     @Query("SELECT s.supplierID FROM Supplier s")
-    List<Long> findAllSupplierIDs();
+    List<String> findAllSupplierIDs();
 
 }
