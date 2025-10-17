@@ -38,13 +38,13 @@ class RelationshipControllerTest {
     void createRelationship_WithValidRequest_ShouldReturnCreatedResponse() throws Exception {
         // Given
         RelationshipRequest request = new RelationshipRequest();
-        request.setClientID(1L);
-        request.setSupplierID(2L);
+        request.setClientID("1");
+        request.setSupplierID("2");
         request.setStatus(SupplierStatus.INVITED);
 
         RelationshipResponse response = new RelationshipResponse();
-        response.setClientID(1L);
-        response.setSupplierID(2L);
+        response.setClientID("1");
+        response.setSupplierID("2");
         response.setStatus(SupplierStatus.INVITED);
 
         when(relationshipService.createRelationship(any(RelationshipRequest.class)))
@@ -56,8 +56,8 @@ class RelationshipControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.clientID").value(1))
-                .andExpect(jsonPath("$.supplierID").value(2))
+                .andExpect(jsonPath("$.clientID").value("1"))
+                .andExpect(jsonPath("$.supplierID").value("2"))
                 .andExpect(jsonPath("$.status").value("INVITED"));
     }
 
@@ -65,8 +65,8 @@ class RelationshipControllerTest {
     void createRelationship_WithMissingAuthHeader_ShouldReturnBadRequest() throws Exception {
         // Given
         RelationshipRequest request = new RelationshipRequest();
-        request.setClientID(1L);
-        request.setSupplierID(2L);
+        request.setClientID("1");
+        request.setSupplierID("2");
         request.setStatus(SupplierStatus.INVITED);
 
         // When & Then
@@ -80,8 +80,8 @@ class RelationshipControllerTest {
     void createRelationship_WithInvalidToken_ShouldReturnUnauthorized() throws Exception {
         // Given
         RelationshipRequest request = new RelationshipRequest();
-        request.setClientID(1L);
-        request.setSupplierID(2L);
+        request.setClientID("1");
+        request.setSupplierID("2");
         request.setStatus(SupplierStatus.INVITED);
 
         // When & Then
@@ -96,8 +96,8 @@ class RelationshipControllerTest {
     void createRelationship_WithDuplicateRelationship_ShouldReturnBadRequest() throws Exception {
         // Given
         RelationshipRequest request = new RelationshipRequest();
-        request.setClientID(1L);
-        request.setSupplierID(2L);
+        request.setClientID("1");
+        request.setSupplierID("2");
         request.setStatus(SupplierStatus.INVITED);
 
         // Mock service to throw exception for duplicate relationship
@@ -118,8 +118,8 @@ class RelationshipControllerTest {
         // Given - Try to create relationship with same client/supplier but different
         // status
         RelationshipRequest request = new RelationshipRequest();
-        request.setClientID(1L);
-        request.setSupplierID(2L);
+        request.setClientID("1");
+        request.setSupplierID("2");
         request.setStatus(SupplierStatus.ONBOARDING); // Different status
 
         // Mock service to throw exception for duplicate relationship
