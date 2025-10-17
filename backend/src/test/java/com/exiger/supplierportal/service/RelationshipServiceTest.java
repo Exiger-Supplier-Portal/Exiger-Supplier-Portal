@@ -35,12 +35,14 @@ class RelationshipServiceTest {
     void testCreateRelationship() {
         // First, create and persist a Client entity
         Client client = new Client();
+        client.setClientID("C111");
         client.setClientName("Test Client");
         client.setClientEmail("test@client.com");
         Client savedClient = entityManager.persistAndFlush(client);
         
         // Create and persist a Supplier entity
         Supplier supplier = new Supplier();
+        supplier.setSupplierID("S111");
         supplier.setSupplierName("Test Supplier");
         supplier.setSupplierEmail("test@supplier.com");
         Supplier savedSupplier = entityManager.persistAndFlush(supplier);
