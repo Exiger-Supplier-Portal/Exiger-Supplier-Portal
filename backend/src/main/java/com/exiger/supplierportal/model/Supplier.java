@@ -17,15 +17,14 @@ import java.util.List;
 @Table(name = "supplier")
 public class Supplier {
 
-  @Id 
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
-  @Column(name = "supplier_id")
-  private String supplierID;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "supplier_id")
+    private String supplierID;
 
-  @Column(name = "supplier_name", nullable = false)
-  private String supplierName;
+    @Column(name = "supplier_name", nullable = false)
+    private String supplierName;
 
-  @OneToMany(mappedBy = "id.supplierID", cascade = CascadeType.ALL)
-  private List<Relationship> relationships;
-
+    @Column(name = "supplier_email", unique = true, nullable = false)
+    private String supplierEmail;
 }
