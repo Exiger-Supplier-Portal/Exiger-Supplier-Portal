@@ -1,0 +1,12 @@
+FROM postgres:16
+
+# Use enviroment variables from .env
+
+ENV POSTGRES_DB=${POSTGRES_DB}
+ENV POSTGRES_USER=${POSTGRES_USER}
+ENV POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+
+
+EXPOSE 5432
+
+VOLUME [ "/var/lib/postgresql/data" ]
