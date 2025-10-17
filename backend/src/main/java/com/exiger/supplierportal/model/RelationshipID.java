@@ -11,10 +11,7 @@ import java.util.Objects;
 @Embeddable
 @Data
 public class RelationshipID implements Serializable {
-    @Column(name = "supplier_id")
     private String supplierID;
-
-    @Column(name = "client_id")
     private String clientID;
 
     /**
