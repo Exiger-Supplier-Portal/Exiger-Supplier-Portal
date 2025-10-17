@@ -2,9 +2,13 @@ package com.exiger.supplierportal.service;
 
 import com.exiger.supplierportal.dto.clientsupplier.request.RelationshipRequest;
 import com.exiger.supplierportal.dto.clientsupplier.response.RelationshipResponse;
+import com.exiger.supplierportal.model.Client;
 import com.exiger.supplierportal.model.Relationship;
 import com.exiger.supplierportal.model.RelationshipID;
+import com.exiger.supplierportal.model.Supplier;
+import com.exiger.supplierportal.repository.ClientRepository;
 import com.exiger.supplierportal.repository.RelationshipRepository;
+import com.exiger.supplierportal.repository.SupplierRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,6 +26,12 @@ public class RelationshipService {
     @Autowired
     private RelationshipRepository relationshipRepository;
 
+    @Autowired
+    private ClientRepository clientRepository;
+
+    @Autowired
+    private SupplierRepository supplierRepository;
+
     /**
      * Creates a new supplier-client relationship using ORM persistence.
      * 
@@ -38,6 +48,13 @@ public class RelationshipService {
                 " and supplier " + request.getSupplierID());
         }
 
+        // Fetch the Client and Supplier entities
+        Client client = clientRepository.findById(request.getClientID())
+            .orElseThrow(() -> new IllegalArgumentException("Client not found with ID: " + request.getClientID()));
+
+        Supplier supplier = supplierRepository.findById(request.getSupplierID())
+            .orElseThrow(() -> new IllegalArgumentException("Supplier not found with ID: " + request.getSupplierID()));
+
         // Create new relationship using ORM
         RelationshipID id = new RelationshipID();
         id.setClientID(request.getClientID());
@@ -45,6 +62,8 @@ public class RelationshipService {
 
         Relationship relationship = new Relationship();
         relationship.setId(id);
+        relationship.setClient(client);  // Set the actual Client entity
+        relationship.setSupplier(supplier);  // Set the actual Supplier entity
         relationship.setStatus(request.getStatus());
 
         // Save to database using JPA/Hibernate ORM
