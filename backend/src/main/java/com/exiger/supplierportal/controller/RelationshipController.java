@@ -59,10 +59,11 @@ public class RelationshipController {
      * @return A list of RelationshipResponse objects where the supplierID matches.
      */
     @GetMapping("/clients")
-    public List<RelationshipResponse> getClientsBySupplier(Authentication authentication) {
+    public ResponseEntity<List<RelationshipResponse>> getClientsBySupplier(Authentication authentication) {
         OidcUser oidcUser = (OidcUser) authentication.getPrincipal();
         String oktaSub = oidcUser.getAttribute("sub"); // unique okta id
 
-        return relationshipService.getRelationshipsBySupplier(oktaSub);
+        List<RelationshipResponse> responseList = relationshipService.getRelationshipsBySupplier(oktaSub);
+        return ResponseEntity.ok(responseList);
     }
 }
