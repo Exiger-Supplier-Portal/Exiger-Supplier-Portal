@@ -66,4 +66,20 @@ public class RelationshipController {
         List<RelationshipResponse> responseList = relationshipService.getRelationshipsBySupplier(oktaSub);
         return ResponseEntity.ok(responseList);
     }
+
+    /**
+     * Gets the status of a specific relationship between a client and supplier.
+     * 
+     * @param clientID The ID of the client
+     * @param supplierID The ID of the supplier
+     * @return ResponseEntity with the relationship status
+     */
+    @GetMapping("/status/{clientID}/{supplierID}")
+    public ResponseEntity<RelationshipResponse> getRelationshipStatus(
+            @PathVariable String clientID,
+            @PathVariable String supplierID) {
+        
+
+        return null;
+    }
 }
