@@ -43,7 +43,7 @@ public class RelationshipController {
     public ResponseEntity<RelationshipResponse> createRelationship(
             @Valid @RequestBody RelationshipRequest request,
             @RequestHeader(value = "Authorization", required = false) String authHeader) {
-        
+
         if (authHeader == null) {
             throw new InvalidApiTokenException("Missing Authorization header");
         }
@@ -70,7 +70,7 @@ public class RelationshipController {
 
     /**
      * Gets the status of a specific relationship between a client and supplier.
-     * 
+     *
      * @param clientID The ID of the client
      * @param supplierID The ID of the supplier
      * @param authHeader The Authorization header containing the API token (Bearer format)
@@ -82,20 +82,20 @@ public class RelationshipController {
             @RequestParam @NotBlank(message = "clientID parameter is required") String clientID,
             @RequestParam @NotBlank(message = "supplierID parameter is required") String supplierID,
             @RequestHeader(value = "Authorization", required = false) String authHeader) {
-        
+
         if (authHeader == null) {
             throw new InvalidApiTokenException("Missing Authorization header");
         }
-        
+
         apiTokenValidator.validateApiToken(authHeader);
-        
+
         RelationshipResponse response = relationshipService.getRelationshipStatus(clientID, supplierID);
         return ResponseEntity.ok(response);
     }
 
     /**
      * Gets the status of a specific relationship for the authenticated supplier with a client.
-     * 
+     *
      * @param clientID The ID of the client
      * @param authentication The Okta authentication object
      * @return ResponseEntity with the relationship status
@@ -104,7 +104,7 @@ public class RelationshipController {
     public ResponseEntity<RelationshipResponse> getRelationshipStatusBySupplier(
             @RequestParam @NotBlank(message = "clientID parameter is required") String clientID,
             Authentication authentication) {
-        
+
         String supplierID = AuthenticationUtils.getSupplierId(authentication);
 
         RelationshipResponse response = relationshipService.getRelationshipStatus(clientID, supplierID);
