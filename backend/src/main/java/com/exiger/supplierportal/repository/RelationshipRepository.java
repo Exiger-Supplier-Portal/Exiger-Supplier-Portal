@@ -1,9 +1,9 @@
 package com.exiger.supplierportal.repository;
 
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
 import com.exiger.supplierportal.model.Relationship;
 import com.exiger.supplierportal.model.RelationshipID;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 import java.util.List;
 
 /**
@@ -13,7 +13,7 @@ import java.util.List;
  */
 @Repository
 public interface RelationshipRepository extends JpaRepository<Relationship, RelationshipID> {
-
+    
     /**
      * Finds all Relationship entries for a given client.
      * 
@@ -33,6 +33,10 @@ public interface RelationshipRepository extends JpaRepository<Relationship, Rela
     /**
      * Check if a relationship already exists between client and supplier.
      * Uses Spring Data JPA's automatic query generation.
+     * 
+     * @param clientID The ID of the client to check.
+     * @param supplierID The ID of the supplier to check.
+     * @return true if a relationship exists between the client and supplier, false otherwise.
      */
     boolean existsById_ClientIDAndId_SupplierID(String clientID, String supplierID);
 }
