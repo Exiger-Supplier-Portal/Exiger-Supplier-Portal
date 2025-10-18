@@ -5,6 +5,7 @@ import com.exiger.supplierportal.model.RelationshipID;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Repository for managing relationships between clients and suppliers.
@@ -39,4 +40,13 @@ public interface RelationshipRepository extends JpaRepository<Relationship, Rela
      * @return true if a relationship exists between the client and supplier, false otherwise.
      */
     boolean existsById_ClientIDAndId_SupplierID(String clientID, String supplierID);
+
+    /**
+     * Finds a specific relationship between a client and supplier.
+     * 
+     * @param clientID The ID of the client
+     * @param supplierID The ID of the supplier
+     * @return Optional containing the Relationship if found
+     */
+    Optional<Relationship> findById_ClientIDAndId_SupplierID(String clientID, String supplierID);
 }
