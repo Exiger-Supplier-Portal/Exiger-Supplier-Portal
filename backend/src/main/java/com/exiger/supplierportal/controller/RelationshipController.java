@@ -5,12 +5,12 @@ import com.exiger.supplierportal.dto.clientsupplier.request.RelationshipRequest;
 import com.exiger.supplierportal.dto.clientsupplier.response.RelationshipResponse;
 import com.exiger.supplierportal.exception.InvalidApiTokenException;
 import com.exiger.supplierportal.service.RelationshipService;
+import com.exiger.supplierportal.util.AuthenticationUtils;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.oauth2.core.oidc.user.OidcUser;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -60,10 +60,9 @@ public class RelationshipController {
      */
     @GetMapping("/clients")
     public ResponseEntity<List<RelationshipResponse>> getClientsBySupplier(Authentication authentication) {
-        OidcUser oidcUser = (OidcUser) authentication.getPrincipal();
-        String oktaSub = oidcUser.getAttribute("sub"); // unique okta id
+        String supplierID = AuthenticationUtils.getSupplierId(authentication);
 
-        List<RelationshipResponse> responseList = relationshipService.getRelationshipsBySupplier(oktaSub);
+        List<RelationshipResponse> responseList = relationshipService.getRelationshipsBySupplier(supplierID);
         return ResponseEntity.ok(responseList);
     }
 
@@ -104,8 +103,7 @@ public class RelationshipController {
     public ResponseEntity<RelationshipResponse> getRelationshipStatusByClient(
             @PathVariable String supplierID,
             Authentication authentication) {
-        OidcUser oidcUser = (OidcUser) authentication.getPrincipal();
-        String clientID = oidcUser.getAttribute("sub"); // unique okta id
+        String clientID = AuthenticationUtils.getClientId(authentication);
 
         RelationshipResponse response = relationshipService.getRelationshipStatus(clientID, supplierID);
         return ResponseEntity.ok(response);
