@@ -72,14 +72,23 @@ public class RelationshipController {
      * 
      * @param clientID The ID of the client
      * @param supplierID The ID of the supplier
+     * @param authHeader The Authorization header containing the API token (Bearer format)
      * @return ResponseEntity with the relationship status
+     * @throws InvalidApiTokenException if API token validation fails
      */
     @GetMapping("/status/{clientID}/{supplierID}")
     public ResponseEntity<RelationshipResponse> getRelationshipStatus(
             @PathVariable String clientID,
-            @PathVariable String supplierID) {
+            @PathVariable String supplierID,
+            @RequestHeader(value = "Authorization", required = false) String authHeader) {
         
-
+        // Validate API token
+        if (authHeader == null) {
+            throw new InvalidApiTokenException("Authorization header is required");
+        }
+        
+        apiTokenValidator.validateApiToken(authHeader);
+        
         RelationshipResponse response = relationshipService.getRelationshipStatus(clientID, supplierID);
         return ResponseEntity.ok(response);
     }
