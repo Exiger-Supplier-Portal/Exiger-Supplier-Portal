@@ -17,7 +17,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import static org.hamcrest.Matchers.containsString;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @SpringBootTest(properties = { "api.token=test-token-123" })
@@ -134,4 +134,57 @@ class RelationshipControllerTest {
                 .andExpect(status().isBadRequest())
                 .andExpect(content().string(containsString("Relationship already exists")));
     }
+
+    // ========== GET ENDPOINT TESTS ==========
+
+    @Test
+    void getRelationshipStatus_WithValidApiToken_ShouldReturnRelationshipStatus() throws Exception {
+        // Given
+        RelationshipResponse response = new RelationshipResponse();
+        response.setClientID("client123");
+        response.setSupplierID("supplier456");
+        response.setStatus(SupplierStatus.APPROVED);
+
+        when(relationshipService.getRelationshipStatus("client123", "supplier456"))
+                .thenReturn(response);
+
+        // When & Then
+        mockMvc.perform(get("/api/relationships/status/client123/supplier456")
+                .header("Authorization", "Bearer test-token-123"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.clientID").value("client123"))
+                .andExpect(jsonPath("$.supplierID").value("supplier456"))
+                .andExpect(jsonPath("$.status").value("APPROVED"));
+    }
+
+    @Test
+    void getRelationshipStatus_WithMissingAuthHeader_ShouldReturnUnauthorized() throws Exception {
+        // When & Then
+        mockMvc.perform(get("/api/relationships/status/client123/supplier456"))
+                .andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    void getRelationshipStatus_WithInvalidToken_ShouldReturnUnauthorized() throws Exception {
+        // When & Then
+        mockMvc.perform(get("/api/relationships/status/client123/supplier456")
+                .header("Authorization", "Bearer invalid-token"))
+                .andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    void getRelationshipStatus_WithNonExistentRelationship_ShouldReturnBadRequest() throws Exception {
+        // Given
+        when(relationshipService.getRelationshipStatus("client123", "supplier456"))
+                .thenThrow(new IllegalArgumentException("Relationship not found between client client123 and supplier supplier456"));
+
+        // When & Then
+        mockMvc.perform(get("/api/relationships/status/client123/supplier456")
+                .header("Authorization", "Bearer test-token-123"))
+                .andExpect(status().isBadRequest())
+                .andExpect(content().string(containsString("Relationship not found")));
+    }
+
+    // Note: Okta authentication tests would require additional Spring Security test dependencies
+    // For now, we're testing the API token endpoints which are the core functionality
 }
