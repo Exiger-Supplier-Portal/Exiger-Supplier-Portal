@@ -110,4 +110,22 @@ public class RelationshipController {
         RelationshipResponse response = relationshipService.getRelationshipStatus(clientID, supplierID);
         return ResponseEntity.ok(response);
     }
+
+    /**
+     * Gets the status of a specific relationship for the authenticated client with a supplier.
+     * 
+     * @param supplierID The ID of the supplier
+     * @param authentication The Okta authentication object
+     * @return ResponseEntity with the relationship status
+     */
+    @GetMapping("/my-status/{supplierID}")
+    public ResponseEntity<RelationshipResponse> getRelationshipStatusByClient(
+            @PathVariable String supplierID,
+            Authentication authentication) {
+        OidcUser oidcUser = (OidcUser) authentication.getPrincipal();
+        String clientID = oidcUser.getAttribute("sub"); // unique okta id
+
+        RelationshipResponse response = relationshipService.getRelationshipStatus(clientID, supplierID);
+        return ResponseEntity.ok(response);
+    }
 }
