@@ -80,6 +80,7 @@ public class RelationshipController {
             @PathVariable String supplierID) {
         
 
-        return null;
+        RelationshipResponse response = relationshipService.getRelationshipStatus(clientID, supplierID);
+        return ResponseEntity.ok(response);
     }
 }

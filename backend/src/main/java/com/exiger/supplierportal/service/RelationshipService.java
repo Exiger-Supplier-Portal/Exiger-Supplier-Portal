@@ -104,6 +104,21 @@ public class RelationshipService {
     }
 
     /**
+     * Retrieves the status of a specific relationship between a client and supplier.
+     * 
+     * @param clientID The ID of the client
+     * @param supplierID The ID of the supplier
+     * @return RelationshipResponse containing the relationship status
+     */
+    public RelationshipResponse getRelationshipStatus(String clientID, String supplierID) {
+        Relationship relationship = relationshipRepository
+            .findById_ClientIDAndId_SupplierID(clientID, supplierID)
+            .orElse(null);
+        
+        return convertToResponse(relationship);
+    }
+
+    /**
      * Convert Relationship entity to RelationshipResponse DTO
      */
     private RelationshipResponse convertToResponse(Relationship relationship) {
