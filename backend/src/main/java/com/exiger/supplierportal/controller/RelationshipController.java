@@ -69,6 +69,20 @@ public class RelationshipController {
     }
 
     /**
+     * Gets all Relationship entries for a given client.
+     * 
+     * @param authentication The Okta authentication object.
+     * @return A list of RelationshipResponse objects where the clientID matches.
+     */
+    @GetMapping("/suppliers")
+    public ResponseEntity<List<RelationshipResponse>> getSuppliersByClient(Authentication authentication) {
+        String clientID = AuthenticationUtils.getClientId(authentication);
+
+        List<RelationshipResponse> responseList = relationshipService.getRelationshipsByClient(clientID);
+        return ResponseEntity.ok(responseList);
+    }
+
+    /**
      * Gets the status of a specific relationship between a client and supplier.
      *
      * @param clientID The ID of the client
