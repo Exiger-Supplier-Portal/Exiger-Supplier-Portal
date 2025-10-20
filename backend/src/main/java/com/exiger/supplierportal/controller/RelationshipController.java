@@ -42,12 +42,7 @@ public class RelationshipController {
     @PostMapping
     public ResponseEntity<RelationshipResponse> createRelationship(
             @Valid @RequestBody RelationshipRequest request,
-            @RequestHeader(value = "Authorization", required = false) String authHeader) {
-        
-        // Validate API token
-        if (authHeader == null) {
-            throw new InvalidApiTokenException("Authorization header is required");
-        }
+            @RequestHeader(value = "Authorization", required = true) String authHeader) {
         
         apiTokenValidator.validateApiToken(authHeader);
         
@@ -82,12 +77,7 @@ public class RelationshipController {
     public ResponseEntity<RelationshipResponse> getRelationshipStatus(
             @RequestParam @NotBlank(message = "clientID parameter is required") String clientID,
             @RequestParam @NotBlank(message = "supplierID parameter is required") String supplierID,
-            @RequestHeader(value = "Authorization", required = false) String authHeader) {
-        
-        // Validate API token
-        if (authHeader == null) {
-            throw new InvalidApiTokenException("Authorization header is required");
-        }
+            @RequestHeader(value = "Authorization", required = true) String authHeader) {
         
         apiTokenValidator.validateApiToken(authHeader);
         
