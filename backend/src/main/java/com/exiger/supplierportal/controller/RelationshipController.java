@@ -67,20 +67,6 @@ public class RelationshipController {
     }
 
     /**
-     * Gets all Relationship entries for a given client.
-     * 
-     * @param authentication The Okta authentication object.
-     * @return A list of RelationshipResponse objects where the clientID matches.
-     */
-    @GetMapping("/suppliers")
-    public ResponseEntity<List<RelationshipResponse>> getSuppliersByClient(Authentication authentication) {
-        String clientID = AuthenticationUtils.getClientId(authentication);
-
-        List<RelationshipResponse> responseList = relationshipService.getRelationshipsByClient(clientID);
-        return ResponseEntity.ok(responseList);
-    }
-
-    /**
      * Gets the status of a specific relationship between a client and supplier.
      * 
      * @param clientID The ID of the client
@@ -89,10 +75,10 @@ public class RelationshipController {
      * @return ResponseEntity with the relationship status
      * @throws InvalidApiTokenException if API token validation fails
      */
-    @GetMapping("/status/{clientID}/{supplierID}")
+    @GetMapping("/status")
     public ResponseEntity<RelationshipResponse> getRelationshipStatus(
-            @PathVariable String clientID,
-            @PathVariable String supplierID,
+            @RequestParam String clientID,
+            @RequestParam String supplierID,
             @RequestHeader(value = "Authorization", required = false) String authHeader) {
         
         // Validate API token
