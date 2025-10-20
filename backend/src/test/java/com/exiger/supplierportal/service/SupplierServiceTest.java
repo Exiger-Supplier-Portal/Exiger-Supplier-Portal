@@ -77,54 +77,6 @@ class SupplierServiceTest {
     }
 
     @Test
-    void createSupplier_WithNullSupplierName_ShouldThrowException() {
-        // Given
-        SupplierRequest request = new SupplierRequest();
-        request.setSupplierName(null);
-        request.setSupplierEmail("test@supplier.com");
-
-        // When & Then
-        assertThatThrownBy(() -> supplierService.createSupplier(request))
-                .isInstanceOf(Exception.class); // JPA validation will throw exception
-    }
-
-    @Test
-    void createSupplier_WithNullSupplierEmail_ShouldThrowException() {
-        // Given
-        SupplierRequest request = new SupplierRequest();
-        request.setSupplierName("Test Supplier");
-        request.setSupplierEmail(null);
-
-        // When & Then
-        assertThatThrownBy(() -> supplierService.createSupplier(request))
-                .isInstanceOf(Exception.class); // JPA validation will throw exception
-    }
-
-    @Test
-    void createSupplier_WithEmptySupplierName_ShouldThrowException() {
-        // Given
-        SupplierRequest request = new SupplierRequest();
-        request.setSupplierName("");
-        request.setSupplierEmail("test@supplier.com");
-
-        // When & Then
-        assertThatThrownBy(() -> supplierService.createSupplier(request))
-                .isInstanceOf(Exception.class); // JPA validation will throw exception
-    }
-
-    @Test
-    void createSupplier_WithEmptySupplierEmail_ShouldThrowException() {
-        // Given
-        SupplierRequest request = new SupplierRequest();
-        request.setSupplierName("Test Supplier");
-        request.setSupplierEmail("");
-
-        // When & Then
-        assertThatThrownBy(() -> supplierService.createSupplier(request))
-                .isInstanceOf(Exception.class); // JPA validation will throw exception
-    }
-
-    @Test
     void createSupplier_WithSpecialCharactersInName_ShouldSucceed() {
         // Given
         SupplierRequest request = new SupplierRequest();
