@@ -46,6 +46,7 @@ public class SupplierService {
         }
         // Create new relationship using ORM
         Supplier supplier = new Supplier();
+        supplier.setSupplierID(request.getSupplierID());
         supplier.setSupplierEmail(request.getSupplierEmail());
         supplier.setSupplierName(request.getSupplierName());
 

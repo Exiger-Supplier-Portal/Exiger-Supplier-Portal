@@ -35,6 +35,7 @@ class SupplierServiceTest {
     void createSupplier_WithValidRequest_ShouldReturnSupplierResponse() {
         // Given
         SupplierRequest request = new SupplierRequest();
+        request.setSupplierID("S111");
         request.setSupplierName("Test Supplier");
         request.setSupplierEmail("test@supplier.com");
 
@@ -61,11 +62,13 @@ class SupplierServiceTest {
     void createSupplier_WithDuplicateEmail_ShouldThrowException() {
         // Given - Create an existing supplier
         Supplier existingSupplier = new Supplier();
+        existingSupplier.setSupplierID("E111");
         existingSupplier.setSupplierName("Existing Supplier");
         existingSupplier.setSupplierEmail("existing@supplier.com");
         entityManager.persistAndFlush(existingSupplier);
 
         SupplierRequest request = new SupplierRequest();
+        request.setSupplierID("N111");
         request.setSupplierName("New Supplier");
         request.setSupplierEmail("existing@supplier.com"); // Same email as existing
 
@@ -80,6 +83,7 @@ class SupplierServiceTest {
     void createSupplier_WithSpecialCharactersInName_ShouldSucceed() {
         // Given
         SupplierRequest request = new SupplierRequest();
+        request.setSupplierID("123AB");
         request.setSupplierName("Test & Co. Ltd. (Inc.)");
         request.setSupplierEmail("test@supplier.com");
 
@@ -97,6 +101,7 @@ class SupplierServiceTest {
         // Given
         String longName = "A".repeat(255); // Assuming reasonable max length
         SupplierRequest request = new SupplierRequest();
+        request.setSupplierID("ABCDE");
         request.setSupplierName(longName);
         request.setSupplierEmail("test@supplier.com");
 
@@ -121,6 +126,7 @@ class SupplierServiceTest {
 
         for (int i = 0; i < validEmails.length; i++) {
             SupplierRequest request = new SupplierRequest();
+            request.setSupplierID("987" + i);
             request.setSupplierName("Test Supplier " + i);
             request.setSupplierEmail(validEmails[i]);
 
@@ -131,26 +137,5 @@ class SupplierServiceTest {
             assertThat(response).isNotNull();
             assertThat(response.getSupplierEmail()).isEqualTo(validEmails[i]);
         }
-    }
-
-    @Test
-    void createSupplier_ShouldGenerateUniqueSupplierIDs() {
-        // Given
-        SupplierRequest request1 = new SupplierRequest();
-        request1.setSupplierName("Supplier 1");
-        request1.setSupplierEmail("supplier1@test.com");
-
-        SupplierRequest request2 = new SupplierRequest();
-        request2.setSupplierName("Supplier 2");
-        request2.setSupplierEmail("supplier2@test.com");
-
-        // When
-        SupplierResponse response1 = supplierService.createSupplier(request1);
-        SupplierResponse response2 = supplierService.createSupplier(request2);
-
-        // Then
-        assertThat(response1.getSupplierID()).isNotEqualTo(response2.getSupplierID());
-        assertThat(response1.getSupplierID()).isNotNull();
-        assertThat(response2.getSupplierID()).isNotNull();
     }
 }
