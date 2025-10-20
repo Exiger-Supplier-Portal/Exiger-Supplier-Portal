@@ -11,10 +11,10 @@ import jakarta.validation.constraints.NotNull;
 @Data
 public class RelationshipRequest {
     @NotNull
-    private Long clientID;
+    private String clientID;
 
     @NotNull
-    private Long supplierID;
+    private String supplierID;
 
     @NotNull
     private SupplierStatus status;
