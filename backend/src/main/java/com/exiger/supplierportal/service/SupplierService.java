@@ -44,6 +44,18 @@ public class SupplierService {
             throw new IllegalArgumentException(
                 "Supplier already created with given email" + request.getSupplierEmail());
         }
+        if (request.getSupplierName() == null) {
+            throw new IllegalArgumentException("Supplier name cannot be null");
+        }
+        if (request.getSupplierEmail() == null) {
+            throw new IllegalArgumentException("Supplier email cannot be null");
+        }
+        if (request.getSupplierName().isEmpty()) {
+            throw new IllegalArgumentException("Supplier name cannot be empty");
+        }
+        if (request.getSupplierEmail().isEmpty()) {
+            throw new IllegalArgumentException("Supplier email cannot be empty");
+        }
         // Create new relationship using ORM
         Supplier supplier = new Supplier();
         supplier.setSupplierEmail(request.getSupplierEmail());

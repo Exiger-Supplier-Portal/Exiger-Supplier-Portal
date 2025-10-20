@@ -4,6 +4,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 import com.exiger.supplierportal.model.Supplier;
+import java.util.Optional;
 import java.util.List;
 
 /**
@@ -25,5 +26,14 @@ public interface SupplierRepository extends JpaRepository<Supplier, String>{
      * @return true if a supplier with given email already exists, false otherwise.
      */
     boolean existsBySupplierEmail(String supplierEmail);
+
+
+    /**
+     * Find a supplier by their email.
+     * 
+     * @param supplierEmail The email of the supplier to find.
+     * @return The supplier with the given email, or null if not found.
+     */
+    Optional<Supplier> findBySupplierEmail(String supplierEmail);
 
 }
