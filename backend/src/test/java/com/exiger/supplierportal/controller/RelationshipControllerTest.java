@@ -149,7 +149,9 @@ class RelationshipControllerTest {
                 .thenReturn(response);
 
         // When & Then
-        mockMvc.perform(get("/api/relationships/status/client123/supplier456")
+        mockMvc.perform(get("/api/relationships/status")
+                .param("clientID", "client123")
+                .param("supplierID", "supplier456")
                 .header("Authorization", "Bearer test-token-123"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.clientID").value("client123"))
@@ -160,14 +162,18 @@ class RelationshipControllerTest {
     @Test
     void getRelationshipStatus_WithMissingAuthHeader_ShouldReturnUnauthorized() throws Exception {
         // When & Then
-        mockMvc.perform(get("/api/relationships/status/client123/supplier456"))
+        mockMvc.perform(get("/api/relationships/status")
+                .param("clientID", "client123")
+                .param("supplierID", "supplier456"))
                 .andExpect(status().isUnauthorized());
     }
 
     @Test
     void getRelationshipStatus_WithInvalidToken_ShouldReturnUnauthorized() throws Exception {
         // When & Then
-        mockMvc.perform(get("/api/relationships/status/client123/supplier456")
+        mockMvc.perform(get("/api/relationships/status")
+                .param("clientID", "client123")
+                .param("supplierID", "supplier456")
                 .header("Authorization", "Bearer invalid-token"))
                 .andExpect(status().isUnauthorized());
     }
@@ -179,7 +185,9 @@ class RelationshipControllerTest {
                 .thenThrow(new IllegalArgumentException("Relationship not found between client client123 and supplier supplier456"));
 
         // When & Then
-        mockMvc.perform(get("/api/relationships/status/client123/supplier456")
+        mockMvc.perform(get("/api/relationships/status")
+                .param("clientID", "client123")
+                .param("supplierID", "supplier456")
                 .header("Authorization", "Bearer test-token-123"))
                 .andExpect(status().isBadRequest())
                 .andExpect(content().string(containsString("Relationship not found")));
