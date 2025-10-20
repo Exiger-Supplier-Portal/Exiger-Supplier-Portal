@@ -29,4 +29,25 @@ This repository contains the Spring Boot backend for the Exiger Supplier Portal.
 2. `java -jar target/exiger-supplier-portal-VERSION.jar`
 3. Navigate to `http://localhost:8080/`
 
+---
+
+## Running Tests
+
+### Setup Test Configuration
+Before running tests, create the test configuration file:
+```bash
+cp src/test/resources/application-test.properties.example src/test/resources/application-test.properties
+```
+
+### Run Tests
+```bash
+# Run all tests
+mvn test
+
+# Run specific test class
+mvn test -Dtest=RelationshipControllerTest
+```
+
+**Note**: `application-test.properties` is gitignored for security - use the example template to create your own.
+
 

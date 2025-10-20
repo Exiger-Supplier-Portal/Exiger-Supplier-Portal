@@ -1,0 +1,24 @@
+# Test Configuration Template
+# Copy this file to application-test.properties and customize as needed
+# DO NOT commit application-test.properties to version control
+
+# API Token for testing - matches ApiTokenValidator pattern
+api.token=test-token-123
+
+# Database Configuration for Tests (H2 in-memory)
+spring.datasource.url=jdbc:h2:mem:testdb
+spring.datasource.driver-class-name=org.h2.Driver
+spring.datasource.username=sa
+spring.datasource.password=
+
+# JPA Configuration for Tests
+spring.jpa.hibernate.ddl-auto=create-drop
+spring.jpa.show-sql=false
+spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.H2Dialect
+
+# CORS Configuration for Tests
+cors.allowed.origins=http://localhost:3000,http://localhost:8080
+
+# Frontend URLs for Tests
+app.frontend.url=http://localhost:3000
+app.frontend.dashboard.url=http://localhost:3000/dashboard

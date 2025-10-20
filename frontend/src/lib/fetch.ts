@@ -16,6 +16,15 @@ export async function fetchWithAuth<TResponse = unknown, TBody = unknown>(
   const url = `${process.env.NEXT_PUBLIC_BACKEND_URL}${path}`;
 
   try {
+    if (typeof window === "undefined") {
+      const { cookies } = await import("next/headers");
+      const cookieStore = await cookies();
+      const jsessionID = cookieStore.get("JSESSIONID")?.value;
+      if (jsessionID) {
+        headers["Cookie"] = `JSESSIONID=${jsessionID}`;
+      }
+    }
+
     const response = await fetch(url, {
       method,
       credentials: "include",
