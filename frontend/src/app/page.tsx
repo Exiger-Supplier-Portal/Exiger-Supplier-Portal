@@ -1,4 +1,3 @@
-"use client";
 import SignInButton from "@/components/auth/SignInButton";
 import {
   Card,
@@ -9,7 +8,6 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { fetchWithAuth } from "@/lib/fetch";
 
 export default function Home() {
   return (
