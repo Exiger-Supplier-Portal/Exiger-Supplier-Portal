@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import SignInButton from "@/components/auth/SignInButton";
 import { Button } from "@/components/ui/button";
 import {
@@ -16,13 +16,6 @@ export default function Home() {
   return (
     <div className="flex min-h-screen w-screen flex-col items-center justify-center p-24">
       <SignInButton />
-      <Button variant={"outline"} onClick={async()=> {
-        const f = await fetchWithAuth<any, any>({path: "/api/hello", method:"GET" })
-        if (f.ok)
-          console.log(f.data)
-        else 
-          console.log(f.error)
-      }}>Hello World</Button>
       <Card className="w-[350px]">
         <CardHeader>
           <CardTitle>Card Title</CardTitle>
