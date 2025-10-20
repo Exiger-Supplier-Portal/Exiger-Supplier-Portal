@@ -40,7 +40,7 @@ public class ClientController {
         
         // Validate API token
         if (authHeader == null) {
-            throw new InvalidApiTokenException("Authorization header is required");
+            throw new InvalidApiTokenException("Missing Authorization header");
         }
         
         apiTokenValidator.validateApiToken(authHeader);
