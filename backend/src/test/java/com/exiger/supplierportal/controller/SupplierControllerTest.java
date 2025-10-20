@@ -36,6 +36,7 @@ class SupplierControllerTest {
     void createSupplier_WithValidRequest_ShouldReturnCreatedResponse() throws Exception {
         // Given
         SupplierRequest request = new SupplierRequest();
+        request.setSupplierID("S111");
         request.setSupplierName("Test Supplier");
         request.setSupplierEmail("test@supplier.com");
 
@@ -58,123 +59,161 @@ class SupplierControllerTest {
                 .andExpect(jsonPath("$.supplierEmail").value("test@supplier.com"));
     }
 
-    // @Test
-    // void createSupplier_WithMissingAuthHeader_ShouldReturnBadRequest() throws Exception {
-    //     // Given
-    //     SupplierRequest request = new SupplierRequest();
-    //     request.setSupplierName("Test Supplier");
-    //     request.setSupplierEmail("test@supplier.com");
+     @Test
+     void createSupplier_WithMissingAuthHeader_ShouldReturnBadRequest() throws Exception {
+         // Given
+         SupplierRequest request = new SupplierRequest();
+         request.setSupplierID("S111");
+         request.setSupplierName("Test Supplier");
+         request.setSupplierEmail("test@supplier.com");
 
-    //     // When & Then
-    //     mockMvc.perform(post("/api/supplier")
-    //             .contentType(MediaType.APPLICATION_JSON)
-    //             .content(objectMapper.writeValueAsString(request)))
-    //             .andExpect(status().isBadRequest())
-    //             .andExpect(jsonPath("$.message").value("Missing Authorization header"));
-    // }
+         // When & Then
+         mockMvc.perform(post("/api/supplier")
+                 .contentType(MediaType.APPLICATION_JSON)
+                 .content(objectMapper.writeValueAsString(request)))
+                 .andExpect(status().isUnauthorized())
+                 .andExpect(jsonPath("$.message").value("Missing Authorization header"));
+     }
 
-    // @Test
-    // void createSupplier_WithInvalidAuthHeader_ShouldReturnBadRequest() throws Exception {
-    //     // Given
-    //     SupplierRequest request = new SupplierRequest();
-    //     request.setSupplierName("Test Supplier");
-    //     request.setSupplierEmail("test@supplier.com");
+     @Test
+     void createSupplier_WithInvalidAuthHeader_ShouldReturnBadRequest() throws Exception {
+         // Given
+         SupplierRequest request = new SupplierRequest();
+         request.setSupplierID("S111");
+         request.setSupplierName("Test Supplier");
+         request.setSupplierEmail("test@supplier.com");
 
-    //     // When & Then
-    //     mockMvc.perform(post("/api/supplier")
-    //             .header("Authorization", "Bearer invalid-token")
-    //             .contentType(MediaType.APPLICATION_JSON)
-    //             .content(objectMapper.writeValueAsString(request)))
-    //             .andExpect(status().isBadRequest())
-    //             .andExpect(jsonPath("$.message").value("Invalid API token"));
-    // }
+         // When & Then
+         mockMvc.perform(post("/api/supplier")
+                 .header("Authorization", "Bearer invalid-token")
+                 .contentType(MediaType.APPLICATION_JSON)
+                 .content(objectMapper.writeValueAsString(request)))
+                 .andExpect(status().isUnauthorized())
+                 .andExpect(jsonPath("$.message").value("Invalid API token"));
+     }
 
-    // @Test
-    // void createSupplier_WithMalformedAuthHeader_ShouldReturnBadRequest() throws Exception {
-    //     // Given
-    //     SupplierRequest request = new SupplierRequest();
-    //     request.setSupplierName("Test Supplier");
-    //     request.setSupplierEmail("test@supplier.com");
+     @Test
+     void createSupplier_WithMalformedAuthHeader_ShouldReturnBadRequest() throws Exception {
+         // Given
+         SupplierRequest request = new SupplierRequest();
+         request.setSupplierID("S111");
+         request.setSupplierName("Test Supplier");
+         request.setSupplierEmail("test@supplier.com");
 
-    //     // When & Then
-    //     mockMvc.perform(post("/api/supplier")
-    //             .header("Authorization", "InvalidFormat")
-    //             .contentType(MediaType.APPLICATION_JSON)
-    //             .content(objectMapper.writeValueAsString(request)))
-    //             .andExpect(status().isBadRequest())
-    //             .andExpect(jsonPath("$.message").value("Missing or invalid Authorization header"));
-    // }
+         // When & Then
+         mockMvc.perform(post("/api/supplier")
+                 .header("Authorization", "InvalidFormat")
+                 .contentType(MediaType.APPLICATION_JSON)
+                 .content(objectMapper.writeValueAsString(request)))
+                 .andExpect(status().isUnauthorized())
+                 .andExpect(jsonPath("$.message").value("Missing or invalid Authorization header"));
+     }
 
-    // @Test
-    // void createSupplier_WithMissingSupplierName_ShouldReturnBadRequest() throws Exception {
-    //     // Given
-    //     SupplierRequest request = new SupplierRequest();
-    //     request.setSupplierEmail("test@supplier.com");
-    //     // supplierName is null
+    @Test
+    void createSupplier_WithMissingSupplierId_ShouldReturnBadRequest() throws Exception {
+        // Given
+        SupplierRequest request = new SupplierRequest();
+        request.setSupplierName("Test Supplier");
+        request.setSupplierEmail("test@supplier.com");
 
-    //     // When & Then
-    //     mockMvc.perform(post("/api/supplier")
-    //             .header("Authorization", "Bearer test-token-123")
-    //             .contentType(MediaType.APPLICATION_JSON)
-    //             .content(objectMapper.writeValueAsString(request)))
-    //             .andExpect(status().isBadRequest());
-    // }
+        // When & Then
+        mockMvc.perform(post("/api/supplier")
+                .header("Authorization", "Bearer test-token-123")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(request)))
+            .andExpect(status().isBadRequest());
+    }
 
-    // @Test
-    // void createSupplier_WithMissingSupplierEmail_ShouldReturnBadRequest() throws Exception {
-    //     // Given
-    //     SupplierRequest request = new SupplierRequest();
-    //     request.setSupplierName("Test Supplier");
-    //     // supplierEmail is null
+     @Test
+     void createSupplier_WithMissingSupplierName_ShouldReturnBadRequest() throws Exception {
+         // Given
+         SupplierRequest request = new SupplierRequest();
+         request.setSupplierID("S111");
+         request.setSupplierEmail("test@supplier.com");
+         // supplierName is null
 
-    //     // When & Then
-    //     mockMvc.perform(post("/api/supplier")
-    //             .header("Authorization", "Bearer test-token-123")
-    //             .contentType(MediaType.APPLICATION_JSON)
-    //             .content(objectMapper.writeValueAsString(request)))
-    //             .andExpect(status().isBadRequest());
-    // }
+         // When & Then
+         mockMvc.perform(post("/api/supplier")
+                 .header("Authorization", "Bearer test-token-123")
+                 .contentType(MediaType.APPLICATION_JSON)
+                 .content(objectMapper.writeValueAsString(request)))
+                 .andExpect(status().isBadRequest());
+     }
 
-    // @Test
-    // void createSupplier_WithEmptySupplierName_ShouldReturnBadRequest() throws Exception {
-    //     // Given
-    //     SupplierRequest request = new SupplierRequest();
-    //     request.setSupplierName("");
-    //     request.setSupplierEmail("test@supplier.com");
+     @Test
+     void createSupplier_WithMissingSupplierEmail_ShouldReturnBadRequest() throws Exception {
+         // Given
+         SupplierRequest request = new SupplierRequest();
+         request.setSupplierID("S111");
+         request.setSupplierName("Test Supplier");
+         // supplierEmail is null
 
-    //     // When & Then
-    //     mockMvc.perform(post("/api/supplier")
-    //             .header("Authorization", "Bearer test-token-123")
-    //             .contentType(MediaType.APPLICATION_JSON)
-    //             .content(objectMapper.writeValueAsString(request)))
-    //             .andExpect(status().isBadRequest());
-    // }
+         // When & Then
+         mockMvc.perform(post("/api/supplier")
+                 .header("Authorization", "Bearer test-token-123")
+                 .contentType(MediaType.APPLICATION_JSON)
+                 .content(objectMapper.writeValueAsString(request)))
+                 .andExpect(status().isBadRequest());
+     }
 
-    // @Test
-    // void createSupplier_WithEmptySupplierEmail_ShouldReturnBadRequest() throws Exception {
-    //     // Given
-    //     SupplierRequest request = new SupplierRequest();
-    //     request.setSupplierName("Test Supplier");
-    //     request.setSupplierEmail("");
+    @Test
+    void createSupplier_WithEmptySupplierId_ShouldReturnBadRequest() throws Exception {
+        // Given
+        SupplierRequest request = new SupplierRequest();
+        request.setSupplierID("");
+        request.setSupplierName("Supplier");
+        request.setSupplierEmail("test@supplier.com");
 
-    //     // When & Then
-    //     mockMvc.perform(post("/api/supplier")
-    //             .header("Authorization", "Bearer test-token-123")
-    //             .contentType(MediaType.APPLICATION_JSON)
-    //             .content(objectMapper.writeValueAsString(request)))
-    //             .andExpect(status().isBadRequest());
-    // }
+        // When & Then
+        mockMvc.perform(post("/api/supplier")
+                .header("Authorization", "Bearer test-token-123")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(request)))
+            .andExpect(status().isBadRequest());
+    }
 
-    // @Test
-    // void createSupplier_WithInvalidJson_ShouldReturnBadRequest() throws Exception {
-    //     // Given
-    //     String invalidJson = "{ invalid json }";
+     @Test
+     void createSupplier_WithEmptySupplierName_ShouldReturnBadRequest() throws Exception {
+         // Given
+         SupplierRequest request = new SupplierRequest();
+         request.setSupplierID("S111");
+         request.setSupplierName("");
+         request.setSupplierEmail("test@supplier.com");
 
-    //     // When & Then
-    //     mockMvc.perform(post("/api/supplier")
-    //             .header("Authorization", "Bearer test-token-123")
-    //             .contentType(MediaType.APPLICATION_JSON)
-    //             .content(invalidJson))
-    //             .andExpect(status().isBadRequest());
-    // }
+         // When & Then
+         mockMvc.perform(post("/api/supplier")
+                 .header("Authorization", "Bearer test-token-123")
+                 .contentType(MediaType.APPLICATION_JSON)
+                 .content(objectMapper.writeValueAsString(request)))
+                 .andExpect(status().isBadRequest());
+     }
+
+     @Test
+     void createSupplier_WithEmptySupplierEmail_ShouldReturnBadRequest() throws Exception {
+         // Given
+         SupplierRequest request = new SupplierRequest();
+         request.setSupplierID("S111");
+         request.setSupplierName("Test Supplier");
+         request.setSupplierEmail("");
+
+         // When & Then
+         mockMvc.perform(post("/api/supplier")
+                 .header("Authorization", "Bearer test-token-123")
+                 .contentType(MediaType.APPLICATION_JSON)
+                 .content(objectMapper.writeValueAsString(request)))
+                 .andExpect(status().isBadRequest());
+     }
+
+     @Test
+     void createSupplier_WithInvalidJson_ShouldReturnBadRequest() throws Exception {
+         // Given
+         String invalidJson = "{ invalid json }";
+
+         // When & Then
+         mockMvc.perform(post("/api/supplier")
+                 .header("Authorization", "Bearer test-token-123")
+                 .contentType(MediaType.APPLICATION_JSON)
+                 .content(invalidJson))
+                 .andExpect(status().isBadRequest());
+     }
 }
