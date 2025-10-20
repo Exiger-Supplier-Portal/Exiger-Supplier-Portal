@@ -104,6 +104,23 @@ public class RelationshipService {
     }
 
     /**
+     * Retrieves the status of a specific relationship between a client and supplier.
+     * 
+     * @param clientID The ID of the client
+     * @param supplierID The ID of the supplier
+     * @return RelationshipResponse containing the relationship status
+     * @throws IllegalArgumentException if the relationship is not found
+     */
+    public RelationshipResponse getRelationshipStatus(String clientID, String supplierID) {
+        Relationship relationship = relationshipRepository
+            .findById_ClientIDAndId_SupplierID(clientID, supplierID)
+            .orElseThrow(() -> new IllegalArgumentException(
+                "Relationship not found between client " + clientID + " and supplier " + supplierID));
+        
+        return convertToResponse(relationship);
+    }
+    
+    /**
      * Convert Relationship entity to RelationshipResponse DTO
      */
     private RelationshipResponse convertToResponse(Relationship relationship) {
