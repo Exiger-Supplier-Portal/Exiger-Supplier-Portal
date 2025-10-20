@@ -14,9 +14,9 @@ export function middleware(request: NextRequest) {
   });
 
   // If accessing protected route without session cookie, redirect to home
-  if (!isPublicPath && !jsessionCookie) {
-    return NextResponse.redirect(new URL("/", request.url));
-  }
+  // if (!isPublicPath && !jsessionCookie) {
+  //   return NextResponse.redirect(new URL("/", request.url));
+  // }
 
   return NextResponse.next();
 }
