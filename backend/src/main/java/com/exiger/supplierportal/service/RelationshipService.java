@@ -72,7 +72,27 @@ public class RelationshipService {
         // Convert to response DTO
         return convertToResponse(savedRelationship);
     }
-    
+
+    /**
+     * Updates the status of an existing supplier-client relationship.
+     *
+     * @param request The relationship request containing clientID, supplierID, and the new status
+     * @return RelationshipResponse containing the updated relationship data
+     * @throws IllegalArgumentException if the relationship is not found
+     */
+    public RelationshipResponse updateRelationship(RelationshipRequest request) {
+        Relationship relationship = relationshipRepository
+        .findById_ClientIDAndId_SupplierID(request.getClientID(), request.getSupplierID())
+                .orElseThrow(() -> new IllegalArgumentException(
+                        "Relationship not found between client " + request.getClientID() +
+                                " and supplier " + request.getSupplierID()));
+        relationship.setStatus(request.getStatus());
+
+        Relationship updatedRelationship = relationshipRepository.save(relationship);
+
+        return convertToResponse(updatedRelationship);
+    }
+
     /**
      * Retrieves all supplier-client relationships for a specific client.
      * Converts each Relationship entity into a RelationshipResponse DTO.
