@@ -2,8 +2,6 @@ package com.exiger.supplierportal.model;
 
 import jakarta.persistence.*;
 import lombok.Data;
-import java.util.List;
-
 
 /**
  * Represents a supplier in the system.

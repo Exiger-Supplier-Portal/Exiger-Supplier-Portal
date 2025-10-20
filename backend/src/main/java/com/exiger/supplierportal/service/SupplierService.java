@@ -1,11 +1,7 @@
 package com.exiger.supplierportal.service;
 
 import com.exiger.supplierportal.repository.SupplierRepository;
-import com.exiger.supplierportal.dto.clientsupplier.response.RelationshipResponse;
 import com.exiger.supplierportal.dto.clientsupplier.response.SupplierResponse;
-import com.exiger.supplierportal.model.Client;
-import com.exiger.supplierportal.model.Relationship;
-import com.exiger.supplierportal.model.RelationshipID;
 import com.exiger.supplierportal.model.Supplier;
 import com.exiger.supplierportal.dto.clientsupplier.request.SupplierRequest;
 import org.springframework.beans.factory.annotation.Autowired;
