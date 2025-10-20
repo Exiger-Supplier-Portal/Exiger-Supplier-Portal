@@ -3,8 +3,8 @@ import { Geist, Geist_Mono, Inter } from "next/font/google";
 import "./globals.css";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/app-sidebar";
-import { CiSearch } from "react-icons/ci";
 import { Input } from "@/components/ui/input";
+import { Search } from "lucide-react";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -42,7 +42,7 @@ export default function RootLayout({
             <h1 className="text-4xl">Supplier Name/Logo</h1>
             <div className="flex flex-row justify-evenly max-w-xl w-full">
               <div className="relative flex items-center grow-2">
-                <CiSearch className="absolute left-3 text-purple-600 text-xl"></CiSearch>
+                <Search className="absolute left-3 text-purple-600 text-xl"></Search>
                 <Input
                   placeholder="Search"
                   className="pl-10 border w-full rounded-2xl font-semibold"
