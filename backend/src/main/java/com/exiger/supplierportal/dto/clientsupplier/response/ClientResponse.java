@@ -1,4 +1,4 @@
-package com.exiger.supplierportal.dto.clientsupplier.request;
+package com.exiger.supplierportal.dto.clientsupplier.response;
 
 import lombok.Data;
 import jakarta.validation.constraints.Email;
