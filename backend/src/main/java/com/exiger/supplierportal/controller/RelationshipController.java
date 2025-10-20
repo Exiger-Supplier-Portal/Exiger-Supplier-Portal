@@ -33,7 +33,7 @@ public class RelationshipController {
 
     /**
      * Creates a new supplier-client relationship using ORM persistence.
-     * 
+     *
      * @param request The relationship data containing clientID, supplierID, and status
      * @param authHeader The Authorization header containing the API token (Bearer format)
      * @return ResponseEntity with created relationship data
@@ -41,22 +41,22 @@ public class RelationshipController {
      */
     @PostMapping
     public ResponseEntity<RelationshipResponse> createRelationship(
-            @Valid @RequestBody RelationshipRequest request,
-            @RequestHeader(value = "Authorization", required = false) String authHeader) {
+        @Valid @RequestBody RelationshipRequest request,
+        @RequestHeader(value = "Authorization", required = false) String authHeader) {
 
         if (authHeader == null) {
             throw new InvalidApiTokenException("Missing Authorization header");
         }
-        
+
         apiTokenValidator.validateApiToken(authHeader);
-        
+
         RelationshipResponse response = relationshipService.createRelationship(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
     /**
      * Gets all Relationship entries for a given supplier.
-     * 
+     *
      * @param authentication The Okta authentication object.
      * @return A list of RelationshipResponse objects where the supplierID matches.
      */
@@ -65,20 +65,6 @@ public class RelationshipController {
         String supplierID = AuthenticationUtils.getSupplierId(authentication);
 
         List<RelationshipResponse> responseList = relationshipService.getRelationshipsBySupplier(supplierID);
-        return ResponseEntity.ok(responseList);
-    }
-
-    /**
-     * Gets all Relationship entries for a given client.
-     * 
-     * @param authentication The Okta authentication object.
-     * @return A list of RelationshipResponse objects where the clientID matches.
-     */
-    @GetMapping("/suppliers")
-    public ResponseEntity<List<RelationshipResponse>> getSuppliersByClient(Authentication authentication) {
-        String clientID = AuthenticationUtils.getClientId(authentication);
-
-        List<RelationshipResponse> responseList = relationshipService.getRelationshipsByClient(clientID);
         return ResponseEntity.ok(responseList);
     }
 
@@ -93,9 +79,9 @@ public class RelationshipController {
      */
     @GetMapping("/status")
     public ResponseEntity<RelationshipResponse> getRelationshipStatus(
-            @RequestParam @NotBlank(message = "clientID parameter is required") String clientID,
-            @RequestParam @NotBlank(message = "supplierID parameter is required") String supplierID,
-            @RequestHeader(value = "Authorization", required = false) String authHeader) {
+        @RequestParam @NotBlank(message = "clientID parameter is required") String clientID,
+        @RequestParam @NotBlank(message = "supplierID parameter is required") String supplierID,
+        @RequestHeader(value = "Authorization", required = false) String authHeader) {
 
         if (authHeader == null) {
             throw new InvalidApiTokenException("Missing Authorization header");
@@ -116,28 +102,10 @@ public class RelationshipController {
      */
     @GetMapping("/my-status")
     public ResponseEntity<RelationshipResponse> getRelationshipStatusBySupplier(
-            @RequestParam @NotBlank(message = "clientID parameter is required") String clientID,
-            Authentication authentication) {
+        @RequestParam @NotBlank(message = "clientID parameter is required") String clientID,
+        Authentication authentication) {
 
         String supplierID = AuthenticationUtils.getSupplierId(authentication);
-
-        RelationshipResponse response = relationshipService.getRelationshipStatus(clientID, supplierID);
-        return ResponseEntity.ok(response);
-    }
-
-    /**
-     * Gets the status of a specific relationship for the authenticated client with a supplier.
-     * 
-     * @param supplierID The ID of the supplier
-     * @param authentication The Okta authentication object
-     * @return ResponseEntity with the relationship status
-     */
-    @GetMapping("/my-status/{supplierID}")
-    public ResponseEntity<RelationshipResponse> getRelationshipStatusByClient(
-            @PathVariable String supplierID,
-            Authentication authentication) {
-        OidcUser oidcUser = (OidcUser) authentication.getPrincipal();
-        String clientID = oidcUser.getAttribute("sub"); // unique okta id
 
         RelationshipResponse response = relationshipService.getRelationshipStatus(clientID, supplierID);
         return ResponseEntity.ok(response);
