@@ -7,10 +7,12 @@ import com.exiger.supplierportal.exception.InvalidApiTokenException;
 import com.exiger.supplierportal.service.RelationshipService;
 import com.exiger.supplierportal.util.AuthenticationUtils;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -20,6 +22,7 @@ import java.util.List;
  */
 @RestController
 @RequestMapping("/api/relationships")
+@Validated
 public class RelationshipController {
 
     @Autowired
@@ -77,8 +80,8 @@ public class RelationshipController {
      */
     @GetMapping("/status")
     public ResponseEntity<RelationshipResponse> getRelationshipStatus(
-            @RequestParam String clientID,
-            @RequestParam String supplierID,
+            @RequestParam @NotBlank(message = "clientID parameter is required") String clientID,
+            @RequestParam @NotBlank(message = "supplierID parameter is required") String supplierID,
             @RequestHeader(value = "Authorization", required = false) String authHeader) {
         
         // Validate API token
@@ -101,8 +104,9 @@ public class RelationshipController {
      */
     @GetMapping("/my-status")
     public ResponseEntity<RelationshipResponse> getRelationshipStatusBySupplier(
-            @RequestParam String clientID,
+            @RequestParam @NotBlank(message = "clientID parameter is required") String clientID,
             Authentication authentication) {
+        
         String supplierID = AuthenticationUtils.getSupplierId(authentication);
 
         RelationshipResponse response = relationshipService.getRelationshipStatus(clientID, supplierID);
