@@ -1,4 +1,5 @@
 "use client";
+import CustomerDropdown from "@/components/auth/CustomerDropdown";
 import SignInButton from "@/components/auth/SignInButton";
 import { Button } from "@/components/ui/button";
 import {
@@ -29,6 +30,7 @@ export default function Home() {
           <p>Card Footer</p>
         </CardFooter>
       </Card>
+      <CustomerDropdown />
     </div>
   );
 }
