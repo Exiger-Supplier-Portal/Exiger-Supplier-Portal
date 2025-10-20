@@ -1,7 +1,4 @@
-"use client";
-import CustomerDropdown from "@/components/auth/CustomerDropdown";
 import SignInButton from "@/components/auth/SignInButton";
-import { Button } from "@/components/ui/button";
 import {
   Card,
   CardAction,
@@ -11,7 +8,6 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { fetchWithAuth } from "@/lib/fetch";
 
 export default function Home() {
   return (
@@ -30,7 +26,6 @@ export default function Home() {
           <p>Card Footer</p>
         </CardFooter>
       </Card>
-      <CustomerDropdown />
     </div>
   );
 }
