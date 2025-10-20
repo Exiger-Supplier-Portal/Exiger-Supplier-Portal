@@ -1,5 +1,4 @@
 "use client";
-
 import CustomerDropdown from "@/components/auth/CustomerDropdown";
 import SignInButton from "@/components/auth/SignInButton";
 import { Button } from "@/components/ui/button";
@@ -12,15 +11,6 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
 
 export default function Home() {
   return (
@@ -40,7 +30,7 @@ export default function Home() {
           <p>Card Footer</p>
         </CardFooter>
       </Card>
-      <CustomerDropdown/>
+      <CustomerDropdown />
     </div>
   );
 }
