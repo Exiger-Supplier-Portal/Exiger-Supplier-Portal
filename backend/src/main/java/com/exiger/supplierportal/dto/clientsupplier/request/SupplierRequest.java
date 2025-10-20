@@ -1,7 +1,8 @@
 package com.exiger.supplierportal.dto.clientsupplier.request;
 
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
-import jakarta.validation.constraints.NotNull;
 
 /**
  * DTO for receiving data to create a supplier.
@@ -9,9 +10,13 @@ import jakarta.validation.constraints.NotNull;
  */
 @Data
 public class SupplierRequest {
-    @NotNull
+    @NotBlank
+    private String supplierID;
+
+    @NotBlank
     private String supplierName;
 
-    @NotNull
+    @NotBlank
+    @Email(message = "Email should be valid")
     private String supplierEmail;
 }
