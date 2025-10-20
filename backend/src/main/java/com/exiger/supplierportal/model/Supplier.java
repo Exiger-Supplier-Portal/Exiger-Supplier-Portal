@@ -18,6 +18,7 @@ import java.util.List;
 public class Supplier {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "supplier_id")
     private String supplierID;
 

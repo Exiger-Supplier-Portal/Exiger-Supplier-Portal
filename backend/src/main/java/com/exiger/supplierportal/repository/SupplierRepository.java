@@ -17,4 +17,13 @@ public interface SupplierRepository extends JpaRepository<Supplier, String>{
     @Query("SELECT s.supplierID FROM Supplier s")
     List<String> findAllSupplierIDs();
 
+    /**
+     * Check if a supplier already exists given supplierEmail (field in supplier model).
+     * Uses Spring Data JPA's automatic query generation.
+     * 
+     * @param supplierEmail The email of the supplier to check.
+     * @return true if a supplier with given email already exists, false otherwise.
+     */
+    boolean existsBySupplierEmail(String supplierEmail);
+
 }
