@@ -6,7 +6,7 @@ function page() {
   const metricsPercentages = [26.72, 4.72, -32.1, 56.72, 41.01];
 
   return (
-    <div className="flex flex-col w-full h-full gap-6 p-6">
+    <div className="flex flex-col w-full h-full gap-6 px-6 pt-0">
       {/* Row 1: My Tasks */}
       <Tasks />
 

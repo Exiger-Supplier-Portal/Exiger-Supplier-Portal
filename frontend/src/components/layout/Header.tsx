@@ -4,7 +4,7 @@ import { Input } from "../ui/input";
 
 function Header() {
   return (
-    <header className="flex flex-row justify-between px-6 py-4 w-full z-10">
+    <header className="flex flex-row justify-between px-6 pt-4 pb-6 w-full z-10">
       <h1 className="text-4xl">Supplier Name/Logo</h1>
       <div className="flex flex-row justify-evenly max-w-xl w-full">
         <div className="relative flex items-center grow-2">
