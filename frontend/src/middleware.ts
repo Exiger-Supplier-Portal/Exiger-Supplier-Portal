@@ -3,7 +3,7 @@ import { NextResponse, NextRequest } from "next/server";
 // This function can be marked `async` if using `await` inside
 export function middleware(request: NextRequest) {
   // List of paths that don't require authentication
-  const publicPaths = ["/", "/login", "/auth/callback"];
+  const publicPaths = ["/", "/login", "/register", "/auth/callback"];
 
   const jsessionCookie = request.cookies.get("JSESSIONID");
   const path = request.nextUrl.pathname;
