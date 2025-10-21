@@ -14,6 +14,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.stream.Collectors;
+import com.exiger.supplierportal.exception.RelationshipNotFoundException;
+
 
 /**
  * Service class for managing supplier-client relationships.
@@ -78,14 +80,13 @@ public class RelationshipService {
      *
      * @param request The relationship request containing clientID, supplierID, and the new status
      * @return RelationshipResponse containing the updated relationship data
-     * @throws IllegalArgumentException if the relationship is not found
+     * @throws RelationshipNotFoundException if the relationship is not found
      */
     public RelationshipResponse updateRelationship(RelationshipRequest request) {
         Relationship relationship = relationshipRepository
         .findById_ClientIDAndId_SupplierID(request.getClientID(), request.getSupplierID())
-                .orElseThrow(() -> new IllegalArgumentException(
-                        "Relationship not found between client " + request.getClientID() +
-                                " and supplier " + request.getSupplierID()));
+                .orElseThrow(() -> 
+                new RelationshipNotFoundException(request.getClientID(), request.getSupplierID()));
         relationship.setStatus(request.getStatus());
 
         Relationship updatedRelationship = relationshipRepository.save(relationship);
@@ -129,13 +130,13 @@ public class RelationshipService {
      * @param clientID The ID of the client
      * @param supplierID The ID of the supplier
      * @return RelationshipResponse containing the relationship status
-     * @throws IllegalArgumentException if the relationship is not found
+     * @throws RelationshipNotFoundException if the relationship is not found
      */
     public RelationshipResponse getRelationshipStatus(String clientID, String supplierID) {
         Relationship relationship = relationshipRepository
             .findById_ClientIDAndId_SupplierID(clientID, supplierID)
-            .orElseThrow(() -> new IllegalArgumentException(
-                "Relationship not found between client " + clientID + " and supplier " + supplierID));
+            .orElseThrow(() -> 
+                new RelationshipNotFoundException(clientID, supplierID));
         
         return convertToResponse(relationship);
     }
