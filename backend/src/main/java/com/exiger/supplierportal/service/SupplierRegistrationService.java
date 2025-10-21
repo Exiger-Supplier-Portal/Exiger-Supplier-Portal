@@ -1,10 +1,14 @@
 package com.exiger.supplierportal.service;
 
 import com.exiger.supplierportal.dto.clientsupplier.request.RegistrationRequest;
+import com.exiger.supplierportal.dto.clientsupplier.request.RelationshipRequest;
 import com.exiger.supplierportal.dto.clientsupplier.response.RegistrationResponse;
 import com.exiger.supplierportal.exception.RegistrationException;
+import com.exiger.supplierportal.model.Supplier;
 import com.exiger.supplierportal.model.SupplierRegistration;
 import com.exiger.supplierportal.repository.SupplierRegistrationRepository;
+import com.exiger.supplierportal.repository.SupplierRepository;
+import com.exiger.supplierportal.enums.SupplierStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,6 +28,12 @@ public class SupplierRegistrationService {
     @Autowired
     private SupplierRegistrationRepository supplierRegistrationRepository;
 
+    @Autowired
+    private SupplierRepository supplierRepository;
+
+    @Autowired
+    private RelationshipService relationshipService;
+
     /**
      * Process supplier registration with token validation and Okta account creation.
      * 
@@ -42,11 +52,34 @@ public class SupplierRegistrationService {
         }
 
         SupplierRegistration registration = registrationOpt.get();
+
+        // 2. Check if supplier already exists with this email
+        Optional<Supplier> existingSupplier = supplierRepository.findBySupplierEmail(request.getEmail());
         
-        // TODO: Continue with next steps
+        String supplierId;
+        if (existingSupplier.isPresent()) {
+            // Supplier already exists, use existing ID
+            supplierId = existingSupplier.get().getSupplierID();
+        } else {
+            // TODO: Create Okta account
+            throw new RegistrationException("Okta account creation not implemented yet");
+        }
+
+        // Create relationship between client and supplier
+        RelationshipRequest relationshipRequest = new RelationshipRequest();
+        relationshipRequest.setClientID(registration.getClient().getClientID());
+        relationshipRequest.setSupplierID(supplierId);
+        relationshipRequest.setStatus(SupplierStatus.ONBOARDING);
+        
+        relationshipService.createRelationship(relationshipRequest);
+
+        // TODO: Delete registration record
+        
         RegistrationResponse response = new RegistrationResponse();
-        response.setSuccess(false);
-        response.setMessage("Token validation complete - next steps pending");
+        response.setSuccess(true);
+        response.setMessage("Registration successful");
+        response.setSupplierId(supplierId);
         return response;
     }
+
 }
