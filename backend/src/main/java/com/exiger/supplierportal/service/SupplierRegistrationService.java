@@ -11,8 +11,17 @@ import com.exiger.supplierportal.repository.SupplierRegistrationRepository;
 import com.exiger.supplierportal.repository.SupplierRepository;
 import com.exiger.supplierportal.enums.SupplierStatus;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.client.RestTemplate;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
+
+import java.util.Map;
+import java.util.HashMap;
 
 import java.time.LocalDateTime;
 import java.util.Optional;
@@ -37,6 +46,15 @@ public class SupplierRegistrationService {
 
     @Autowired
     private RelationshipService relationshipService;
+
+    @Autowired
+    private RestTemplate restTemplate;
+
+    @Value("${spring.security.oauth2.client.provider.okta.issuer-uri}")
+    private String oktaDomain;
+
+    @Value("${okta.api.token}")
+    private String oktaApiToken;
 
     /**
      * Process supplier registration with token validation and Okta account creation.
@@ -65,10 +83,10 @@ public class SupplierRegistrationService {
             // Supplier already exists, use existing ID
             supplierId = existingSupplier.get().getSupplierID();
         } else {
-            // Generate a temporary supplier ID (will be replaced with Okta ID later)
-            supplierId = "temp-" + UUID.randomUUID().toString();
+            // Create Okta account and get the user ID
+            supplierId = createOktaAccount(request.getEmail(), request.getCompanyName());
             
-            // Create supplier record using SupplierService
+            // Create supplier record using SupplierService with Okta ID
             SupplierRequest supplierRequest = new SupplierRequest();
             supplierRequest.setSupplierID(supplierId);
             supplierRequest.setSupplierName(request.getCompanyName());
@@ -93,6 +111,70 @@ public class SupplierRegistrationService {
         response.setMessage("Registration successful");
         response.setSupplierId(supplierId);
         return response;
+    }
+
+    /**
+     * Create Okta user account and return the Okta user ID.
+     * 
+     * @param email The user's email address
+     * @param companyName The company name (used for first/last name)
+     * @return Okta user ID
+     * @throws RegistrationException if Okta account creation fails
+     */
+    private String createOktaAccount(String email, String companyName) {
+        try {
+            // Extract Okta domain from issuer URI (remove /oauth2/default)
+            String oktaOrgUrl = oktaDomain.replace("/oauth2/default", "");
+            
+            // Prepare Okta user creation request
+            Map<String, Object> userProfile = new HashMap<>();
+            userProfile.put("email", email);
+            userProfile.put("login", email);
+            userProfile.put("firstName", companyName); // Using company name as first name
+            userProfile.put("lastName", "Supplier"); // Generic last name
+            
+            Map<String, Object> oktaUser = new HashMap<>();
+            oktaUser.put("profile", userProfile);
+            
+            // Set activation to false - user will activate via email
+            Map<String, Object> credentials = new HashMap<>();
+            credentials.put("emails", new String[]{email});
+            oktaUser.put("credentials", credentials);
+            
+            // Prepare HTTP headers
+            HttpHeaders headers = new HttpHeaders();
+            headers.set("Authorization", "SSWS " + oktaApiToken);
+            headers.set("Content-Type", "application/json");
+            headers.set("Accept", "application/json");
+            
+            HttpEntity<Map<String, Object>> request = new HttpEntity<>(oktaUser, headers);
+            
+            // Make API call to Okta
+            String oktaApiUrl = oktaOrgUrl + "/api/v1/users?activate=false";
+            
+            ResponseEntity<Map> response = restTemplate.exchange(
+                oktaApiUrl, 
+                HttpMethod.POST, 
+                request, 
+                Map.class
+            );
+            
+            if (response.getStatusCode().is2xxSuccessful() && response.getBody() != null) {
+                Map<String, Object> responseBody = (Map<String, Object>) response.getBody();
+                if (responseBody != null) {
+                    String oktaUserId = (String) responseBody.get("id");
+                    
+                    if (oktaUserId != null) {
+                        return oktaUserId;
+                    }
+                }
+            }
+            
+            throw new RegistrationException("Failed to create Okta account: Invalid response");
+            
+        } catch (Exception e) {
+            throw new RegistrationException("Failed to create Okta account: " + e.getMessage(), e);
+        }
     }
 
 }
