@@ -2,6 +2,7 @@ package com.exiger.supplierportal.service;
 
 import com.exiger.supplierportal.dto.clientsupplier.request.RegistrationRequest;
 import com.exiger.supplierportal.dto.clientsupplier.request.RelationshipRequest;
+import com.exiger.supplierportal.dto.clientsupplier.request.SupplierRequest;
 import com.exiger.supplierportal.dto.clientsupplier.response.RegistrationResponse;
 import com.exiger.supplierportal.exception.RegistrationException;
 import com.exiger.supplierportal.model.Supplier;
@@ -30,6 +31,9 @@ public class SupplierRegistrationService {
 
     @Autowired
     private SupplierRepository supplierRepository;
+
+    @Autowired
+    private SupplierService supplierService;
 
     @Autowired
     private RelationshipService relationshipService;
@@ -61,8 +65,16 @@ public class SupplierRegistrationService {
             // Supplier already exists, use existing ID
             supplierId = existingSupplier.get().getSupplierID();
         } else {
-            // TODO: Create Okta account
-            throw new RegistrationException("Okta account creation not implemented yet");
+            // Generate a temporary supplier ID (will be replaced with Okta ID later)
+            supplierId = "temp-" + UUID.randomUUID().toString();
+            
+            // Create supplier record using SupplierService
+            SupplierRequest supplierRequest = new SupplierRequest();
+            supplierRequest.setSupplierID(supplierId);
+            supplierRequest.setSupplierName(request.getCompanyName());
+            supplierRequest.setSupplierEmail(request.getEmail());
+            
+            supplierService.createSupplier(supplierRequest);
         }
 
         // Create relationship between client and supplier
@@ -73,7 +85,8 @@ public class SupplierRegistrationService {
         
         relationshipService.createRelationship(relationshipRequest);
 
-        // TODO: Delete registration record
+        // Clean up: Delete the registration record since it's no longer needed
+        supplierRegistrationRepository.deleteByToken(token);
         
         RegistrationResponse response = new RegistrationResponse();
         response.setSuccess(true);
