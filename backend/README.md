@@ -56,4 +56,12 @@ mvn test -Dtest=RelationshipControllerTest
 
 **Note**: `application-test.properties` is gitignored for security - use the example template to create your own.
 
-
+## Connecting to PostgreSQL instance
+NOTE: must be running backend and postgres containers (Option 1)
+1. Start Docker containers: `docker compose up`
+2. Connect via psql:`docker exec -it exiger-db psql -U exiger -d exigerdb`
+3. You can:
+   1. View tables with `\d`
+   2. Write any SQL query
+   3. Quit with `\q`
+   4. More commands: [https://www.postgresql.org/docs/current/app-psql.html](https://www.postgresql.org/docs/current/app-psql.html)
