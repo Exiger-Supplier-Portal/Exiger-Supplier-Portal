@@ -14,12 +14,19 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
+
 
 import java.util.List;
 /**
  * REST Controller for managing supplier-client relationships.
  * Provides API endpoints for external tools to create relationships using API token authentication.
  */
+@Tag(name = "Relationship Management", description = "Operations for managing supplier-client relationships")
 @RestController
 @RequestMapping("/api/relationships")
 @Validated
@@ -39,10 +46,21 @@ public class RelationshipController {
      * @return ResponseEntity with created relationship data
      * @throws InvalidApiTokenException if API token validation fails
      */
+    @Operation(
+        summary = "Create a new supplier-client relationship",
+        description = "Creates a new supplier-client relationship using API token authentication. Requires valid API token in Authorization header."
+    )
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "201", description = "Relationship created successfully"),
+        @ApiResponse(responseCode = "401", description = "Invalid or missing API token"),
+        @ApiResponse(responseCode = "400", description = "Invalid request data")
+    })
     @PostMapping
     public ResponseEntity<RelationshipResponse> createRelationship(
             @Valid @RequestBody RelationshipRequest request,
-            @RequestHeader(value = "Authorization", required = false) String authHeader) {
+            @RequestHeader(value = "Authorization", required = false) 
+            @Parameter(description = "Bearer token for API authentication", example = "Bearer your-api-token") 
+            String authHeader) {
         
         if (authHeader == null) {
             throw new InvalidApiTokenException("Missing Authorization header");
@@ -60,6 +78,15 @@ public class RelationshipController {
      * @param authentication The Okta authentication object.
      * @return A list of RelationshipResponse objects where the supplierID matches.
      */
+    @Operation(
+        summary = "Get all relationships for authenticated supplier",
+        description = "Gets all relationships for the currently authenticated supplier using OAuth2 authentication. User must be logged in."
+    )
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Relationships retrieved successfully"),
+        @ApiResponse(responseCode = "401", description = "User not authenticated"),
+        @ApiResponse(responseCode = "403", description = "Access denied")
+    })
     @GetMapping("/clients")
     public ResponseEntity<List<RelationshipResponse>> getClientsBySupplier(Authentication authentication) {
         String supplierID = AuthenticationUtils.getSupplierId(authentication);
@@ -77,10 +104,22 @@ public class RelationshipController {
      * @return ResponseEntity with the relationship status
      * @throws InvalidApiTokenException if API token validation fails
      */
+    @Operation(
+        summary = "Gets the status of a specific relationship between a client and supplier",
+        description = "Gets the status of a specific relationship between a client and supplier using API token validation. Requires valid API token in Authorization header."
+    )
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Status retrieved successfully"),
+        @ApiResponse(responseCode = "401", description = "Invalid or missing API token"),
+        @ApiResponse(responseCode = "400", description = "Invalid request data")
+    })
     @GetMapping("/status")
     public ResponseEntity<RelationshipResponse> getRelationshipStatus(
+            @Parameter(description = "ID of the client", example = "[client-id]")
             @RequestParam @NotBlank(message = "clientID parameter is required") String clientID,
+            @Parameter(description = "ID of the supplier", example = "[supplier-id]")
             @RequestParam @NotBlank(message = "supplierID parameter is required") String supplierID,
+            @Parameter(description = "Bearer token for API authentication", example = "Bearer your-api-token")
             @RequestHeader(value = "Authorization", required = false) String authHeader) {
         
         if (authHeader == null) {
@@ -100,8 +139,18 @@ public class RelationshipController {
      * @param authentication The Okta authentication object
      * @return ResponseEntity with the relationship status
      */
+    @Operation(
+        summary = "Get relationship status for authenticated supplier with a client",
+        description = "Gets the status of a specific relationship between the authenticated supplier and a client using OAuth2 authentication. User must be logged in."
+    )
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Status retrieved successfully"),
+        @ApiResponse(responseCode = "401", description = "User not authenticated"),
+        @ApiResponse(responseCode = "403", description = "Access denied")
+    })
     @GetMapping("/my-status")
     public ResponseEntity<RelationshipResponse> getRelationshipStatusBySupplier(
+            @Parameter(description = "ID of the client", example = "[client-id]")
             @RequestParam @NotBlank(message = "clientID parameter is required") String clientID,
             Authentication authentication) {
         
