@@ -18,7 +18,7 @@ import java.util.UUID;
 public class SupplierRegistration {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long ID;
+    private Long id;
 
     @ManyToOne(optional = false)
     @JoinColumn(name = "client_id", nullable = false)
