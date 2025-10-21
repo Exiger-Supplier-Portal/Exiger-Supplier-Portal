@@ -4,7 +4,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 
-@SpringBootTest(properties = { "api.token=test-token-123" })
+@SpringBootTest()
 @ActiveProfiles("test")
 class ApplicationTest {
 
