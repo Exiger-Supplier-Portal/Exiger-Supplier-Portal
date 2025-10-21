@@ -182,7 +182,7 @@ class RelationshipControllerTest {
     void getRelationshipStatus_WithNonExistentRelationship_ShouldReturnBadRequest() throws Exception {
         // Given
         when(relationshipService.getRelationshipStatus("client123", "supplier456"))
-                .thenThrow(new IllegalArgumentException("Relationship not found between client client123 and supplier supplier456"));
+                .thenThrow(new RelationshipNotFoundException("Relationship not found between client client123 and supplier supplier456"));
 
         // When & Then
         mockMvc.perform(get("/api/relationships/status")
@@ -193,6 +193,89 @@ class RelationshipControllerTest {
                 .andExpect(content().string(containsString("Relationship not found")));
     }
 
-    // Note: Okta authentication tests would require additional Spring Security test dependencies
-    // For now, we're testing the API token endpoints which are the core functionality
+
+        // ========== PUT ENDPOINT TESTS ==========
+
+        
+    @Test
+    void updateRelationship_WithValidRequest_ShouldReturnCreatedResponse() throws Exception {
+        // Given
+        RelationshipRequest request = new RelationshipRequest();
+        request.setClientID("1");
+        request.setSupplierID("2");
+        request.setStatus(SupplierStatus.ONBOARDING);
+
+        RelationshipResponse response = new RelationshipResponse();
+        response.setClientID("1");
+        response.setSupplierID("2");
+        response.setStatus(SupplierStatus.ONBOARDING);
+
+        when(relationshipService.updateRelationship(any(RelationshipRequest.class)))
+                .thenReturn(response);
+
+        // When & Then
+        mockMvc.perform(put("/api/relationships")
+                .header("Authorization", "Bearer test-token-123")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.clientID").value("1"))
+                .andExpect(jsonPath("$.supplierID").value("2"))
+                .andExpect(jsonPath("$.status").value("ONBOARDING"));
+    }
+    @Test
+    void updateRelationship_WithMissingAuthHeader_ShouldReturnUnauthorized() throws Exception {
+        // Given
+        RelationshipRequest request = new RelationshipRequest();
+        request.setClientID("1");
+        request.setSupplierID("2");
+        request.setStatus(SupplierStatus.ONBOARDING);
+
+        // When & Then
+        mockMvc.perform(put("/api/relationships")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isUnauthorized());
+     }
+
+    @Test
+    void updateRelationship_WithInvalidToken_ShouldReturnUnauthorized() throws Exception {
+        // Given
+        RelationshipRequest request = new RelationshipRequest();
+        request.setClientID("1");
+        request.setSupplierID("2");
+        request.setStatus(SupplierStatus.ONBOARDING);
+
+        // When & Then
+        mockMvc.perform(put("/api/relationships")
+                .header("Authorization", "Bearer invalid-token")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    void updateRelationship_WithNonExistentRelationship_ShouldReturnBadRequest() throws Exception {
+        // Given
+        RelationshipRequest request = new RelationshipRequest();
+        request.setClientID("1");
+        request.setSupplierID("2");
+        request.setStatus(SupplierStatus.ONBOARDING);
+
+        // Mock service to throw exception for non-existent relationship
+        when(relationshipService.updateRelationship(any(RelationshipRequest.class)))
+                .thenThrow(new RelationshipNotFoundException("Relationship not found between client 1 and supplier 2"));
+
+        // When & Then
+        mockMvc.perform(put("/api/relationships")
+                .header("Authorization", "Bearer test-token-123")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isBadRequest())
+                .andExpect(content().string(containsString("Relationship not found")));
+    }
+
+
+        // Note: Okta authentication tests would require additional Spring Security test dependencies
+        // For now, we're testing the API token endpoints which are the core functionality
 }
