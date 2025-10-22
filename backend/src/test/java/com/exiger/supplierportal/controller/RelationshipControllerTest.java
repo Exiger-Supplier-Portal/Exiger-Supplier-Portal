@@ -190,7 +190,7 @@ class RelationshipControllerTest {
                 .param("clientID", "client123")
                 .param("supplierID", "supplier456")
                 .header("Authorization", "Bearer test-token-123"))
-                .andExpect(status().isBadRequest())
+                .andExpect(status().isNotFound())
                 .andExpect(content().string(containsString("Relationship not found")));
     }
 
@@ -270,11 +270,9 @@ class RelationshipControllerTest {
                 .header("Authorization", "Bearer test-token-123")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(request)))
-                .andExpect(status().isBadRequest())
+                .andExpect(status().isNotFound())
                 .andExpect(content().string(containsString("Relationship not found")));
     }
-
-
-        // Note: Okta authentication tests would require additional Spring Security test dependencies
-        // For now, we're testing the API token endpoints which are the core functionality
+    // Note: Okta authentication tests would require additional Spring Security test dependencies
+    // For now, we're testing the API token endpoints which are the core functionality
 }
