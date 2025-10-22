@@ -94,6 +94,27 @@ public class RelationshipController {
     }
 
     /**
+     * Updates the status of an existing supplier-client relationship.
+     *
+     * @param request The relationship data containing clientID, supplierID, and the new status
+     * @param authHeader The Authorization header containing the API token (Bearer format)
+     * @return ResponseEntity with the updated relationship data
+     * @throws InvalidApiTokenException if API token validation fails
+     */
+    @PutMapping("/status")
+    public ResponseEntity<RelationshipResponse> updateRelationshipStatus(
+        @Valid @RequestBody RelationshipRequest request,
+        @RequestHeader(value = "Authorization", required = false) String authHeader) {
+        if (authHeader == null) {
+            throw new InvalidApiTokenException("Missing Authorization header");
+        }
+
+        apiTokenValidator.validateApiToken(authHeader);
+        RelationshipResponse response = relationshipService.updateRelationshipStatus(request);
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+    }
+
+    /**
      * Gets the status of a specific relationship for the authenticated supplier with a client.
      * 
      * @param clientID The ID of the client
