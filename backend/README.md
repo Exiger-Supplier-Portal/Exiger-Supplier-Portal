@@ -9,6 +9,24 @@ This repository contains the Spring Boot backend for the Exiger Supplier Portal.
 - Docker installed ([Docker Desktop](https://www.docker.com/products/docker-desktop/))
 - Maven installed ([Maven Installation](https://maven.apache.org/install.html))
   - This is a build tool for Java projects. It manages compilation, testing, and dependencies.
+
+## Environment Configuration
+Before running the application, you need to set up your environment variables:
+
+1. Copy the example environment file:
+   ```bash
+   cp .env.example .env
+   ```
+
+2. Edit `.env` with your actual values:
+   - Replace `your-okta-client-id` with your Okta application client ID
+   - Replace `your-okta-client-secret` with your Okta application client secret
+   - Replace `your-domain.okta.com` with your actual Okta domain
+   - Replace `your-api-token` with your API token
+   - Replace `your-okta-management-api-token` with your Okta Management API token
+
+**Note**: The `.env` file is gitignored for security - never commit your actual credentials.
+
 ---
 
 ## Running the Spring Boot server
