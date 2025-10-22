@@ -213,7 +213,7 @@ class RelationshipControllerTest {
                 .thenReturn(response);
 
         // When & Then
-        mockMvc.perform(put("/api/relationships")
+        mockMvc.perform(put("/api/relationships/status")
                 .header("Authorization", "Bearer test-token-123")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(request)))
@@ -231,7 +231,7 @@ class RelationshipControllerTest {
         request.setStatus(SupplierStatus.ONBOARDING);
 
         // When & Then
-        mockMvc.perform(put("/api/relationships")
+        mockMvc.perform(put("/api/relationships/status")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isUnauthorized());
@@ -246,7 +246,7 @@ class RelationshipControllerTest {
         request.setStatus(SupplierStatus.ONBOARDING);
 
         // When & Then
-        mockMvc.perform(put("/api/relationships")
+        mockMvc.perform(put("/api/relationships/status")
                 .header("Authorization", "Bearer invalid-token")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(request)))
@@ -266,7 +266,7 @@ class RelationshipControllerTest {
                 .thenThrow(new RelationshipNotFoundException("1", "2"));
 
         // When & Then
-        mockMvc.perform(put("/api/relationships")
+        mockMvc.perform(put("/api/relationships/status")
                 .header("Authorization", "Bearer test-token-123")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(request)))
