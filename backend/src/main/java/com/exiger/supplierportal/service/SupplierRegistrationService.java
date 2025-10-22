@@ -136,10 +136,7 @@ public class SupplierRegistrationService {
             Map<String, Object> oktaUser = new HashMap<>();
             oktaUser.put("profile", userProfile);
             
-            // Set activation to false - user will activate via email
-            Map<String, Object> credentials = new HashMap<>();
-            credentials.put("emails", new String[]{email});
-            oktaUser.put("credentials", credentials);
+            // No credentials needed - user will set password via activation email
             
             // Prepare HTTP headers
             HttpHeaders headers = new HttpHeaders();
@@ -165,6 +162,11 @@ public class SupplierRegistrationService {
                     String oktaUserId = (String) responseBody.get("id");
                     
                     if (oktaUserId != null) {
+                        // Automatically trigger activation email after user creation
+                        String activateUrl = oktaOrgUrl + "/api/v1/users/" + oktaUserId + "/lifecycle/activate?sendEmail=true";
+                        HttpEntity<Void> activateRequest = new HttpEntity<>(headers);
+                        restTemplate.postForObject(activateUrl, activateRequest, Map.class);
+                        
                         return oktaUserId;
                     }
                 }
