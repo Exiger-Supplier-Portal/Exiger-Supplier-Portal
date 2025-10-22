@@ -7,7 +7,7 @@ import lombok.Data;
 
 /**
  * DTO for receiving registration form data to create a supplier account.
- * Requires email and company name from the registration form.
+ * Requires email and supplier name from the registration form.
  * Password is handled by Okta through activation email - not collected by our API.
  */
 @Data
@@ -17,6 +17,6 @@ public class RegistrationRequest {
     private String email;
     
     @NotBlank
-    @Size(min = 2, max = 100, message = "Company name must be between 2 and 100 characters")
+    @Size(min = 2, max = 100, message = "Supplier name must be between 2 and 100 characters")
     private String supplierName;
 }
