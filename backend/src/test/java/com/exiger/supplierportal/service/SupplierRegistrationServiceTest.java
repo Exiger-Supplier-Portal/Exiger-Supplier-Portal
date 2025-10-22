@@ -1,8 +1,5 @@
 package com.exiger.supplierportal.service;
 
-import com.exiger.supplierportal.dto.clientsupplier.request.RegistrationRequest;
-import com.exiger.supplierportal.dto.clientsupplier.response.RegistrationResponse;
-import com.exiger.supplierportal.exception.RegistrationException;
 import com.exiger.supplierportal.model.Client;
 import com.exiger.supplierportal.model.Supplier;
 import com.exiger.supplierportal.model.SupplierRegistration;
@@ -21,7 +18,6 @@ import java.util.Optional;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 @DataJpaTest
 @ActiveProfiles("test")
