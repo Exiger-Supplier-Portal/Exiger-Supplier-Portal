@@ -18,6 +18,12 @@ public interface ClientRepository extends JpaRepository<Client, String>{
     @Query("SELECT c.clientID from Client c")
     List<String> findAllClientIDs();
 
-    // Return true if a client with clientID exists, false otherwise
+    /**
+     * Check if a client exists given clientID.
+     * Uses Spring Data JPA's automatic query generation.
+     * 
+     * @param clientID The id of the client to check.
+     * @return true if a client with given clientID already exists, false otherwise.
+     */
     boolean existsByClientID(String clientID);
 }
