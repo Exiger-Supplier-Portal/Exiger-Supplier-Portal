@@ -47,9 +47,9 @@ public class ApiExceptionHandler {
     @ExceptionHandler(RelationshipNotFoundException.class)
     public ResponseEntity<Map<String, Object>> handleRelationshipNotFoundException(RelationshipNotFoundException ex) {
         Map<String, Object> response = new HashMap<>();
-        response.put("status", HttpStatus.BAD_REQUEST.value());
+        response.put("status", HttpStatus.NOT_FOUND.value());
         response.put("message", ex.getMessage());
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
