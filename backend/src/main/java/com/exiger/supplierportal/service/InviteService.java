@@ -13,7 +13,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
-import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -31,16 +30,12 @@ public class InviteService {
     @Transactional
     public InviteResponse createInvite(InviteRequest request) {
         // Validate client exists
-        if (!clientRepository.existsByClientID(request.getClientId())) {
-            throw new IllegalArgumentException("Invalid clientId");
-        }
+        Client client = clientRepository.findById(request.getClientId())
+                .orElseThrow(() -> new IllegalStateException("Client not found"));
 
         // Generate registration token
         UUID token = UUID.randomUUID();
         LocalDateTime expiration = LocalDateTime.now().plusHours(24); // 24 hours expiry
-
-        Client client = clientRepository.findById(request.getClientId())
-                .orElseThrow(() -> new IllegalStateException("Client not found"));
 
         Registration registration = new Registration();
         registration.setClient(client);
