@@ -71,7 +71,7 @@ public class RelationshipController {
         }
 
         apiTokenValidator.validateApiToken(authHeader);
-        RelationshipResponse response = relationshipService.updateRelationship(request);
+        RelationshipResponse response = relationshipService.updateRelationshipStatus(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 

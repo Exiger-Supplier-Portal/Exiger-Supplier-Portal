@@ -82,7 +82,7 @@ public class RelationshipService {
      * @return RelationshipResponse containing the updated relationship data
      * @throws RelationshipNotFoundException if the relationship is not found
      */
-    public RelationshipResponse updateRelationship(RelationshipRequest request) {
+    public RelationshipResponse updateRelationshipStatus(RelationshipRequest request) {
         Relationship relationship = relationshipRepository
         .findById_ClientIDAndId_SupplierID(request.getClientID(), request.getSupplierID())
                 .orElseThrow(() -> 
