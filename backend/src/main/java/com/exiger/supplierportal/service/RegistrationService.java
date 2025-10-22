@@ -117,11 +117,11 @@ public class RegistrationService {
      * Create Okta user account and return the Okta user ID.
      * 
      * @param email The user's email address
-     * @param companyName The company name (used for first/last name)
+     * @param supplierName The supplier name (used for first/last name)
      * @return Okta user ID
      * @throws RegistrationException if Okta account creation fails
      */
-    private String createOktaAccount(String email, String companyName) {
+    private String createOktaAccount(String email, String supplierName) {
         try {
             // Extract Okta domain from issuer URI (remove /oauth2/default)
             String oktaOrgUrl = oktaDomain.replace("/oauth2/default", "");
@@ -130,7 +130,7 @@ public class RegistrationService {
             Map<String, Object> userProfile = new HashMap<>();
             userProfile.put("email", email);
             userProfile.put("login", email);
-            userProfile.put("firstName", companyName); // Using company name as first name
+            userProfile.put("firstName", supplierName); // Using supplier name as first name
             userProfile.put("lastName", "Supplier"); // Generic last name
             
             Map<String, Object> oktaUser = new HashMap<>();

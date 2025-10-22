@@ -28,7 +28,7 @@ public class RegistrationController {
      * Process supplier registration with token validation and Okta account creation.
      * 
      * @param token The registration token from URL parameter
-     * @param request The registration form data containing email and company name
+     * @param request The registration form data containing email and supplier name
      * @return ResponseEntity with registration result
      */
     @PostMapping("/register")

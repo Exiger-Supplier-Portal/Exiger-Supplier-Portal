@@ -138,7 +138,7 @@ class RegistrationControllerTest {
         String token = UUID.randomUUID().toString();
         RegistrationRequest request = new RegistrationRequest();
         request.setEmail("test@supplier.com");
-        // companyName is null
+        // supplierName is null
 
         // When & Then
         mockMvc.perform(post("/api/register")
