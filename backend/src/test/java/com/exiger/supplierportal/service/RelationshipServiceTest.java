@@ -34,7 +34,7 @@ class RelationshipServiceTest {
     private TestEntityManager entityManager;
 
     @Test
-    void testCreateRelationship() {
+    void createRelationship_WhenValid_ShouldReturnRelationship() {
         // First, create and persist a Client entity
         Client client = new Client();
         client.setClientID("C111");
@@ -66,7 +66,7 @@ class RelationshipServiceTest {
     }
 
     @Test
-    void testGetRelationshipsBySupplier() {
+    void getRelationshipsBySupplier_WhenValid_ShouldReturnRelationships() {
         // Client 1
         Client client1 = new Client();
         client1.setClientID("C111");
