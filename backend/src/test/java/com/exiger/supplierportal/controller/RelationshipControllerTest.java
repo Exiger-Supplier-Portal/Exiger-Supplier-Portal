@@ -3,6 +3,7 @@ package com.exiger.supplierportal.controller;
 import com.exiger.supplierportal.dto.clientsupplier.request.RelationshipRequest;
 import com.exiger.supplierportal.dto.clientsupplier.response.RelationshipResponse;
 import com.exiger.supplierportal.enums.SupplierStatus;
+import com.exiger.supplierportal.exception.RelationshipNotFoundException;
 import com.exiger.supplierportal.service.RelationshipService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
@@ -182,7 +183,7 @@ class RelationshipControllerTest {
     void getRelationshipStatus_WithNonExistentRelationship_ShouldReturnBadRequest() throws Exception {
         // Given
         when(relationshipService.getRelationshipStatus("client123", "supplier456"))
-                .thenThrow(new RelationshipNotFoundException("Relationship not found between client client123 and supplier supplier456"));
+                .thenThrow(new RelationshipNotFoundException("client123", "supplier456"));
 
         // When & Then
         mockMvc.perform(get("/api/relationships/status")
@@ -210,7 +211,7 @@ class RelationshipControllerTest {
         response.setSupplierID("2");
         response.setStatus(SupplierStatus.ONBOARDING);
 
-        when(relationshipService.updateRelationship(any(RelationshipRequest.class)))
+        when(relationshipService.updateRelationshipStatus(any(RelationshipRequest.class)))
                 .thenReturn(response);
 
         // When & Then
@@ -263,8 +264,8 @@ class RelationshipControllerTest {
         request.setStatus(SupplierStatus.ONBOARDING);
 
         // Mock service to throw exception for non-existent relationship
-        when(relationshipService.updateRelationship(any(RelationshipRequest.class)))
-                .thenThrow(new RelationshipNotFoundException("Relationship not found between client 1 and supplier 2"));
+        when(relationshipService.updateRelationshipStatus(any(RelationshipRequest.class)))
+                .thenThrow(new RelationshipNotFoundException("1", "2"));
 
         // When & Then
         mockMvc.perform(put("/api/relationships")
