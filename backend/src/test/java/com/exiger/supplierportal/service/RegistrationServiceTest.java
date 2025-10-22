@@ -138,4 +138,32 @@ class RegistrationServiceTest {
         assertThat(registrationRepository.findByTokenAndExpirationAfter(validToken, LocalDateTime.now()))
                 .isEmpty();
     }
+
+    @Test
+    void deleteByToken_ShouldDeleteCorrespondingRegistration() {
+        // Given
+        // Create second registration
+        UUID validToken2 = UUID.randomUUID();
+        Registration validRegistration2 = new Registration();
+        validRegistration2.setToken(validToken2);
+        validRegistration2.setSupplierEmail("test@supplier2.com");
+        validRegistration2.setExpiration(LocalDateTime.now().plusHours(24));
+        validRegistration2.setClient(testClient);
+        entityManager.persistAndFlush(validRegistration2);
+
+        assertThat(registrationRepository.findByTokenAndExpirationAfter(validToken, LocalDateTime.now()))
+            .isPresent();
+        assertThat(registrationRepository.findByTokenAndExpirationAfter(validToken2, LocalDateTime.now()))
+            .isPresent();
+
+        // When
+        registrationRepository.deleteByToken(validToken2);
+
+        // Then
+        // Verify original registration remains
+        assertThat(registrationRepository.findByTokenAndExpirationAfter(validToken, LocalDateTime.now()))
+            .isPresent();
+        assertThat(registrationRepository.findByTokenAndExpirationAfter(validToken2, LocalDateTime.now()))
+            .isEmpty();
+    }
 }
