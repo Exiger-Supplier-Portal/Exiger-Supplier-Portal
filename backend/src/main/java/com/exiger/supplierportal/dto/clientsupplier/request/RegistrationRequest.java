@@ -18,5 +18,5 @@ public class RegistrationRequest {
     
     @NotBlank
     @Size(min = 2, max = 100, message = "Company name must be between 2 and 100 characters")
-    private String companyName;
+    private String supplierName;
 }
