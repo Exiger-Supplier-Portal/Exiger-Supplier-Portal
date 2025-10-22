@@ -195,9 +195,7 @@ class RelationshipControllerTest {
     }
 
 
-        // ========== PUT ENDPOINT TESTS ==========
-
-        
+    // ========== PUT ENDPOINT TESTS ==========
     @Test
     void updateRelationship_WithValidRequest_ShouldReturnCreatedResponse() throws Exception {
         // Given
