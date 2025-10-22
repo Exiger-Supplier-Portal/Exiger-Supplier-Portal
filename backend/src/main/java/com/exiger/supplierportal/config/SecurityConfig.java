@@ -14,6 +14,7 @@ import org.springframework.security.oauth2.client.registration.ClientRegistratio
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.springframework.web.client.RestTemplate;
 
 import java.util.Arrays;
 import java.util.List;
@@ -41,7 +42,7 @@ public class SecurityConfig {
         http
             .cors(cors -> cors.configurationSource(corsConfigurationSource()))
             .authorizeHttpRequests(req -> req
-                .requestMatchers("/", "/api/hello", "/api/relationships", "/api/relationships/status", "/api/clients", "/api/supplier").permitAll()
+                .requestMatchers("/", "/api/hello", "/api/relationships", "/api/relationships/status", "/api/clients", "/api/supplier", "/api/register").permitAll()
                 .anyRequest().authenticated()
             )
             .oauth2Login(oauth2 -> oauth2
@@ -100,5 +101,10 @@ public class SecurityConfig {
         return (request, response, authentication) -> {
             response.sendRedirect(dashboardUrl); // Redirect to frontend dashboard
         };
+    }
+
+    @Bean
+    public RestTemplate restTemplate() {
+        return new RestTemplate();
     }
 }
