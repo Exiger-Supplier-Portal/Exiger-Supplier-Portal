@@ -3,7 +3,7 @@ package com.exiger.supplierportal.controller;
 import com.exiger.supplierportal.dto.clientsupplier.request.RegistrationRequest;
 import com.exiger.supplierportal.dto.clientsupplier.response.RegistrationResponse;
 import com.exiger.supplierportal.exception.RegistrationException;
-import com.exiger.supplierportal.service.SupplierRegistrationService;
+import com.exiger.supplierportal.service.RegistrationService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,7 +30,7 @@ class RegistrationControllerTest {
     private MockMvc mockMvc;
 
     @MockitoBean
-    private SupplierRegistrationService supplierRegistrationService;
+    private RegistrationService registrationService;
 
     @Autowired
     private ObjectMapper objectMapper;
@@ -41,14 +41,14 @@ class RegistrationControllerTest {
         String token = UUID.randomUUID().toString();
         RegistrationRequest request = new RegistrationRequest();
         request.setEmail("test@supplier.com");
-        request.setCompanyName("Test Company");
+        request.setSupplierName("Test Company");
 
         RegistrationResponse response = new RegistrationResponse();
         response.setSuccess(true);
         response.setMessage("Registration successful");
         response.setSupplierId("okta-user-id-123");
 
-        when(supplierRegistrationService.processRegistration(any(UUID.class), any(RegistrationRequest.class)))
+        when(registrationService.processRegistration(any(UUID.class), any(RegistrationRequest.class)))
                 .thenReturn(response);
 
         // When & Then
@@ -68,9 +68,9 @@ class RegistrationControllerTest {
         String invalidToken = "invalid-token";
         RegistrationRequest request = new RegistrationRequest();
         request.setEmail("test@supplier.com");
-        request.setCompanyName("Test Company");
+        request.setSupplierName("Test Company");
 
-        when(supplierRegistrationService.processRegistration(any(UUID.class), any(RegistrationRequest.class)))
+        when(registrationService.processRegistration(any(UUID.class), any(RegistrationRequest.class)))
                 .thenThrow(new IllegalArgumentException("Invalid UUID string"));
 
         // When & Then
@@ -87,9 +87,9 @@ class RegistrationControllerTest {
         String token = UUID.randomUUID().toString();
         RegistrationRequest request = new RegistrationRequest();
         request.setEmail("test@supplier.com");
-        request.setCompanyName("Test Company");
+        request.setSupplierName("Test Company");
 
-        when(supplierRegistrationService.processRegistration(any(UUID.class), any(RegistrationRequest.class)))
+        when(registrationService.processRegistration(any(UUID.class), any(RegistrationRequest.class)))
                 .thenThrow(new RegistrationException("Invalid or expired registration token"));
 
         // When & Then
@@ -107,7 +107,7 @@ class RegistrationControllerTest {
         // Given
         RegistrationRequest request = new RegistrationRequest();
         request.setEmail("test@supplier.com");
-        request.setCompanyName("Test Company");
+        request.setSupplierName("Test Company");
 
         // When & Then
         mockMvc.perform(post("/api/register")
@@ -121,7 +121,7 @@ class RegistrationControllerTest {
         // Given
         String token = UUID.randomUUID().toString();
         RegistrationRequest request = new RegistrationRequest();
-        request.setCompanyName("Test Company");
+        request.setSupplierName("Test Company");
         // email is null
 
         // When & Then
@@ -154,7 +154,7 @@ class RegistrationControllerTest {
         String token = UUID.randomUUID().toString();
         RegistrationRequest request = new RegistrationRequest();
         request.setEmail("");
-        request.setCompanyName("Test Company");
+        request.setSupplierName("Test Company");
 
         // When & Then
         mockMvc.perform(post("/api/register")
@@ -170,7 +170,7 @@ class RegistrationControllerTest {
         String token = UUID.randomUUID().toString();
         RegistrationRequest request = new RegistrationRequest();
         request.setEmail("test@supplier.com");
-        request.setCompanyName("");
+        request.setSupplierName("");
 
         // When & Then
         mockMvc.perform(post("/api/register")
@@ -186,7 +186,7 @@ class RegistrationControllerTest {
         String token = UUID.randomUUID().toString();
         RegistrationRequest request = new RegistrationRequest();
         request.setEmail("invalid-email");
-        request.setCompanyName("Test Company");
+        request.setSupplierName("Test Company");
 
         // When & Then
         mockMvc.perform(post("/api/register")
@@ -202,7 +202,7 @@ class RegistrationControllerTest {
         String token = UUID.randomUUID().toString();
         RegistrationRequest request = new RegistrationRequest();
         request.setEmail("test@supplier.com");
-        request.setCompanyName("A".repeat(101)); // Exceeds max length of 100
+        request.setSupplierName("A".repeat(101)); // Exceeds max length of 100
 
         // When & Then
         mockMvc.perform(post("/api/register")
@@ -218,7 +218,7 @@ class RegistrationControllerTest {
         String token = UUID.randomUUID().toString();
         RegistrationRequest request = new RegistrationRequest();
         request.setEmail("test@supplier.com");
-        request.setCompanyName("A"); // Below min length of 2
+        request.setSupplierName("A"); // Below min length of 2
 
         // When & Then
         mockMvc.perform(post("/api/register")
@@ -248,9 +248,9 @@ class RegistrationControllerTest {
         String token = UUID.randomUUID().toString();
         RegistrationRequest request = new RegistrationRequest();
         request.setEmail("test@supplier.com");
-        request.setCompanyName("Test Company");
+        request.setSupplierName("Test Company");
 
-        when(supplierRegistrationService.processRegistration(any(UUID.class), any(RegistrationRequest.class)))
+        when(registrationService.processRegistration(any(UUID.class), any(RegistrationRequest.class)))
                 .thenThrow(new RegistrationException("Failed to create Okta account: API error"));
 
         // When & Then

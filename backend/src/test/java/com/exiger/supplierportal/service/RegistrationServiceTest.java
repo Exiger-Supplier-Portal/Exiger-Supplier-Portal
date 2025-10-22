@@ -2,8 +2,8 @@ package com.exiger.supplierportal.service;
 
 import com.exiger.supplierportal.model.Client;
 import com.exiger.supplierportal.model.Supplier;
-import com.exiger.supplierportal.model.SupplierRegistration;
-import com.exiger.supplierportal.repository.SupplierRegistrationRepository;
+import com.exiger.supplierportal.model.Registration;
+import com.exiger.supplierportal.repository.RegistrationRepository;
 import com.exiger.supplierportal.repository.SupplierRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -22,10 +22,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 @DataJpaTest
 @ActiveProfiles("test")
 @Transactional
-class SupplierRegistrationServiceTest {
+class RegistrationServiceTest {
 
     @Autowired
-    private SupplierRegistrationRepository supplierRegistrationRepository;
+    private RegistrationRepository registrationRepository;
 
     @Autowired
     private SupplierRepository supplierRepository;
@@ -35,7 +35,7 @@ class SupplierRegistrationServiceTest {
 
     private UUID validToken;
     private Client testClient;
-    private SupplierRegistration validRegistration;
+    private Registration validRegistration;
 
     @BeforeEach
     void setUp() {
@@ -47,7 +47,7 @@ class SupplierRegistrationServiceTest {
         testClient.setClientEmail("test@client.com");
         entityManager.persistAndFlush(testClient);
 
-        validRegistration = new SupplierRegistration();
+        validRegistration = new Registration();
         validRegistration.setToken(validToken);
         validRegistration.setSupplierEmail("test@supplier.com");
         validRegistration.setExpiration(LocalDateTime.now().plusHours(24));
@@ -58,7 +58,7 @@ class SupplierRegistrationServiceTest {
     @Test
     void findByTokenAndExpirationAfter_WithValidToken_ShouldReturnRegistration() {
         // When
-        Optional<SupplierRegistration> result = supplierRegistrationRepository
+        Optional<Registration> result = registrationRepository
                 .findByTokenAndExpirationAfter(validToken, LocalDateTime.now());
 
         // Then
@@ -70,7 +70,7 @@ class SupplierRegistrationServiceTest {
     @Test
     void findByTokenAndExpirationAfter_WithExpiredToken_ShouldReturnEmpty() {
         // Given
-        SupplierRegistration expiredRegistration = new SupplierRegistration();
+        Registration expiredRegistration = new Registration();
         expiredRegistration.setToken(UUID.randomUUID());
         expiredRegistration.setSupplierEmail("expired@supplier.com");
         expiredRegistration.setExpiration(LocalDateTime.now().minusHours(1)); // Expired
@@ -78,7 +78,7 @@ class SupplierRegistrationServiceTest {
         entityManager.persistAndFlush(expiredRegistration);
 
         // When
-        Optional<SupplierRegistration> result = supplierRegistrationRepository
+        Optional<Registration> result = registrationRepository
                 .findByTokenAndExpirationAfter(expiredRegistration.getToken(), LocalDateTime.now());
 
         // Then
@@ -91,7 +91,7 @@ class SupplierRegistrationServiceTest {
         UUID invalidToken = UUID.randomUUID();
 
         // When
-        Optional<SupplierRegistration> result = supplierRegistrationRepository
+        Optional<Registration> result = registrationRepository
                 .findByTokenAndExpirationAfter(invalidToken, LocalDateTime.now());
 
         // Then
@@ -128,14 +128,14 @@ class SupplierRegistrationServiceTest {
     @Test
     void deleteByToken_ShouldDeleteRegistration() {
         // Given
-        assertThat(supplierRegistrationRepository.findByTokenAndExpirationAfter(validToken, LocalDateTime.now()))
+        assertThat(registrationRepository.findByTokenAndExpirationAfter(validToken, LocalDateTime.now()))
                 .isPresent();
 
         // When
-        supplierRegistrationRepository.deleteByToken(validToken);
+        registrationRepository.deleteByToken(validToken);
 
         // Then
-        assertThat(supplierRegistrationRepository.findByTokenAndExpirationAfter(validToken, LocalDateTime.now()))
+        assertThat(registrationRepository.findByTokenAndExpirationAfter(validToken, LocalDateTime.now()))
                 .isEmpty();
     }
 }

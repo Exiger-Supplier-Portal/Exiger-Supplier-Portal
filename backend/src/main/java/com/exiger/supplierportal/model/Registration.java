@@ -14,8 +14,8 @@ import java.util.UUID;
  */
 @Entity
 @Data
-@Table(name = "supplier_registration")
-public class SupplierRegistration {
+@Table(name = "registration")
+public class Registration {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

@@ -2,7 +2,7 @@ package com.exiger.supplierportal.controller;
 
 import com.exiger.supplierportal.dto.clientsupplier.request.RegistrationRequest;
 import com.exiger.supplierportal.dto.clientsupplier.response.RegistrationResponse;
-import com.exiger.supplierportal.service.SupplierRegistrationService;
+import com.exiger.supplierportal.service.RegistrationService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -22,7 +22,7 @@ import java.util.UUID;
 public class RegistrationController {
 
     @Autowired
-    private SupplierRegistrationService supplierRegistrationService;
+    private RegistrationService registrationService;
 
     /**
      * Process supplier registration with token validation and Okta account creation.
@@ -37,7 +37,7 @@ public class RegistrationController {
             @Valid @RequestBody RegistrationRequest request) {
         
         UUID registrationToken = UUID.fromString(token);
-        RegistrationResponse response = supplierRegistrationService.processRegistration(registrationToken, request);
+        RegistrationResponse response = registrationService.processRegistration(registrationToken, request);
         
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
