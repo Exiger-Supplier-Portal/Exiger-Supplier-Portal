@@ -28,10 +28,35 @@ public class InviteService {
     @Value("${app.frontend.url}")
     private String frontendBaseUrl;
 
-    // @Transactional
-    // public InviteResponse createInvite(InviteRequest request) {
+    @Transactional
+    public InviteResponse createInvite(InviteRequest request) {
+        // Validate client exists
+        if (!clientRepository.existsByClientID(request.getClientId())) {
+            throw new IllegalArgumentException("Invalid clientId");
+        }
 
-    //     // Validate client exists
-        
-    // }
+        // Generate registration token
+        UUID token = UUID.randomUUID();
+        LocalDateTime expiration = LocalDateTime.now().plusHours(24); // 24 hours expiry
+
+        Client client = clientRepository.findById(request.getClientId())
+                .orElseThrow(() -> new IllegalStateException("Client not found"));
+
+        Registration registration = new Registration();
+        registration.setClient(client);
+        registration.setSupplierEmail(request.getSupplierEmail());
+        registration.setToken(token);
+        registration.setExpiration(expiration);
+
+        registrationRepository.save(registration);
+
+        // Build registration URL
+        String registrationUrl = frontendBaseUrl + "/register?token=" + token;
+
+        InviteResponse response = new InviteResponse();
+        response.setRegistrationUrl(registrationUrl);
+        response.setExpiresAt(expiration.toInstant(ZoneOffset.UTC));
+
+        return response;
+    }
 }
