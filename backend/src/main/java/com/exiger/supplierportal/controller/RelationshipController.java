@@ -111,7 +111,8 @@ public class RelationshipController {
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "Status retrieved successfully"),
         @ApiResponse(responseCode = "401", description = "Invalid or missing API token"),
-        @ApiResponse(responseCode = "400", description = "Invalid request data")
+        @ApiResponse(responseCode = "400", description = "Invalid request data"),
+        @ApiResponse(responseCode = "404", description = "Relationship not found")
     })
     @GetMapping("/status")
     public ResponseEntity<RelationshipResponse> getRelationshipStatus(
@@ -147,7 +148,8 @@ public class RelationshipController {
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "Status retrieved successfully"),
         @ApiResponse(responseCode = "401", description = "Invalid or missing API token"),
-        @ApiResponse(responseCode = "400", description = "Invalid request data")
+        @ApiResponse(responseCode = "400", description = "Invalid request data"),
+        @ApiResponse(responseCode = "404", description = "Relationship not found")
     })
     @PutMapping("/status")
     public ResponseEntity<RelationshipResponse> updateRelationshipStatus(
