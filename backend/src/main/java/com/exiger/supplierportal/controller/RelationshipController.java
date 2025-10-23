@@ -2,10 +2,13 @@ package com.exiger.supplierportal.controller;
 
 import com.exiger.supplierportal.config.ApiTokenValidator;
 import com.exiger.supplierportal.dto.clientsupplier.request.RelationshipRequest;
+import com.exiger.supplierportal.dto.clientsupplier.response.ApiErrorResponse;
 import com.exiger.supplierportal.dto.clientsupplier.response.RelationshipResponse;
 import com.exiger.supplierportal.exception.InvalidApiTokenException;
 import com.exiger.supplierportal.service.RelationshipService;
 import com.exiger.supplierportal.util.AuthenticationUtils;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,8 +55,16 @@ public class RelationshipController {
     )
     @ApiResponses(value = {
         @ApiResponse(responseCode = "201", description = "Relationship created successfully"),
-        @ApiResponse(responseCode = "401", description = "Invalid or missing API token"),
-        @ApiResponse(responseCode = "400", description = "Invalid request data")
+        @ApiResponse(
+            responseCode = "401",
+            description = "Invalid or missing API token",
+            content = @Content(mediaType = "application/json",
+                schema = @Schema(implementation = ApiErrorResponse.class))),
+        @ApiResponse(
+            responseCode = "400",
+            description = "Invalid request data",
+            content = @Content(mediaType = "application/json",
+                schema = @Schema(implementation = ApiErrorResponse.class)))
     })
     @PostMapping
     public ResponseEntity<RelationshipResponse> createRelationship(
@@ -84,8 +95,16 @@ public class RelationshipController {
     )
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "Relationships retrieved successfully"),
-        @ApiResponse(responseCode = "401", description = "User not authenticated"),
-        @ApiResponse(responseCode = "403", description = "Access denied")
+        @ApiResponse(
+            responseCode = "401",
+            description = "User not authenticated",
+            content = @Content(mediaType = "application/json",
+                schema = @Schema(implementation = ApiErrorResponse.class))),
+        @ApiResponse(
+            responseCode = "403",
+            description = "Access denied",
+            content = @Content(mediaType = "application/json",
+                schema = @Schema(implementation = ApiErrorResponse.class)))
     })
     @GetMapping("/clients")
     public ResponseEntity<List<RelationshipResponse>> getClientsBySupplier(Authentication authentication) {
@@ -110,9 +129,21 @@ public class RelationshipController {
     )
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "Status retrieved successfully"),
-        @ApiResponse(responseCode = "401", description = "Invalid or missing API token"),
-        @ApiResponse(responseCode = "400", description = "Invalid request data"),
-        @ApiResponse(responseCode = "404", description = "Relationship not found")
+        @ApiResponse(
+            responseCode = "401",
+            description = "Invalid or missing API token",
+            content = @Content(mediaType = "application/json",
+                schema = @Schema(implementation = ApiErrorResponse.class))),
+        @ApiResponse(
+            responseCode = "400",
+            description = "Invalid request data",
+            content = @Content(mediaType = "application/json",
+                schema = @Schema(implementation = ApiErrorResponse.class))),
+        @ApiResponse(
+            responseCode = "404",
+            description = "Relationship not found",
+            content = @Content(mediaType = "application/json",
+                schema = @Schema(implementation = ApiErrorResponse.class)))
     })
     @GetMapping("/status")
     public ResponseEntity<RelationshipResponse> getRelationshipStatus(
@@ -147,9 +178,21 @@ public class RelationshipController {
     )
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "Status retrieved successfully"),
-        @ApiResponse(responseCode = "401", description = "Invalid or missing API token"),
-        @ApiResponse(responseCode = "400", description = "Invalid request data"),
-        @ApiResponse(responseCode = "404", description = "Relationship not found")
+        @ApiResponse(
+            responseCode = "401",
+            description = "Invalid or missing API token",
+            content = @Content(mediaType = "application/json",
+                schema = @Schema(implementation = ApiErrorResponse.class))),
+        @ApiResponse(
+            responseCode = "400",
+            description = "Invalid request data",
+            content = @Content(mediaType = "application/json",
+                schema = @Schema(implementation = ApiErrorResponse.class))),
+        @ApiResponse(
+            responseCode = "404",
+            description = "Relationship not found",
+            content = @Content(mediaType = "application/json",
+                schema = @Schema(implementation = ApiErrorResponse.class)))
     })
     @PutMapping("/status")
     public ResponseEntity<RelationshipResponse> updateRelationshipStatus(
@@ -179,8 +222,16 @@ public class RelationshipController {
     )
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "Status retrieved successfully"),
-        @ApiResponse(responseCode = "401", description = "User not authenticated"),
-        @ApiResponse(responseCode = "403", description = "Access denied")
+        @ApiResponse(
+            responseCode = "401",
+            description = "User not authenticated",
+            content = @Content(mediaType = "application/json",
+                schema = @Schema(implementation = ApiErrorResponse.class))),
+        @ApiResponse(
+            responseCode = "403",
+            description = "Access denied",
+            content = @Content(mediaType = "application/json",
+                schema = @Schema(implementation = ApiErrorResponse.class)))
     })
     @GetMapping("/my-status")
     public ResponseEntity<RelationshipResponse> getRelationshipStatusBySupplier(

@@ -1,6 +1,9 @@
 package com.exiger.supplierportal.controller;
 import com.exiger.supplierportal.config.ApiTokenValidator;
+import com.exiger.supplierportal.dto.clientsupplier.response.ApiErrorResponse;
 import com.exiger.supplierportal.exception.InvalidApiTokenException;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -46,8 +49,16 @@ public class SupplierController {
     )
     @ApiResponses(value = {
         @ApiResponse(responseCode = "201", description = "Supplier created successfully"),
-        @ApiResponse(responseCode = "401", description = "Invalid or missing API token"),
-        @ApiResponse(responseCode = "400", description = "Invalid request data")
+        @ApiResponse(
+            responseCode = "401",
+            description = "Invalid or missing API token",
+            content = @Content(mediaType = "application/json",
+                schema = @Schema(implementation = ApiErrorResponse.class))),
+        @ApiResponse(
+            responseCode = "400",
+            description = "Invalid request data",
+            content = @Content(mediaType = "application/json",
+                schema = @Schema(implementation = ApiErrorResponse.class)))
     })
     @PostMapping
     public ResponseEntity<SupplierResponse> createSupplier(

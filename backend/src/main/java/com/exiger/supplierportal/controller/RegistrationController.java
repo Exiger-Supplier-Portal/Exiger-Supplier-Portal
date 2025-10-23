@@ -1,8 +1,11 @@
 package com.exiger.supplierportal.controller;
 
 import com.exiger.supplierportal.dto.clientsupplier.request.RegistrationRequest;
+import com.exiger.supplierportal.dto.clientsupplier.response.ApiErrorResponse;
 import com.exiger.supplierportal.dto.clientsupplier.response.RegistrationResponse;
 import com.exiger.supplierportal.service.RegistrationService;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -43,8 +46,15 @@ public class RegistrationController {
     )
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "Registration processed successfully"),
-        @ApiResponse(responseCode = "400", description = "Invalid token or request data"),
-        @ApiResponse(responseCode = "404", description = "Registration token not found or expired")
+        @ApiResponse(
+            responseCode = "400",
+            description = "Invalid token or request data",
+            content = @Content(mediaType = "application/json",
+                schema = @Schema(implementation = ApiErrorResponse.class))),
+        @ApiResponse(responseCode = "404",
+            description = "Registration token not found or expired",
+            content = @Content(mediaType = "application/json",
+                schema = @Schema(implementation = ApiErrorResponse.class)))
     })
     @PostMapping("/register")
     public ResponseEntity<RegistrationResponse> registerSupplier(

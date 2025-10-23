@@ -1,5 +1,8 @@
 package com.exiger.supplierportal.controller;
 
+import com.exiger.supplierportal.dto.clientsupplier.response.ApiErrorResponse;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -34,8 +37,16 @@ public class AuthDemo {
     )
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "Authentication details returned successfully"),
-        @ApiResponse(responseCode = "401", description = "User not authenticated"),
-        @ApiResponse(responseCode = "403", description = "Access denied")
+        @ApiResponse(
+            responseCode = "401",
+            description = "User not authenticated",
+            content = @Content(mediaType = "application/json",
+                schema = @Schema(implementation = ApiErrorResponse.class))),
+        @ApiResponse(
+            responseCode = "403",
+            description = "Access denied",
+            content = @Content(mediaType = "application/json",
+                schema = @Schema(implementation = ApiErrorResponse.class)))
     })
     @GetMapping("/api/whoami")
     public String whoami(Authentication authentication) {
