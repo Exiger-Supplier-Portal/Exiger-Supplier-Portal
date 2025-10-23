@@ -8,6 +8,7 @@ export default function AuthedLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  console.log("Rendering AuthedLayout");
   return (
     <CompanyProvider>
       <SidebarProvider>

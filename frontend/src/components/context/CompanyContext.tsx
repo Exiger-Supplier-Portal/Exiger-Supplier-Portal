@@ -1,4 +1,5 @@
 "use client";
+import { useRouter, useSearchParams } from "next/navigation";
 import { createContext, useContext, useState, ReactNode, useMemo } from "react";
 
 // Context type
@@ -14,12 +15,20 @@ const CompanyContext = createContext<CompanyContextType | undefined>(undefined);
 
 // Provider component
 export const CompanyProvider = ({ children }: { children: ReactNode }) => {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+
   const [selectedCompanyId, setSelectedCompanyId] = useState<string | null>(null);
   const [data, setData] = useState<Record<string, CompanyData>>({});
 
   const setSelectedCompany = (companyId: string) => {
     // TODO: Add logic to update company id and fetch related data from the backend if not in record already
     setSelectedCompanyId(companyId);
+    const params = new URLSearchParams(searchParams);
+    if (companyId !== searchParams.get("companyId")) {
+      params.set("companyId", companyId);
+      router.replace(`?${params.toString()}`);
+    }
   };
 
   // Only expose data for the selected company

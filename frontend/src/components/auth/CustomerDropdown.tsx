@@ -10,6 +10,7 @@ import {
   DropdownMenuRadioGroup,
   DropdownMenuRadioItem,
 } from "@/components/ui/dropdown-menu";
+import { useCompany } from "../context/CompanyContext";
 
 function CustomerDropdown() {
   // Mock data
@@ -19,7 +20,7 @@ function CustomerDropdown() {
     { id: "c3", name: "Lidl" },
   ];
 
-  const [selectedCustomer, setSelectedCustomer] = React.useState(mockCustomers[0].id);
+  const { selectedCompanyId, setSelectedCompany } = useCompany();
 
   return (
     <DropdownMenu>
@@ -27,7 +28,10 @@ function CustomerDropdown() {
       <DropdownMenuContent>
         <DropdownMenuLabel>Customer List</DropdownMenuLabel>
         <DropdownMenuSeparator />
-        <DropdownMenuRadioGroup value={selectedCustomer} onValueChange={setSelectedCustomer}>
+        <DropdownMenuRadioGroup
+          value={selectedCompanyId || mockCustomers[0].id}
+          onValueChange={setSelectedCompany}
+        >
           {mockCustomers.map((customer) => (
             <DropdownMenuRadioItem key={customer.id} value={customer.id}>
               {customer.name}

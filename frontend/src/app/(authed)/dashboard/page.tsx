@@ -1,3 +1,4 @@
+import CustomerDropdown from "@/components/auth/CustomerDropdown";
 import MetricsCard from "@/components/dashboard/MetricsCard";
 import Tasks from "@/components/dashboard/TasksCard";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -21,6 +22,7 @@ function page() {
           </CardHeader>
           <CardContent>
             <p>Graph here</p>
+            <CustomerDropdown />
           </CardContent>
         </Card>
 
