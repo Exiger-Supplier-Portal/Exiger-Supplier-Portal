@@ -54,4 +54,3 @@ type Relationship = {
   supplierID: string;
   status: "INVITED" | "ONBOARDED" | "APPROVED";
 };
-

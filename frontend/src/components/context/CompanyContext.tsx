@@ -8,6 +8,8 @@ type CompanyContextType = {
   setSelectedCompany: (companyId: string) => void;
   companyData: CompanyData | null; // key = companyId
   setCompanyData: (companyId: string, companyData: CompanyData) => void;
+  relationships: Relationship[];
+  setRelationships: (relationships: Relationship[]) => void;
 };
 
 // Create the context
@@ -16,28 +18,24 @@ const CompanyContext = createContext<CompanyContextType | undefined>(undefined);
 // Provider component
 export const CompanyProvider = ({
   children,
-  initialData = [],
+  initialData,
   defaultCompanyId = null,
+  initialRelationships = [],
 }: {
   children: ReactNode;
-  initialData?: Relationship[];
+  initialData: Record<string, CompanyData>;
   defaultCompanyId?: string | null;
+  initialRelationships?: Relationship[];
 }) => {
   const router = useRouter();
-  const searchParams = useSearchParams();
 
   const [selectedCompanyId, setSelectedCompanyId] = useState<string | null>(defaultCompanyId);
   const [data, setData] = useState<Record<string, CompanyData>>({});
-  const [relationships, setRelationships] = useState<Relationship[]>(initialData);
+  const [relationships, setRelationships] = useState<Relationship[]>(initialRelationships);
 
   const setSelectedCompany = (companyId: string) => {
     // TODO: Add logic to update company id and fetch related data from the backend if not in record already
     setSelectedCompanyId(companyId);
-    const params = new URLSearchParams(searchParams);
-    if (companyId !== searchParams.get("companyId")) {
-      params.set("companyId", companyId);
-      router.replace(`?${params.toString()}`);
-    }
   };
 
   // Only expose data for the selected company
@@ -55,7 +53,14 @@ export const CompanyProvider = ({
 
   return (
     <CompanyContext.Provider
-      value={{ selectedCompanyId, setSelectedCompany, companyData, setCompanyData }}
+      value={{
+        selectedCompanyId,
+        setSelectedCompany,
+        companyData,
+        setCompanyData,
+        relationships,
+        setRelationships,
+      }}
     >
       {children}
     </CompanyContext.Provider>
