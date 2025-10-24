@@ -9,7 +9,6 @@ type RelationshipData = {
   status: "ACTIVE" | "PENDING" | "INACTIVE";
 };
 
-
 async function page() {
   const metricsPercentages = [26.72, 4.72, -32.1, 56.72, 41.01];
 
