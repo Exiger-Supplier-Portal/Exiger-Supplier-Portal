@@ -55,8 +55,9 @@ Thumbs.db
 # =========================
 # Environment / Secrets
 # =========================
-*.env
+.env
 .env.*
+!.env.example
 application-*.yml
 application-*.yaml
 application-*.properties

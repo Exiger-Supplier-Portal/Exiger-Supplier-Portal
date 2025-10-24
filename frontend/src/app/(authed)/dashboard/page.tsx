@@ -1,8 +1,16 @@
 import MetricsCard from "@/components/dashboard/MetricsCard";
 import Tasks from "@/components/dashboard/TasksCard";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { fetchWithAuth } from "@/lib/fetch";
 
-function page() {
+type RelationshipData = {
+  clientID: string;
+  supplierID: string;
+  status: "ACTIVE" | "PENDING" | "INACTIVE";
+};
+
+
+async function page() {
   const metricsPercentages = [26.72, 4.72, -32.1, 56.72, 41.01];
 
   return (

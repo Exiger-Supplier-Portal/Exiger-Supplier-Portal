@@ -1,5 +1,6 @@
 package com.exiger.supplierportal.exception;
 
+import com.exiger.supplierportal.dto.clientsupplier.response.ApiErrorResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -21,23 +22,39 @@ import java.util.Map;
 public class ApiExceptionHandler {
 
     @ExceptionHandler(InvalidApiTokenException.class)
-    public ResponseEntity<Map<String, Object>> handleInvalidApiToken(InvalidApiTokenException ex) {
-        Map<String, Object> response = new HashMap<>();
-        response.put("status", HttpStatus.UNAUTHORIZED.value());
-        response.put("message", ex.getMessage());
+    public ResponseEntity<ApiErrorResponse> handleInvalidApiToken(InvalidApiTokenException ex) {
+        ApiErrorResponse response = new ApiErrorResponse();
+        response.setStatus(HttpStatus.UNAUTHORIZED.value());
+        response.setMessage(ex.getMessage());
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
     }
 
     @ExceptionHandler(IllegalArgumentException.class)
-    public ResponseEntity<Map<String, Object>> handleIllegalArgument(IllegalArgumentException ex) {
-        Map<String, Object> response = new HashMap<>();
-        response.put("status", HttpStatus.BAD_REQUEST.value());
-        response.put("message", ex.getMessage());
+    public ResponseEntity<ApiErrorResponse> handleIllegalArgument(IllegalArgumentException ex) {
+        ApiErrorResponse response = new ApiErrorResponse();
+        response.setStatus(HttpStatus.BAD_REQUEST.value());
+        response.setMessage(ex.getMessage());
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
     }
 
+    @ExceptionHandler(RegistrationException.class)
+    public ResponseEntity<ApiErrorResponse> handleRegistrationException(RegistrationException ex) {
+        ApiErrorResponse response = new ApiErrorResponse();
+        response.setStatus(HttpStatus.BAD_REQUEST.value());
+        response.setMessage(ex.getMessage());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+    }
+
+    @ExceptionHandler(RelationshipNotFoundException.class)
+    public ResponseEntity<ApiErrorResponse> handleRelationshipNotFoundException(RelationshipNotFoundException ex) {
+        ApiErrorResponse response = new ApiErrorResponse();
+        response.setStatus(HttpStatus.NOT_FOUND.value());
+        response.setMessage(ex.getMessage());
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+    }
+
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<Map<String, Object>> handleValidationException(MethodArgumentNotValidException ex) {
+    public ResponseEntity<ApiErrorResponse> handleValidationException(MethodArgumentNotValidException ex) {
         Map<String, String> errors = new HashMap<>();
         ex.getBindingResult().getAllErrors().forEach((error) -> {
             String fieldName = error.getCode();
@@ -45,15 +62,15 @@ public class ApiExceptionHandler {
             errors.put(fieldName, errorMessage);
         });
 
-        Map<String, Object> response = new HashMap<>();
-        response.put("status", HttpStatus.BAD_REQUEST.value());
-        response.put("message", "Validation failed");
-        response.put("errors", errors);
+        ApiErrorResponse response = new ApiErrorResponse();
+        response.setStatus(HttpStatus.BAD_REQUEST.value());
+        response.setMessage("Validation failed");
+        response.setErrors(errors);
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
     }
 
     @ExceptionHandler(HttpMessageNotReadableException.class)
-    public ResponseEntity<Map<String, Object>> handleHttpMessageNotReadable(HttpMessageNotReadableException ex) {
+    public ResponseEntity<ApiErrorResponse> handleHttpMessageNotReadable(HttpMessageNotReadableException ex) {
         Throwable cause = ex.getCause();
         String message = "Malformed JSON request";
 
@@ -61,30 +78,30 @@ public class ApiExceptionHandler {
             message = "Invalid value: " + invalidFormatException.getValue();
         }
 
-        Map<String, Object> response = new HashMap<>();
-        response.put("status", HttpStatus.BAD_REQUEST.value());
-        response.put("message", message);
+        ApiErrorResponse response = new ApiErrorResponse();
+        response.setStatus(HttpStatus.BAD_REQUEST.value());
+        response.setMessage(message);
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
     }
 
     @ExceptionHandler(MissingRequestHeaderException.class)
-    public ResponseEntity<Map<String, Object>> handleMissingRequestHeader(MissingRequestHeaderException ex) {
-        Map<String, Object> response = new HashMap<>();
-        response.put("status", HttpStatus.BAD_REQUEST.value());
-        response.put("message", "Required request header '" + ex.getHeaderName() + "' is not present");
+    public ResponseEntity<ApiErrorResponse> handleMissingRequestHeader(MissingRequestHeaderException ex) {
+        ApiErrorResponse response = new ApiErrorResponse();
+        response.setStatus(HttpStatus.BAD_REQUEST.value());
+        response.setMessage("Required request header '" + ex.getHeaderName() + "' is not present");
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
     }
 
     @ExceptionHandler(MissingServletRequestParameterException.class)
-    public ResponseEntity<Map<String, Object>> handleMissingServletRequestParameter(MissingServletRequestParameterException ex) {
-        Map<String, Object> response = new HashMap<>();
-        response.put("status", HttpStatus.BAD_REQUEST.value());
-        response.put("message", "Required request parameter '" + ex.getParameterName() + "' is not present");
+    public ResponseEntity<ApiErrorResponse> handleMissingServletRequestParameter(MissingServletRequestParameterException ex) {
+        ApiErrorResponse response = new ApiErrorResponse();
+        response.setStatus(HttpStatus.BAD_REQUEST.value());
+        response.setMessage("Required request parameter '" + ex.getParameterName() + "' is not present");
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
     }
 
     @ExceptionHandler(ConstraintViolationException.class)
-    public ResponseEntity<Map<String, Object>> handleConstraintViolation(ConstraintViolationException ex) {
+    public ResponseEntity<ApiErrorResponse> handleConstraintViolation(ConstraintViolationException ex) {
         Map<String, String> errors = new HashMap<>();
         ex.getConstraintViolations().forEach((violation) -> {
             String fieldName = violation.getPropertyPath().toString();
@@ -92,18 +109,18 @@ public class ApiExceptionHandler {
             errors.put(fieldName, errorMessage);
         });
 
-        Map<String, Object> response = new HashMap<>();
-        response.put("status", HttpStatus.BAD_REQUEST.value());
-        response.put("message", "Validation failed");
-        response.put("errors", errors);
+        ApiErrorResponse response = new ApiErrorResponse();
+        response.setStatus(HttpStatus.BAD_REQUEST.value());
+        response.setMessage("Validation failed");
+        response.setErrors(errors);
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
     }
 
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<Map<String, Object>> handleGenericException(Exception ex) {
-        Map<String, Object> response = new HashMap<>();
-        response.put("status", HttpStatus.INTERNAL_SERVER_ERROR.value());
-        response.put("message", "An unexpected error occurred");
+    public ResponseEntity<ApiErrorResponse> handleGenericException(Exception ex) {
+        ApiErrorResponse response = new ApiErrorResponse();
+        response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
+        response.setMessage("An unexpected error occurred");
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
     }
 }
