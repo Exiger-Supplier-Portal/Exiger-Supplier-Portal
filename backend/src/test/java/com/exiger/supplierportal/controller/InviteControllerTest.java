@@ -14,7 +14,8 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 
-import java.time.LocalDateTime;
+import java.time.Duration;
+import java.time.Instant;
 
 import static org.hamcrest.Matchers.containsString;
 import static org.mockito.ArgumentMatchers.any;
@@ -48,7 +49,7 @@ class InviteControllerTest {
 
         InviteResponse response = new InviteResponse();
         response.setRegistrationUrl("https://portal.example.com/register?token=abc-123");
-        response.setExpiresAt(LocalDateTime.now().plusDays(7));
+        response.setExpiresAt(Instant.now().plus(Duration.ofHours(24)));
 
         when(inviteService.createInvite(any(InviteRequest.class)))
                 .thenReturn(response);
