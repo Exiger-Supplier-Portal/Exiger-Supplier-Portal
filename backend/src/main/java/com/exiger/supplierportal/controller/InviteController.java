@@ -1,10 +1,17 @@
 package com.exiger.supplierportal.controller;
 
 import com.exiger.supplierportal.dto.clientsupplier.request.InviteRequest;
+import com.exiger.supplierportal.dto.clientsupplier.response.ApiErrorResponse;
 import com.exiger.supplierportal.dto.clientsupplier.response.InviteResponse;
 import com.exiger.supplierportal.exception.InvalidApiTokenException;
 import com.exiger.supplierportal.service.InviteService;
 import com.exiger.supplierportal.config.ApiTokenValidator;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -33,9 +40,27 @@ public class InviteController {
      * @return ResponseEntity with registration URL and expiration
      * @throws InvalidApiTokenException if API token validation fails
      */
+    @Operation(
+        summary = "Create a one-time, temporary invite link for a supplier",
+        description = "Generates unique token and adds row to Registration entity. Requires valid API token in Authorization header."
+    )
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "201", description = "Invite link created successfully"),
+        @ApiResponse(
+            responseCode = "401",
+            description = "Invalid or missing API token",
+            content = @Content(mediaType = "application/json",
+                schema = @Schema(implementation = ApiErrorResponse.class))),
+        @ApiResponse(
+            responseCode = "400",
+            description = "Invalid request data",
+            content = @Content(mediaType = "application/json",
+                schema = @Schema(implementation = ApiErrorResponse.class)))
+    })
     @PostMapping
     public ResponseEntity<InviteResponse> createInvite(
             @Valid @RequestBody InviteRequest request,
+            @Parameter(description = "Bearer token for API authentication", example = "Bearer your-api-token")
             @RequestHeader(value = "Authorization", required = false) String authHeader) {
 
         // Validate API token
