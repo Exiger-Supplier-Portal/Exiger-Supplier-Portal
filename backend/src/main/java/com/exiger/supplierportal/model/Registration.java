@@ -2,7 +2,7 @@ package com.exiger.supplierportal.model;
 
 import jakarta.persistence.*;
 import lombok.Data;
-import java.time.LocalDateTime;
+import java.time.Instant;
 import java.util.UUID;
 
 /**
@@ -31,5 +31,5 @@ public class Registration {
     private UUID token;
 
     @Column(name = "expiration", nullable = false)
-    private LocalDateTime expiration;
+    private Instant expiration;
 }
