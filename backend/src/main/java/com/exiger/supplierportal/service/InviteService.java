@@ -52,7 +52,7 @@ public class InviteService {
         registrationRepository.save(registration);
 
         // Build registration URL
-        String registrationUrl = frontendBaseUrl + "/api/register?token=" + token;
+        String registrationUrl = frontendBaseUrl + "/register?token=" + token;
 
         InviteResponse response = new InviteResponse();
         response.setRegistrationUrl(registrationUrl);
