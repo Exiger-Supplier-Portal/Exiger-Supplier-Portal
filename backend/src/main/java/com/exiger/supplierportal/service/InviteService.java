@@ -15,6 +15,7 @@ import java.time.Instant;
 import java.util.UUID;
 
 @Service
+@Transactional
 public class InviteService {
 
     @Autowired
@@ -26,7 +27,13 @@ public class InviteService {
     @Value("${app.frontend.url}")
     private String frontendBaseUrl;
 
-    @Transactional
+    /**
+     * Creates a Registration, which generates a one-time temporary registration link for a supplier
+     *
+     * @param request InviteRequest containing clientID and supplierEmail
+     * @return InviteResponse containing registrationUrl and expiration
+     * @throws IllegalArgumentException if client not found
+     */
     public InviteResponse createInvite(InviteRequest request) {
         // Validate client exists
         Client client = clientRepository.findById(request.getClientId())
@@ -45,7 +52,7 @@ public class InviteService {
         registrationRepository.save(registration);
 
         // Build registration URL
-        String registrationUrl = frontendBaseUrl + "/register?token=" + token;
+        String registrationUrl = frontendBaseUrl + "/api/register?token=" + token;
 
         InviteResponse response = new InviteResponse();
         response.setRegistrationUrl(registrationUrl);
