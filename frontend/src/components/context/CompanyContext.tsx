@@ -13,9 +13,18 @@ type CompanyContextType = {
 const CompanyContext = createContext<CompanyContextType | undefined>(undefined);
 
 // Provider component
-export const CompanyProvider = ({ children }: { children: ReactNode }) => {
-  const [selectedCompanyId, setSelectedCompanyId] = useState<string | null>(null);
+export const CompanyProvider = ({ 
+  children,
+  initialData = [],
+  defaultCompanyId = null,
+}: { 
+  children: ReactNode;
+  initialData?: Relationship[];
+  defaultCompanyId?: string | null
+}) => {
+  const [selectedCompanyId, setSelectedCompanyId] = useState<string | null>(defaultCompanyId);
   const [data, setData] = useState<Record<string, CompanyData>>({});
+  const [relationships, setRelationships] = useState<Relationship[]>(initialData); 
 
   const setSelectedCompany = (companyId: string) => {
     // TODO: Add logic to update company id and fetch related data from the backend if not in record already

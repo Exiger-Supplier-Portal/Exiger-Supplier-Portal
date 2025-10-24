@@ -10,6 +10,7 @@ type CompanyData = {
  */
 type CoreData = {
   companyName: string;
+  companyID: string;
   logoUrl?: string;
 };
 
@@ -47,3 +48,10 @@ type Order = {
   notes: string;
   approvalStatus: "pending" | "approved";
 };
+
+type Relationship = {
+  clientID: string;
+  supplierID: string;
+  status: "INVITED" | "ONBOARDED" | "APPROVED";
+};
+
