@@ -14,7 +14,7 @@ import lombok.Data;
 public class InviteRequest {
     @Schema(description = "Unique identifier for the client", example = "[client-id]")
     @NotBlank(message = "Client ID is required")
-    private String clientId;
+    private String clientID;
 
     @Schema(description = "Email of the supplier", example = "test@supplier.com")
     @NotBlank(message = "Supplier email is required")

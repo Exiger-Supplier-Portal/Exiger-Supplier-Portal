@@ -41,7 +41,7 @@ class InviteControllerTest {
     void createInvite_WithValidRequest_ShouldReturnCreatedResponse() throws Exception {
         // Given
         InviteRequest request = new InviteRequest();
-        request.setClientId("CLIENT-001");
+        request.setClientID("CLIENT-001");
         request.setSupplierEmail("test@supplier.com");
 
         InviteResponse response = new InviteResponse();
@@ -65,7 +65,7 @@ class InviteControllerTest {
     void createInvite_WithMissingAuthHeader_ShouldReturnUnauthorized() throws Exception {
         // Given
         InviteRequest request = new InviteRequest();
-        request.setClientId("CLIENT-001");
+        request.setClientID("CLIENT-001");
         request.setSupplierEmail("test@supplier.com");
 
         // When & Then
@@ -79,7 +79,7 @@ class InviteControllerTest {
     void createInvite_WithInvalidToken_ShouldReturnUnauthorized() throws Exception {
         // Given
         InviteRequest request = new InviteRequest();
-        request.setClientId("CLIENT-001");
+        request.setClientID("CLIENT-001");
         request.setSupplierEmail("supplier@example.com");
 
         // When & Then
@@ -109,7 +109,7 @@ class InviteControllerTest {
     void createInvite_WithMissingSupplierEmail_ShouldReturnBadRequest() throws Exception {
         // Given
         InviteRequest request = new InviteRequest();
-        request.setClientId("CLIENT-001");
+        request.setClientID("CLIENT-001");
         // supplierEmail is null
 
         // When & Then
@@ -124,7 +124,7 @@ class InviteControllerTest {
     void createInvite_WithEmptyClientId_ShouldReturnBadRequest() throws Exception {
         // Given
         InviteRequest request = new InviteRequest();
-        request.setClientId("");
+        request.setClientID("");
         request.setSupplierEmail("supplier@example.com");
 
         // When & Then
@@ -139,7 +139,7 @@ class InviteControllerTest {
     void createInvite_WithEmptySupplierEmail_ShouldReturnBadRequest() throws Exception {
         // Given
         InviteRequest request = new InviteRequest();
-        request.setClientId("CLIENT-001");
+        request.setClientID("CLIENT-001");
         request.setSupplierEmail("");
 
         // When & Then
@@ -154,7 +154,7 @@ class InviteControllerTest {
     void createInvite_WithInvalidEmailFormat_ShouldReturnBadRequest() throws Exception {
         // Given
         InviteRequest request = new InviteRequest();
-        request.setClientId("CLIENT-001");
+        request.setClientID("CLIENT-001");
         request.setSupplierEmail("invalid-email"); // Invalid email format
 
         // When & Then
@@ -182,7 +182,7 @@ class InviteControllerTest {
     void createInvite_WithDuplicateInvite_ShouldReturnBadRequest() throws Exception {
         // Given
         InviteRequest request = new InviteRequest();
-        request.setClientId("CLIENT-001");
+        request.setClientID("CLIENT-001");
         request.setSupplierEmail("supplier@example.com");
 
         // Mock service to throw exception for duplicate invite
@@ -202,7 +202,7 @@ class InviteControllerTest {
     void createInvite_WithNonExistentClient_ShouldReturnBadRequest() throws Exception {
         // Given
         InviteRequest request = new InviteRequest();
-        request.setClientId("NON-EXISTENT-CLIENT");
+        request.setClientID("NON-EXISTENT-CLIENT");
         request.setSupplierEmail("supplier@example.com");
 
         // Mock service to throw exception for non-existent client

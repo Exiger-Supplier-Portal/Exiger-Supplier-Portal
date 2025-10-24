@@ -36,7 +36,7 @@ public class InviteService {
      */
     public InviteResponse createInvite(InviteRequest request) {
         // Validate client exists
-        Client client = clientRepository.findById(request.getClientId())
+        Client client = clientRepository.findById(request.getClientID())
                 .orElseThrow(() -> new IllegalArgumentException("Client not found"));
 
         // Generate registration token

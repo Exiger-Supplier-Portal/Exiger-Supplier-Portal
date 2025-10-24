@@ -63,7 +63,7 @@ public class InviteServiceTest {
     void createInvite_WithValidClient_ShouldReturnInviteResponse() {
         // Given
         InviteRequest request = new InviteRequest();
-        request.setClientId(client.getClientID());
+        request.setClientID(client.getClientID());
         request.setSupplierEmail("test@supplier.com");
 
         // When
@@ -71,7 +71,7 @@ public class InviteServiceTest {
 
         // Then
         assertThat(response).isNotNull();
-        assertThat(response.getRegistrationUrl()).startsWith(baseURL + "/api/register?token=");
+        assertThat(response.getRegistrationUrl()).startsWith(baseURL + "/register?token=");
         assertThat(response.getExpiresAt().isAfter(Instant.now()));
     }
 
@@ -79,7 +79,7 @@ public class InviteServiceTest {
     void createInvite_WithNonExistentClient_ShouldThrowException() {
         // Given
         InviteRequest request = new InviteRequest();
-        request.setClientId("MISSING-CLIENT");
+        request.setClientID("MISSING-CLIENT");
         request.setSupplierEmail("test@supplier.com");
 
         // When & Then
@@ -91,7 +91,7 @@ public class InviteServiceTest {
     @Test
     void createInvite_ShouldPersistRegistrationRecord() {
         InviteRequest request = new InviteRequest();
-        request.setClientId(client.getClientID());
+        request.setClientID(client.getClientID());
         request.setSupplierEmail("test@supplier.com");
 
         InviteResponse response = inviteService.createInvite(request);
