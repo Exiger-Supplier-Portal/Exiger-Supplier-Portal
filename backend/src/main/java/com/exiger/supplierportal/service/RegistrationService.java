@@ -19,11 +19,9 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
-
+import java.time.Instant;
 import java.util.Map;
 import java.util.HashMap;
-
-import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -67,7 +65,7 @@ public class RegistrationService {
     public RegistrationResponse processRegistration(UUID token, RegistrationRequest request) {
         // 1. Verify token is valid and not expired
         Optional<Registration> registrationOpt = registrationRepository
-                .findByTokenAndExpirationAfter(token, LocalDateTime.now());
+                .findByTokenAndExpirationAfter(token, Instant.now());
         
         if (registrationOpt.isEmpty()) {
             throw new RegistrationException("Invalid or expired registration token");

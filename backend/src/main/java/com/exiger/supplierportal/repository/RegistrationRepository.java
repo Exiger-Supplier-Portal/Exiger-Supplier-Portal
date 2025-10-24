@@ -3,7 +3,7 @@ package com.exiger.supplierportal.repository;
 import com.exiger.supplierportal.model.Registration;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
-import java.time.LocalDateTime;
+import java.time.Instant;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -22,7 +22,7 @@ public interface RegistrationRepository extends JpaRepository<Registration, Long
      * @param expiration The expiration time to check against
      * @return Optional SupplierRegistration if found and not expired
      */
-    Optional<Registration> findByTokenAndExpirationAfter(UUID token, LocalDateTime expiration);
+    Optional<Registration> findByTokenAndExpirationAfter(UUID token, Instant expiration);
 
     /**
      * Delete a supplier registration by token.

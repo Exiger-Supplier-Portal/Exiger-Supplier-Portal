@@ -10,9 +10,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.time.LocalDateTime;
-import java.time.ZoneOffset;
+import java.time.Duration;
+import java.time.Instant;
 import java.util.UUID;
 
 @Service
@@ -35,7 +34,7 @@ public class InviteService {
 
         // Generate registration token
         UUID token = UUID.randomUUID();
-        LocalDateTime expiration = LocalDateTime.now().plusHours(24); // 24 hours expiry
+        Instant expiration = Instant.now().plus(Duration.ofHours(24)); // 24 hours expiry
 
         Registration registration = new Registration();
         registration.setClient(client);
@@ -50,7 +49,7 @@ public class InviteService {
 
         InviteResponse response = new InviteResponse();
         response.setRegistrationUrl(registrationUrl);
-        response.setExpiresAt(expiration.toInstant(ZoneOffset.UTC));
+        response.setExpiresAt(expiration);
 
         return response;
     }
