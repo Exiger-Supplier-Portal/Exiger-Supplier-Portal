@@ -1,17 +1,23 @@
+"use client";
 import React from "react";
 import { Button } from "../ui/button";
+import { useRouter } from "next/navigation";
 
-function SignInButton() {
-  // const handleSignIn = () => {
-  //   window.location.href = "http://localhost:8080/oauth2/authorization/okta";
-  // };
+function SignInButton({
+  text = "Sign in with Okta SSO",
+  className,
+  ...props
+}: React.ComponentProps<"button"> & { text?: string }) {
+  const router = useRouter();
 
-  // return <Button onClick={handleSignIn}>Sign in with Okta SSO</Button>;
+  const handleClick = () => {
+    router.push(`${process.env.NEXT_PUBLIC_BACKEND_URL}/oauth2/authorization/okta`);
+  };
 
   return (
-    <a href="http://localhost:8080/oauth2/authorization/okta">
-      <Button>Sign in with Okta SSO</Button>
-    </a>
+    <Button onClick={handleClick} className={className} {...props}>
+      {text}
+    </Button>
   );
 }
 

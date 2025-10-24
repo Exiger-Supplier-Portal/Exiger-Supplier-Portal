@@ -4,6 +4,8 @@ import Header from "@/components/layout/Header";
 import { SidebarProvider } from "@/components/ui/sidebar";
 import { fetchWithAuth } from "@/lib/fetch";
 
+export const dynamic = "force-dynamic";
+
 export default async function AuthedLayout({
   children,
 }: Readonly<{
