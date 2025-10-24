@@ -62,7 +62,7 @@ class InviteControllerTest {
     }
 
     @Test
-    void createInvite_WithMissingAuthHeader_ShouldReturnBadRequest() throws Exception {
+    void createInvite_WithMissingAuthHeader_ShouldReturnUnauthorized() throws Exception {
         // Given
         InviteRequest request = new InviteRequest();
         request.setClientId("CLIENT-001");
