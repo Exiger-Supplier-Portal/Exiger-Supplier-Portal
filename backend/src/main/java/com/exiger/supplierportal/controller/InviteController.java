@@ -12,6 +12,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -22,6 +23,7 @@ import org.springframework.web.bind.annotation.*;
  * Controller for handling supplier invitations via POST /api/invite
  * Validates external API token and returns registration link with expiration.
  */
+@Tag(name = "Invite Management", description = "Operations for inviting suppliers to register for the dashboard")
 @RestController
 @RequestMapping("/api/invite")
 public class InviteController {
