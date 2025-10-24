@@ -9,6 +9,8 @@ type RelationshipData = {
   status: "ACTIVE" | "PENDING" | "INACTIVE";
 };
 
+export const dynamic = "force-dynamic";
+
 async function page() {
   const metricsPercentages = [26.72, 4.72, -32.1, 56.72, 41.01];
 

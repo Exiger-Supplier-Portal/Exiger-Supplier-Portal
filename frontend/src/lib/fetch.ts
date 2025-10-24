@@ -39,7 +39,15 @@ export async function fetchWithAuth<TResponse = unknown, TBody = unknown>(
       const data = responseFn ? await responseFn(response) : await response.json();
       return { ok: true, data };
     } else {
-      return { ok: false, error: await response.text() };
+      let errorMessage = "Unknown error";
+      try {
+        const errJson = await response.json();
+        errorMessage = errJson.message || JSON.stringify(errJson);
+      } catch {
+        errorMessage = await response.text();
+      }
+
+      return { ok: false, error: errorMessage };
     }
   } catch (err) {
     return {
