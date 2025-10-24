@@ -12,8 +12,8 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.time.LocalDateTime;
+import java.time.Duration;
+import java.time.Instant;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -50,7 +50,7 @@ class RegistrationServiceTest {
         validRegistration = new Registration();
         validRegistration.setToken(validToken);
         validRegistration.setSupplierEmail("test@supplier.com");
-        validRegistration.setExpiration(LocalDateTime.now().plusHours(24));
+        validRegistration.setExpiration(Instant.now().plus(Duration.ofHours(24)));
         validRegistration.setClient(testClient);
         entityManager.persistAndFlush(validRegistration);
     }
@@ -59,7 +59,7 @@ class RegistrationServiceTest {
     void findByTokenAndExpirationAfter_WithValidToken_ShouldReturnRegistration() {
         // When
         Optional<Registration> result = registrationRepository
-                .findByTokenAndExpirationAfter(validToken, LocalDateTime.now());
+                .findByTokenAndExpirationAfter(validToken, Instant.now());
 
         // Then
         assertThat(result).isPresent();
@@ -73,13 +73,13 @@ class RegistrationServiceTest {
         Registration expiredRegistration = new Registration();
         expiredRegistration.setToken(UUID.randomUUID());
         expiredRegistration.setSupplierEmail("expired@supplier.com");
-        expiredRegistration.setExpiration(LocalDateTime.now().minusHours(1)); // Expired
+        expiredRegistration.setExpiration(Instant.now().minus(Duration.ofHours(1))); // Expired
         expiredRegistration.setClient(testClient);
         entityManager.persistAndFlush(expiredRegistration);
 
         // When
         Optional<Registration> result = registrationRepository
-                .findByTokenAndExpirationAfter(expiredRegistration.getToken(), LocalDateTime.now());
+                .findByTokenAndExpirationAfter(expiredRegistration.getToken(), Instant.now());
 
         // Then
         assertThat(result).isEmpty();
@@ -92,7 +92,7 @@ class RegistrationServiceTest {
 
         // When
         Optional<Registration> result = registrationRepository
-                .findByTokenAndExpirationAfter(invalidToken, LocalDateTime.now());
+                .findByTokenAndExpirationAfter(invalidToken, Instant.now());
 
         // Then
         assertThat(result).isEmpty();
@@ -128,14 +128,14 @@ class RegistrationServiceTest {
     @Test
     void deleteByToken_ShouldDeleteRegistration() {
         // Given
-        assertThat(registrationRepository.findByTokenAndExpirationAfter(validToken, LocalDateTime.now()))
+        assertThat(registrationRepository.findByTokenAndExpirationAfter(validToken, Instant.now()))
                 .isPresent();
 
         // When
         registrationRepository.deleteByToken(validToken);
 
         // Then
-        assertThat(registrationRepository.findByTokenAndExpirationAfter(validToken, LocalDateTime.now()))
+        assertThat(registrationRepository.findByTokenAndExpirationAfter(validToken, Instant.now()))
                 .isEmpty();
     }
 
@@ -147,13 +147,13 @@ class RegistrationServiceTest {
         Registration validRegistration2 = new Registration();
         validRegistration2.setToken(validToken2);
         validRegistration2.setSupplierEmail("test@supplier2.com");
-        validRegistration2.setExpiration(LocalDateTime.now().plusHours(24));
+        validRegistration2.setExpiration(Instant.now().plus(Duration.ofHours(24)));
         validRegistration2.setClient(testClient);
         entityManager.persistAndFlush(validRegistration2);
 
-        assertThat(registrationRepository.findByTokenAndExpirationAfter(validToken, LocalDateTime.now()))
+        assertThat(registrationRepository.findByTokenAndExpirationAfter(validToken, Instant.now()))
             .isPresent();
-        assertThat(registrationRepository.findByTokenAndExpirationAfter(validToken2, LocalDateTime.now()))
+        assertThat(registrationRepository.findByTokenAndExpirationAfter(validToken2, Instant.now()))
             .isPresent();
 
         // When
@@ -161,9 +161,9 @@ class RegistrationServiceTest {
 
         // Then
         // Verify original registration remains
-        assertThat(registrationRepository.findByTokenAndExpirationAfter(validToken, LocalDateTime.now()))
+        assertThat(registrationRepository.findByTokenAndExpirationAfter(validToken, Instant.now()))
             .isPresent();
-        assertThat(registrationRepository.findByTokenAndExpirationAfter(validToken2, LocalDateTime.now()))
+        assertThat(registrationRepository.findByTokenAndExpirationAfter(validToken2, Instant.now()))
             .isEmpty();
     }
 }

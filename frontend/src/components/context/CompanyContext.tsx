@@ -1,4 +1,5 @@
 "use client";
+import { useRouter, useSearchParams } from "next/navigation";
 import { createContext, useContext, useState, ReactNode, useMemo } from "react";
 
 // Context type
@@ -7,24 +8,30 @@ type CompanyContextType = {
   setSelectedCompany: (companyId: string) => void;
   companyData: CompanyData | null; // key = companyId
   setCompanyData: (companyId: string, companyData: CompanyData) => void;
+  relationships: Relationship[];
+  setRelationships: (relationships: Relationship[]) => void;
 };
 
 // Create the context
 const CompanyContext = createContext<CompanyContextType | undefined>(undefined);
 
 // Provider component
-export const CompanyProvider = ({ 
+export const CompanyProvider = ({
   children,
-  initialData = [],
+  initialData,
   defaultCompanyId = null,
-}: { 
+  initialRelationships = [],
+}: {
   children: ReactNode;
-  initialData?: Relationship[];
-  defaultCompanyId?: string | null
+  initialData: Record<string, CompanyData>;
+  defaultCompanyId?: string | null;
+  initialRelationships?: Relationship[];
 }) => {
+  const router = useRouter();
+
   const [selectedCompanyId, setSelectedCompanyId] = useState<string | null>(defaultCompanyId);
   const [data, setData] = useState<Record<string, CompanyData>>({});
-  const [relationships, setRelationships] = useState<Relationship[]>(initialData); 
+  const [relationships, setRelationships] = useState<Relationship[]>(initialRelationships);
 
   const setSelectedCompany = (companyId: string) => {
     // TODO: Add logic to update company id and fetch related data from the backend if not in record already
@@ -46,7 +53,14 @@ export const CompanyProvider = ({
 
   return (
     <CompanyContext.Provider
-      value={{ selectedCompanyId, setSelectedCompany, companyData, setCompanyData }}
+      value={{
+        selectedCompanyId,
+        setSelectedCompany,
+        companyData,
+        setCompanyData,
+        relationships,
+        setRelationships,
+      }}
     >
       {children}
     </CompanyContext.Provider>

@@ -10,27 +10,30 @@ import {
   DropdownMenuRadioGroup,
   DropdownMenuRadioItem,
 } from "@/components/ui/dropdown-menu";
+import { useCompany } from "../context/CompanyContext";
+import { Button } from "../ui/button";
+import { ChevronDown } from "lucide-react";
 
 function CustomerDropdown() {
-  // Mock data
-  const mockCustomers = [
-    { id: "c1", name: "Walmart" },
-    { id: "c2", name: "Cosco" },
-    { id: "c3", name: "Lidl" },
-  ];
-
-  const [selectedCustomer, setSelectedCustomer] = React.useState(mockCustomers[0].id);
+  const { selectedCompanyId, setSelectedCompany, relationships } = useCompany();
 
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger>Switch Customer</DropdownMenuTrigger>
-      <DropdownMenuContent>
-        <DropdownMenuLabel>Customer List</DropdownMenuLabel>
-        <DropdownMenuSeparator />
-        <DropdownMenuRadioGroup value={selectedCustomer} onValueChange={setSelectedCustomer}>
-          {mockCustomers.map((customer) => (
-            <DropdownMenuRadioItem key={customer.id} value={customer.id}>
-              {customer.name}
+      <DropdownMenuTrigger asChild>
+        <Button variant="secondary" className="w-full justify-between">
+          {relationships.find((r) => r.clientID === selectedCompanyId)?.clientID ||
+            "Select Customer"}
+          <ChevronDown className="h-4 w-4" />
+        </Button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent className="w-full min-w-52">
+        <DropdownMenuRadioGroup
+          value={selectedCompanyId || undefined}
+          onValueChange={setSelectedCompany}
+        >
+          {relationships.map((relationship) => (
+            <DropdownMenuRadioItem key={relationship.clientID} value={relationship.clientID}>
+              {relationship.clientID}
             </DropdownMenuRadioItem>
           ))}
         </DropdownMenuRadioGroup>
