@@ -1,16 +1,12 @@
+"use client";
+import CustomerDropdown from "@/components/auth/CustomerDropdown";
+import { useCompany } from "@/components/context/CompanyContext";
 import MetricsCard from "@/components/dashboard/MetricsCard";
 import Tasks from "@/components/dashboard/TasksCard";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { fetchWithAuth } from "@/lib/fetch";
 
-type RelationshipData = {
-  clientID: string;
-  supplierID: string;
-  status: "ACTIVE" | "PENDING" | "INACTIVE";
-};
-
-
-async function page() {
+export default function DashboardPage() {
+  const { selectedCompanyId } = useCompany();
   const metricsPercentages = [26.72, 4.72, -32.1, 56.72, 41.01];
 
   return (
@@ -28,7 +24,7 @@ async function page() {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <p>Graph here</p>
+            <p>Risk History for {selectedCompanyId} here</p>
           </CardContent>
         </Card>
 
@@ -40,7 +36,7 @@ async function page() {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <p>Graph here</p>
+            <p>Purchase Orders for {selectedCompanyId} here</p>
           </CardContent>
         </Card>
       </div>
@@ -81,5 +77,3 @@ async function page() {
     </div>
   );
 }
-
-export default page;
