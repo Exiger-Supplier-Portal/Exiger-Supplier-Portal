@@ -34,9 +34,6 @@ class InviteControllerTest {
     @MockitoBean
     private InviteService inviteService;
 
-    @MockitoBean
-    private ApiTokenValidator apiTokenValidator;
-
     @Autowired
     private ObjectMapper objectMapper;
 
