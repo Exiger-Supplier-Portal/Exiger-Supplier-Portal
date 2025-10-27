@@ -29,14 +29,14 @@ public class ClientService {
      */
     public ClientResponse createClient(ClientRequest request) {
         // Check if client already exists
-        if (clientRepository.existsById(request.getClientID())) {
+        if (clientRepository.existsById(request.getClientId())) {
             throw new IllegalArgumentException(
-                "Client already exists with ID: " + request.getClientID());
+                "Client already exists with ID: " + request.getClientId());
         }
 
         // Create new client entity
         Client client = new Client();
-        client.setClientID(request.getClientID());
+        client.setClientId(request.getClientId());
         client.setClientName(request.getClientName());
         client.setClientEmail(request.getClientEmail());
 
@@ -61,7 +61,7 @@ public class ClientService {
      */
     private ClientResponse convertToResponse(Client client) {
         ClientResponse response = new ClientResponse();
-        response.setClientID(client.getClientID());
+        response.setClientID(client.getClientId());
         response.setClientName(client.getClientName());
         response.setClientEmail(client.getClientEmail());
         return response;

@@ -17,20 +17,20 @@ import java.util.Optional;
 public interface UserAccessRepository extends JpaRepository<UserAccess, String> {
 
     /**
-     * Get all ClientSupplier objects that userEmail has access to
+     * Get all UserAccess objects that userEmail has access to
      *
      * @param userEmail email of user account
-     * @return List of ClientSupplier objects that associate to userEmail
+     * @return List of UserAccess objects that associate to userEmail
      */
-    List<ClientSupplier> findAllClientSupplierByUserAccount_UserEmail(String userEmail);
+    List<UserAccess> findAllByUserAccount_UserEmail(String userEmail);
 
     /**
-     * Get all UserAccount objects that have access to clientSupplierId
+     * Get all UserAccess objects that include clientSupplierId
      *
      * @param clientSupplierId ID of ClientSupplier object
-     * @return List of UserAccount objects that have access to ClientSupplier object
+     * @return List of UserAccess objects that have access to ClientSupplier object
      */
-    List<UserAccount> findAllUserAccountByClientSupplier_Id(Long clientSupplierId);
+    List<UserAccess> findAllByClientSupplier_Id(Long clientSupplierId);
 
     /**
      * Check if userEmail has access to clientSupplierId
