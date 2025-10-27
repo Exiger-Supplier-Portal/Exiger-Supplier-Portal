@@ -30,7 +30,7 @@ public class ClientSupplier {
     private Client client;
 
     @Column(name = "supplier_id", nullable = false)
-    private String supplierID;
+    private String supplierId;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "supplier_status", nullable = false)

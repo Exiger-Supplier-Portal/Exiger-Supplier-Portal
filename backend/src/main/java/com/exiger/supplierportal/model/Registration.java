@@ -27,7 +27,7 @@ public class Registration {
     private Client client;
 
     @Column(name = "supplier_id", nullable = false)
-    private String supplierID;
+    private String supplierId;
 
     @Column(name = "invite_email", nullable = false)
     private String inviteEmail;
