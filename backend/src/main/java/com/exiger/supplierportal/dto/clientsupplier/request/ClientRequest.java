@@ -14,7 +14,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 public class ClientRequest {
     @Schema(description = "Unique identifier for the client", example = "[client-id]")
     @NotBlank
-    private String clientID;
+    private String clientId;
 
     @Schema(description = "Name of the client company", example = "Test Client")
     @NotBlank
