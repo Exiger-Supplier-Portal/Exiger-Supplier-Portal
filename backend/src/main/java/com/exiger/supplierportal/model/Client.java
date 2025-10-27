@@ -3,7 +3,6 @@ package com.exiger.supplierportal.model;
 import jakarta.persistence.*;
 import lombok.Data;
 
-
 /**
  * Represents a client.
  * Primary key is clientID.
