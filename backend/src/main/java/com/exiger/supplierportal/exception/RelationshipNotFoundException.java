@@ -8,10 +8,10 @@ package com.exiger.supplierportal.exception;
 public class RelationshipNotFoundException extends RuntimeException {
     
     public RelationshipNotFoundException(String clientId, String supplierId) {
-      super("ClientSupplier not found between client " + clientId + " and supplier " + supplierId);
+      super("Relationship not found between client " + clientId + " and supplier " + supplierId);
     }
 
     public RelationshipNotFoundException(Long id) {
-        super("ClientSupplier not found for id " + id);
+        super("Relationship not found for ClientSupplier id " + id);
     }
 }

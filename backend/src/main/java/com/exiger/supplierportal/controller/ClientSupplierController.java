@@ -139,7 +139,7 @@ public class ClientSupplierController {
                 schema = @Schema(implementation = ApiErrorResponse.class))),
         @ApiResponse(
             responseCode = "404",
-            description = "ClientSupplier not found",
+            description = "Relationship not found",
             content = @Content(mediaType = "application/json",
                 schema = @Schema(implementation = ApiErrorResponse.class)))
     })
