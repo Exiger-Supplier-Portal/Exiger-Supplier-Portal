@@ -52,8 +52,8 @@ public class ClientService {
      *
      * @return A list of client IDs.
      */
-    public List<String> getAllClientIDs() {
-        return clientRepository.findAllClientIDs();
+    public List<String> getAllClientIds() {
+        return clientRepository.findAllClientIds();
     }
 
     /**
