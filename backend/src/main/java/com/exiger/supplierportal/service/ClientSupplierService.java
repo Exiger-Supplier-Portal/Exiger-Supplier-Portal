@@ -7,8 +7,7 @@ import com.exiger.supplierportal.model.ClientSupplier;
 import com.exiger.supplierportal.repository.ClientRepository;
 import com.exiger.supplierportal.repository.ClientSupplierRepository;
 import com.exiger.supplierportal.repository.UserAccessRepository;
-import com.exiger.supplierportal.repository.UserAccountRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
@@ -22,19 +21,11 @@ import com.exiger.supplierportal.exception.RelationshipNotFoundException;
  */
 @Service
 @Transactional
+@RequiredArgsConstructor
 public class ClientSupplierService {
-
-    @Autowired
-    private ClientSupplierRepository clientSupplierRepository;
-
-    @Autowired
-    private ClientRepository clientRepository;
-
-    @Autowired
-    private UserAccountRepository userAccountRepository;
-
-    @Autowired
-    private UserAccessRepository userAccessRepository;
+    private final ClientSupplierRepository clientSupplierRepository;
+    private final ClientRepository clientRepository;
+    private final UserAccessRepository userAccessRepository;
 
     /**
      * Creates a new supplier-client relationship using ORM persistence.
@@ -52,7 +43,7 @@ public class ClientSupplierService {
                 " and supplier " + request.getSupplierId());
         }
 
-        // Fetch the Client and Supplier entities
+        // Fetch the Client entity
         Client client = clientRepository.findById(request.getClientId())
             .orElseThrow(() -> new IllegalArgumentException("Client not found with ID: " + request.getClientId()));
 
@@ -120,20 +111,49 @@ public class ClientSupplierService {
     }
 
     /**
-     * Retrieves the specific relationship between a client and supplier.
+     * Retrieves the specific relationship between a client and supplier, using the IDs.
      * 
      * @param clientId The ID of the client
      * @param supplierId The ID of the supplier
      * @return ClientSupplierResponse
      * @throws RelationshipNotFoundException if the relationship is not found
      */
-    public ClientSupplierResponse getRelationship(String clientId, String supplierId) {
+    public ClientSupplierResponse getRelationshipByClientIdSupplierId(String clientId, String supplierId) {
         ClientSupplier clientSupplier = clientSupplierRepository
             .findByClient_ClientIdAndSupplierId(clientId, supplierId)
             .orElseThrow(() -> 
                 new RelationshipNotFoundException(clientId, supplierId));
         
         return convertToResponse(clientSupplier);
+    }
+
+    /**
+     * Retrieves the specific relationship between a client and supplier, using clientId and userEmail
+     *
+     * @param clientId The ID of the client
+     * @param userEmail The email of the user account
+     * @return ClientSupplierResponse
+     * @throws RelationshipNotFoundException if the relationship is not found
+     */
+    public ClientSupplierResponse getRelationshipByClientIdUserEmail(String clientId, String userEmail) {
+        ClientSupplier relationship = userAccessRepository.findClientSupplierByUserEmailAndClientId(userEmail, clientId)
+            .orElseThrow(() -> new RelationshipNotFoundException(clientId, userEmail));
+
+        return convertToResponse(relationship);
+    }
+
+    /**
+     * Retrieves all ClientSupplier entities for user email
+     *
+     * @param userEmail The email of the user account
+     * @return ClientSupplierResponse
+     * @throws RelationshipNotFoundException if the relationship is not found
+     */
+    public List<ClientSupplierResponse> getRelationshipsByUserEmail(String userEmail) {
+        List<ClientSupplier> relationshipList = userAccessRepository
+            .findAllClientSuppliersByUserEmail(userEmail);
+
+        return relationshipList.stream().map(this::convertToResponse).collect(Collectors.toList());
     }
     
     /**

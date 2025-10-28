@@ -4,7 +4,7 @@ import com.exiger.supplierportal.dto.clientsupplier.request.ClientRequest;
 import com.exiger.supplierportal.dto.clientsupplier.response.ClientResponse;
 import com.exiger.supplierportal.model.Client;
 import com.exiger.supplierportal.repository.ClientRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
@@ -15,10 +15,10 @@ import java.util.List;
  */
 @Service
 @Transactional
+@RequiredArgsConstructor
 public class ClientService {
 
-    @Autowired
-    private ClientRepository clientRepository;
+    private final ClientRepository clientRepository;
 
     /**
      * Creates a new client using ORM persistence.

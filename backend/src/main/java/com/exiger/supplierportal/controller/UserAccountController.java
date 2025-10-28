@@ -1,18 +1,18 @@
 package com.exiger.supplierportal.controller;
 import com.exiger.supplierportal.config.ApiTokenValidator;
+import com.exiger.supplierportal.dto.clientsupplier.request.UserAccountRequest;
 import com.exiger.supplierportal.dto.clientsupplier.response.ApiErrorResponse;
+import com.exiger.supplierportal.dto.clientsupplier.response.UserAccountResponse;
 import com.exiger.supplierportal.exception.InvalidApiTokenException;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import com.exiger.supplierportal.dto.clientsupplier.request.SupplierRequest;
-import com.exiger.supplierportal.dto.clientsupplier.response.SupplierResponse;
-import com.exiger.supplierportal.service.SupplierService;
+import com.exiger.supplierportal.service.UserAccountService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -25,15 +25,13 @@ import io.swagger.v3.oas.annotations.tags.Tag;
  */
 @Tag(name = "Supplier Management", description = "Operations for managing suppliers")
 @RestController
-@RequestMapping("/api/supplier")
+@RequestMapping("/api/user")
 @Validated
-public class SupplierController {
+@RequiredArgsConstructor
+public class UserAccountController {
 
-    @Autowired
-    private SupplierService supplierService;
-
-    @Autowired
-    private ApiTokenValidator apiTokenValidator;
+    private final UserAccountService userAccountService;
+    private final ApiTokenValidator apiTokenValidator;
 
     /**
      * Creates a new supplier using ORM persistence.
@@ -44,11 +42,11 @@ public class SupplierController {
      * @throws InvalidApiTokenException if API token validation fails
      */
     @Operation(
-        summary = "Create a new supplier",
-        description = "Creates a new supplier using API token authentication. Requires valid API token in Authorization header."
+        summary = "Create a new user account",
+        description = "Creates a new user account using API token authentication. Requires valid API token in Authorization header."
     )
     @ApiResponses(value = {
-        @ApiResponse(responseCode = "201", description = "Supplier created successfully"),
+        @ApiResponse(responseCode = "201", description = "User account created successfully"),
         @ApiResponse(
             responseCode = "401",
             description = "Invalid or missing API token",
@@ -61,8 +59,8 @@ public class SupplierController {
                 schema = @Schema(implementation = ApiErrorResponse.class)))
     })
     @PostMapping
-    public ResponseEntity<SupplierResponse> createSupplier(
-            @Valid @RequestBody SupplierRequest request,
+    public ResponseEntity<UserAccountResponse> createUser(
+            @Valid @RequestBody UserAccountRequest request,
             @RequestHeader(value = "Authorization", required = false) 
             @Parameter(description = "Bearer token for API authentication", example = "Bearer your-api-token") 
             String authHeader) {
@@ -73,7 +71,7 @@ public class SupplierController {
         
         apiTokenValidator.validateApiToken(authHeader);
         
-        SupplierResponse response = supplierService.createSupplier(request);
+        UserAccountResponse response = userAccountService.createUser(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 }

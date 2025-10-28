@@ -1,17 +1,17 @@
 package com.exiger.supplierportal.controller;
 
 import com.exiger.supplierportal.config.ApiTokenValidator;
-import com.exiger.supplierportal.dto.clientsupplier.request.RelationshipRequest;
+import com.exiger.supplierportal.dto.clientsupplier.request.ClientSupplierRequest;
 import com.exiger.supplierportal.dto.clientsupplier.response.ApiErrorResponse;
-import com.exiger.supplierportal.dto.clientsupplier.response.RelationshipResponse;
+import com.exiger.supplierportal.dto.clientsupplier.response.ClientSupplierResponse;
 import com.exiger.supplierportal.exception.InvalidApiTokenException;
-import com.exiger.supplierportal.service.RelationshipService;
+import com.exiger.supplierportal.service.ClientSupplierService;
 import com.exiger.supplierportal.util.AuthenticationUtils;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -22,29 +22,26 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
-
-
 import java.util.List;
+
 /**
  * REST Controller for managing supplier-client relationships.
  * Provides API endpoints for external tools to create relationships using API token authentication.
  */
-@Tag(name = "Relationship Management", description = "Operations for managing supplier-client relationships")
+@Tag(name = "ClientSupplier Management", description = "Operations for managing supplier-client relationships")
 @RestController
-@RequestMapping("/api/relationships")
+@RequestMapping("/api/relationship")
 @Validated
-public class RelationshipController {
+@RequiredArgsConstructor
+public class ClientSupplierController {
 
-    @Autowired
-    private RelationshipService relationshipService;
-
-    @Autowired
-    private ApiTokenValidator apiTokenValidator;
+    private final ClientSupplierService clientSupplierService;
+    private final ApiTokenValidator apiTokenValidator;
 
     /**
      * Creates a new supplier-client relationship using ORM persistence.
      * 
-     * @param request The relationship data containing clientID, supplierID, and status
+     * @param request The relationship data containing clientId, supplierId, and status
      * @param authHeader The Authorization header containing the API token (Bearer format)
      * @return ResponseEntity with created relationship data
      * @throws InvalidApiTokenException if API token validation fails
@@ -54,7 +51,7 @@ public class RelationshipController {
         description = "Creates a new supplier-client relationship using API token authentication. Requires valid API token in Authorization header."
     )
     @ApiResponses(value = {
-        @ApiResponse(responseCode = "201", description = "Relationship created successfully"),
+        @ApiResponse(responseCode = "201", description = "ClientSupplier created successfully"),
         @ApiResponse(
             responseCode = "401",
             description = "Invalid or missing API token",
@@ -67,8 +64,8 @@ public class RelationshipController {
                 schema = @Schema(implementation = ApiErrorResponse.class)))
     })
     @PostMapping
-    public ResponseEntity<RelationshipResponse> createRelationship(
-            @Valid @RequestBody RelationshipRequest request,
+    public ResponseEntity<ClientSupplierResponse> createRelationship(
+            @Valid @RequestBody ClientSupplierRequest request,
             @RequestHeader(value = "Authorization", required = false) 
             @Parameter(description = "Bearer token for API authentication", example = "Bearer your-api-token") 
             String authHeader) {
@@ -79,18 +76,18 @@ public class RelationshipController {
         
         apiTokenValidator.validateApiToken(authHeader);
         
-        RelationshipResponse response = relationshipService.createRelationship(request);
+        ClientSupplierResponse response = clientSupplierService.createRelationship(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
     /**
-     * Gets all Relationship entries for a given supplier.
+     * Gets all ClientSupplier entries for a given user.
      * 
      * @param authentication The Okta authentication object.
-     * @return A list of RelationshipResponse objects where the supplierID matches.
+     * @return A list of ClientSupplierResponse objects where the supplierId matches.
      */
     @Operation(
-        summary = "Get all relationships for authenticated supplier",
+        summary = "Get all relationships for authenticated user",
         description = "Gets all relationships for the currently authenticated supplier using OAuth2 authentication. User must be logged in."
     )
     @ApiResponses(value = {
@@ -106,19 +103,20 @@ public class RelationshipController {
             content = @Content(mediaType = "application/json",
                 schema = @Schema(implementation = ApiErrorResponse.class)))
     })
-    @GetMapping("/clients")
-    public ResponseEntity<List<RelationshipResponse>> getClientsBySupplier(Authentication authentication) {
-        String supplierID = AuthenticationUtils.getSupplierId(authentication);
+    @GetMapping("/my-relationships")
+    public ResponseEntity<List<ClientSupplierResponse>> getMyRelationships(Authentication authentication) {
+        String userEmail = AuthenticationUtils.getUserEmail(authentication);
 
-        List<RelationshipResponse> responseList = relationshipService.getRelationshipsBySupplier(supplierID);
-        return ResponseEntity.ok(responseList);
+        List<ClientSupplierResponse> response = clientSupplierService.getRelationshipsByUserEmail(userEmail);
+
+        return ResponseEntity.ok(response);
     }
 
     /**
      * Gets the status of a specific relationship between a client and supplier.
      * 
-     * @param clientID The ID of the client
-     * @param supplierID The ID of the supplier
+     * @param clientId The ID of the client
+     * @param supplierId The ID of the supplier
      * @param authHeader The Authorization header containing the API token (Bearer format)
      * @return ResponseEntity with the relationship status
      * @throws InvalidApiTokenException if API token validation fails
@@ -141,16 +139,16 @@ public class RelationshipController {
                 schema = @Schema(implementation = ApiErrorResponse.class))),
         @ApiResponse(
             responseCode = "404",
-            description = "Relationship not found",
+            description = "ClientSupplier not found",
             content = @Content(mediaType = "application/json",
                 schema = @Schema(implementation = ApiErrorResponse.class)))
     })
     @GetMapping("/status")
-    public ResponseEntity<RelationshipResponse> getRelationshipStatus(
+    public ResponseEntity<ClientSupplierResponse> getRelationshipStatus(
             @Parameter(description = "ID of the client", example = "[client-id]")
-            @RequestParam @NotBlank(message = "clientID parameter is required") String clientID,
+            @RequestParam @NotBlank(message = "clientId parameter is required") String clientId,
             @Parameter(description = "ID of the supplier", example = "[supplier-id]")
-            @RequestParam @NotBlank(message = "supplierID parameter is required") String supplierID,
+            @RequestParam @NotBlank(message = "supplierId parameter is required") String supplierId,
             @Parameter(description = "Bearer token for API authentication", example = "Bearer your-api-token")
             @RequestHeader(value = "Authorization", required = false) String authHeader) {
         
@@ -160,14 +158,14 @@ public class RelationshipController {
         
         apiTokenValidator.validateApiToken(authHeader);
         
-        RelationshipResponse response = relationshipService.getRelationshipStatus(clientID, supplierID);
+        ClientSupplierResponse response = clientSupplierService.getRelationshipByClientIdSupplierId(clientId, supplierId);
         return ResponseEntity.ok(response);
     }
 
     /**
      * Updates the status of an existing supplier-client relationship.
      *
-     * @param request The relationship data containing clientID, supplierID, and the new status
+     * @param request The relationship data containing clientId, supplierId, and the new status
      * @param authHeader The Authorization header containing the API token (Bearer format)
      * @return ResponseEntity with the updated relationship data
      * @throws InvalidApiTokenException if API token validation fails
@@ -190,13 +188,13 @@ public class RelationshipController {
                 schema = @Schema(implementation = ApiErrorResponse.class))),
         @ApiResponse(
             responseCode = "404",
-            description = "Relationship not found",
+            description = "ClientSupplier not found",
             content = @Content(mediaType = "application/json",
                 schema = @Schema(implementation = ApiErrorResponse.class)))
     })
     @PutMapping("/status")
-    public ResponseEntity<RelationshipResponse> updateRelationshipStatus(
-        @Valid @RequestBody RelationshipRequest request,
+    public ResponseEntity<ClientSupplierResponse> updateRelationshipStatus(
+        @Valid @RequestBody ClientSupplierRequest request,
         @RequestHeader(value = "Authorization", required = false) 
         @Parameter(description = "Bearer token for API authentication", example = "Bearer your-api-token") 
         String authHeader) {
@@ -205,26 +203,26 @@ public class RelationshipController {
         }
 
         apiTokenValidator.validateApiToken(authHeader);
-        RelationshipResponse response = relationshipService.updateRelationshipStatus(request);
+        ClientSupplierResponse response = clientSupplierService.updateRelationshipStatus(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
     /**
      * Gets the status of a specific relationship for the authenticated supplier with a client.
      * 
-     * @param clientID The ID of the client
+     * @param clientId The ID of the client
      * @param authentication The Okta authentication object
      * @return ResponseEntity with the relationship status
      */
     @Operation(
         summary = "Get relationship status for authenticated supplier with a client",
-        description = "Gets the status of a specific relationship between the authenticated supplier and a client using OAuth2 authentication. User must be logged in."
+        description = "Gets the status of a specific relationship between the authenticated supplier and a client using OAuth2 authentication. UserAccount must be logged in."
     )
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "Status retrieved successfully"),
         @ApiResponse(
             responseCode = "401",
-            description = "User not authenticated",
+            description = "UserAccount not authenticated",
             content = @Content(mediaType = "application/json",
                 schema = @Schema(implementation = ApiErrorResponse.class))),
         @ApiResponse(
@@ -234,14 +232,14 @@ public class RelationshipController {
                 schema = @Schema(implementation = ApiErrorResponse.class)))
     })
     @GetMapping("/my-status")
-    public ResponseEntity<RelationshipResponse> getRelationshipStatusBySupplier(
+    public ResponseEntity<ClientSupplierResponse> getRelationshipStatusBySupplier(
             @Parameter(description = "ID of the client", example = "[client-id]")
-            @RequestParam @NotBlank(message = "clientID parameter is required") String clientID,
+            @RequestParam @NotBlank(message = "clientId parameter is required") String clientId,
             Authentication authentication) {
         
-        String supplierID = AuthenticationUtils.getSupplierId(authentication);
+        String userEmail = AuthenticationUtils.getUserEmail(authentication);
 
-        RelationshipResponse response = relationshipService.getRelationshipStatus(clientID, supplierID);
+        ClientSupplierResponse response = clientSupplierService.getRelationshipByClientIdUserEmail(clientId, userEmail);
         return ResponseEntity.ok(response);
     }
 }

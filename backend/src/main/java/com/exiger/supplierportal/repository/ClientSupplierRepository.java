@@ -12,7 +12,7 @@ import java.util.Optional;
  * and inherits standard CRUD operations from JpaRepository.
  */
 @Repository
-public interface ClientSupplierRepository extends JpaRepository<ClientSupplier, String> {
+public interface ClientSupplierRepository extends JpaRepository<ClientSupplier, Long> {
     /**
      * Find client-supplier relationship by clientID and supplierID
      *

@@ -14,7 +14,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -26,13 +26,11 @@ import org.springframework.web.bind.annotation.*;
 @Tag(name = "Invite Management", description = "Operations for inviting suppliers to register for the dashboard")
 @RestController
 @RequestMapping("/api/invite")
+@RequiredArgsConstructor
 public class InviteController {
 
-    @Autowired
-    private InviteService inviteService;
-
-    @Autowired
-    private ApiTokenValidator apiTokenValidator;
+    private final InviteService inviteService;
+    private final ApiTokenValidator apiTokenValidator;
 
 //    /**
 //     * Creates a new supplier invite.

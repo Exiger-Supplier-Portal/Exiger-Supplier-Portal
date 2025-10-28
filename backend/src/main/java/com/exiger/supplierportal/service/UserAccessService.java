@@ -9,7 +9,7 @@ import com.exiger.supplierportal.model.UserAccount;
 import com.exiger.supplierportal.repository.ClientSupplierRepository;
 import com.exiger.supplierportal.repository.UserAccessRepository;
 import com.exiger.supplierportal.repository.UserAccountRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,16 +22,12 @@ import java.util.stream.Collectors;
  */
 @Service
 @Transactional
+@RequiredArgsConstructor
 public class UserAccessService {
 
-    @Autowired
-    UserAccessRepository userAccessRepository;
-
-    @Autowired
-    ClientSupplierRepository clientSupplierRepository;
-
-    @Autowired
-    UserAccountRepository userAccountRepository;
+    private final UserAccessRepository userAccessRepository;
+    private final ClientSupplierRepository clientSupplierRepository;
+    private final UserAccountRepository userAccountRepository;
 
     /**
      * Grant user access to a client-supplier relationship

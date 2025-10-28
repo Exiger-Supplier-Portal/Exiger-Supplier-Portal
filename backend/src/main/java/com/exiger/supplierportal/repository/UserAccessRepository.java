@@ -4,8 +4,8 @@ import com.exiger.supplierportal.model.ClientSupplier;
 import com.exiger.supplierportal.model.UserAccess;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
-import com.exiger.supplierportal.model.UserAccount;
 import java.util.List;
 import java.util.Optional;
 
@@ -14,7 +14,7 @@ import java.util.Optional;
  * Repository for managing user accounts
  */
 @Repository
-public interface UserAccessRepository extends JpaRepository<UserAccess, String> {
+public interface UserAccessRepository extends JpaRepository<UserAccess, Long> {
 
     /**
      * Get all UserAccess objects that userEmail has access to
@@ -47,4 +47,29 @@ public interface UserAccessRepository extends JpaRepository<UserAccess, String> 
      * @return UserAccess if it exists, null otherwise
      */
     Optional<UserAccess> findByUserAccount_UserEmailAndClientSupplier_Id(String userEmail, Long clientSupplierId);
+
+    /**
+     * Get all ClientSupplier objects by userEmail.
+     *
+     * @param userEmail email of user account
+     * @return List of ClientSupplier objects
+     */
+    @Query("SELECT access.clientSupplier FROM UserAccess access WHERE access.userAccount.userEmail = :userEmail")
+    List<ClientSupplier> findAllClientSuppliersByUserEmail(@Param("userEmail") String userEmail);
+
+    /**
+     * Get ClientSupplier object by userEmail and clientId, if exists
+     *
+     * @param userEmail email of user account
+     * @param clientId ID of client
+     * @return Optional ClientSupplier
+     */
+    @Query("""
+    SELECT ua.clientSupplier
+    FROM UserAccess ua
+    WHERE ua.userAccount.userEmail = :userEmail
+      AND ua.clientSupplier.client.clientId = :clientId""")
+    Optional<ClientSupplier> findClientSupplierByUserEmailAndClientId(
+        @Param("userEmail") String userEmail,
+        @Param("clientId") String clientId);
 }
