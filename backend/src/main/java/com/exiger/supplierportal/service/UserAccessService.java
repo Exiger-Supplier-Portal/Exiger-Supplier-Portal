@@ -69,15 +69,6 @@ public class UserAccessService {
      * @return UserAccessResponse object with the deleted access information
      */
     public UserAccessResponse deleteUserAccess(UserAccessRequest request) {
-        // Check if access doesn't exist
-        if (!userAccessRepository.existsByUserAccount_UserEmailAndClientSupplier_Id(
-            request.getUserEmail(), request.getClientSupplierId()
-        )) {
-            throw new IllegalArgumentException(
-                "User access does not exist between client-supplier relationship" + request.getClientSupplierId() + "and user" + request.getUserEmail()
-            );
-        }
-
         // Fetch the ClientSupplier entity
         ClientSupplier relationship = clientSupplierRepository.findById(request.getClientSupplierId())
             .orElseThrow(() -> new RelationshipNotFoundException(request.getClientSupplierId()));
@@ -89,9 +80,11 @@ public class UserAccessService {
             ));
 
         // Delete user access using ORM
-        UserAccess access = new UserAccess();
-        access.setClientSupplier(relationship);
-        access.setUserAccount(user);
+        UserAccess access = userAccessRepository.findByUserAccount_UserEmailAndClientSupplier_Id(user.getUserEmail(), relationship.getId())
+            .orElseThrow(() -> new IllegalArgumentException(
+                "User access does not exist between client-supplier relationship " + relationship.getId()
+                    + " and user " + user.getUserEmail()
+            ));
 
         userAccessRepository.delete(access);
         return convertToResponse(access);
