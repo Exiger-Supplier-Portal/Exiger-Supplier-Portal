@@ -10,24 +10,24 @@ import org.springframework.security.oauth2.core.oidc.user.OidcUser;
 public class AuthenticationUtils {
 
     /**
-     * Extracts the client ID from Okta authentication.
+     * Extracts the sub ID from Okta authentication.
      * 
      * @param authentication The Okta authentication object
-     * @return The client ID (Okta sub attribute)
+     * @return The sub ID attribute
      */
-    public static String getClientId(Authentication authentication) {
+    public static String getSubId(Authentication authentication) {
         OidcUser oidcUser = (OidcUser) authentication.getPrincipal();
         return oidcUser.getAttribute("sub"); // unique okta id
     }
 
     /**
-     * Extracts the supplier ID from Okta authentication.
-     * Note: In this system, supplier ID is the same as client ID (Okta sub attribute).
-     * 
+     * Extracts the user's email from Okta authentication.
+     *
      * @param authentication The Okta authentication object
-     * @return The supplier ID (Okta sub attribute)
+     * @return The user's email address
      */
-    public static String getSupplierId(Authentication authentication) {
-        return getClientId(authentication); // Same as client ID in this system
+    public static String getUserEmail(Authentication authentication) {
+        OidcUser oidcUser = (OidcUser) authentication.getPrincipal();
+        return oidcUser.getEmail();
     }
 }
