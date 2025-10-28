@@ -26,8 +26,9 @@ public class VerifyEmailService {
     private RegistrationRepository registrationRepository;
 
     /**
-     * Validate registration token by checking Registration repository and expiration.
-     * Throws RegistrationException if token is invalid or expired.
+     * Validate registration token.
+     * @param token The registration token from URL parameter
+     * @throws RegistrationException if token is invalid or expired
      */
     public void validateRegistrationToken(UUID token) {
         if (registrationRepository.findByTokenAndExpirationAfter(token, Instant.now()).isEmpty()) {
