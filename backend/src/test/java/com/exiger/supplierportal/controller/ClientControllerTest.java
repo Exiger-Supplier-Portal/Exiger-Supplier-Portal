@@ -37,7 +37,7 @@ class ClientControllerTest {
     void createClient_WithValidRequest_ShouldReturnCreatedResponse() throws Exception {
         // Given
         ClientRequest request = new ClientRequest();
-        request.setClientID("C111");
+        request.setClientId("C111");
         request.setClientName("Test Client");
         request.setClientEmail("test@client.com");
 
@@ -64,7 +64,7 @@ class ClientControllerTest {
     void createClient_WithMissingAuthHeader_ShouldReturnUnauthorized() throws Exception {
         // Given
         ClientRequest request = new ClientRequest();
-        request.setClientID("C111");
+        request.setClientId("C111");
         request.setClientName("Test Client");
         request.setClientEmail("test@client.com");
 
@@ -79,7 +79,7 @@ class ClientControllerTest {
     void createClient_WithInvalidToken_ShouldReturnUnauthorized() throws Exception {
         // Given
         ClientRequest request = new ClientRequest();
-        request.setClientID("C111");
+        request.setClientId("C111");
         request.setClientName("Test Client");
         request.setClientEmail("test@client.com");
 
@@ -95,7 +95,7 @@ class ClientControllerTest {
     void createClient_WithDuplicateClient_ShouldReturnBadRequest() throws Exception {
         // Given
         ClientRequest request = new ClientRequest();
-        request.setClientID("C111");
+        request.setClientId("C111");
         request.setClientName("Test Client");
         request.setClientEmail("test@client.com");
 
@@ -116,7 +116,7 @@ class ClientControllerTest {
     void createClient_WithInvalidEmail_ShouldReturnBadRequest() throws Exception {
         // Given
         ClientRequest request = new ClientRequest();
-        request.setClientID("C111");
+        request.setClientId("C111");
         request.setClientName("Test Client");
         request.setClientEmail("invalid-email"); // Invalid email format
 
@@ -132,7 +132,7 @@ class ClientControllerTest {
     void createClient_WithBlankFields_ShouldReturnBadRequest() throws Exception {
         // Given
         ClientRequest request = new ClientRequest();
-        request.setClientID(""); // Blank ID
+        request.setClientId(""); // Blank ID
         request.setClientName("Test Client");
         request.setClientEmail("test@client.com");
 
