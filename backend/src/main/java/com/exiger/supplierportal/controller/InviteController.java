@@ -34,44 +34,44 @@ public class InviteController {
     @Autowired
     private ApiTokenValidator apiTokenValidator;
 
-    /**
-     * Creates a new supplier invite.
-     *
-     * @param request    The invite request containing clientId and supplierEmail
-     * @param authHeader The Authorization header containing API token (Bearer format)
-     * @return ResponseEntity with registration URL and expiration
-     * @throws InvalidApiTokenException if API token validation fails
-     */
-    @Operation(
-        summary = "Create a one-time, temporary invite link for a supplier",
-        description = "Generates unique token and adds row to Registration entity. Requires valid API token in Authorization header."
-    )
-    @ApiResponses(value = {
-        @ApiResponse(responseCode = "201", description = "Invite link created successfully"),
-        @ApiResponse(
-            responseCode = "401",
-            description = "Invalid or missing API token",
-            content = @Content(mediaType = "application/json",
-                schema = @Schema(implementation = ApiErrorResponse.class))),
-        @ApiResponse(
-            responseCode = "400",
-            description = "Invalid request data",
-            content = @Content(mediaType = "application/json",
-                schema = @Schema(implementation = ApiErrorResponse.class)))
-    })
-    @PostMapping
-    public ResponseEntity<InviteResponse> createInvite(
-            @Valid @RequestBody InviteRequest request,
-            @Parameter(description = "Bearer token for API authentication", example = "Bearer your-api-token")
-            @RequestHeader(value = "Authorization", required = false) String authHeader) {
-
-        // Validate API token
-        if (authHeader == null) {
-            throw new InvalidApiTokenException("Missing Authorization header");
-        }
-        apiTokenValidator.validateApiToken(authHeader);
-
-        InviteResponse response = inviteService.createInvite(request);
-        return ResponseEntity.status(HttpStatus.CREATED).body(response);
-    }
+//    /**
+//     * Creates a new supplier invite.
+//     *
+//     * @param request    The invite request containing clientId and supplierEmail
+//     * @param authHeader The Authorization header containing API token (Bearer format)
+//     * @return ResponseEntity with registration URL and expiration
+//     * @throws InvalidApiTokenException if API token validation fails
+//     */
+//    @Operation(
+//        summary = "Create a one-time, temporary invite link for a supplier",
+//        description = "Generates unique token and adds row to Registration entity. Requires valid API token in Authorization header."
+//    )
+//    @ApiResponses(value = {
+//        @ApiResponse(responseCode = "201", description = "Invite link created successfully"),
+//        @ApiResponse(
+//            responseCode = "401",
+//            description = "Invalid or missing API token",
+//            content = @Content(mediaType = "application/json",
+//                schema = @Schema(implementation = ApiErrorResponse.class))),
+//        @ApiResponse(
+//            responseCode = "400",
+//            description = "Invalid request data",
+//            content = @Content(mediaType = "application/json",
+//                schema = @Schema(implementation = ApiErrorResponse.class)))
+//    })
+//    @PostMapping
+//    public ResponseEntity<InviteResponse> createInvite(
+//            @Valid @RequestBody InviteRequest request,
+//            @Parameter(description = "Bearer token for API authentication", example = "Bearer your-api-token")
+//            @RequestHeader(value = "Authorization", required = false) String authHeader) {
+//
+//        // Validate API token
+//        if (authHeader == null) {
+//            throw new InvalidApiTokenException("Missing Authorization header");
+//        }
+//        apiTokenValidator.validateApiToken(authHeader);
+//
+//        InviteResponse response = inviteService.createInvite(request);
+//        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+//    }
 }

@@ -1,14 +1,8 @@
 package com.exiger.supplierportal.service;
 
-import com.exiger.supplierportal.dto.clientsupplier.request.RegistrationRequest;
-import com.exiger.supplierportal.dto.clientsupplier.request.ClientSupplierRequest;
-import com.exiger.supplierportal.dto.clientsupplier.response.RegistrationResponse;
 import com.exiger.supplierportal.exception.RegistrationException;
-import com.exiger.supplierportal.model.Registration;
 import com.exiger.supplierportal.repository.ClientSupplierRepository;
 import com.exiger.supplierportal.repository.RegistrationRepository;
-import com.exiger.supplierportal.repository.UserAccountRepository;
-import com.exiger.supplierportal.enums.SupplierStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -18,11 +12,9 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
-import java.time.Instant;
+
 import java.util.Map;
 import java.util.HashMap;
-import java.util.Optional;
-import java.util.UUID;
 
 /**
  * Service class for managing supplier registrations
