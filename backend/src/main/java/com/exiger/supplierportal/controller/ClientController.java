@@ -9,7 +9,7 @@ import com.exiger.supplierportal.service.ClientService;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -26,13 +26,11 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 @Tag(name = "Client Management", description = "Operations for managing clients")
 @RestController
 @RequestMapping("/api/clients")
+@RequiredArgsConstructor
 public class ClientController {
 
-    @Autowired
-    private ClientService clientService;
-
-    @Autowired
-    private ApiTokenValidator apiTokenValidator;
+    private final ClientService clientService;
+    private final ApiTokenValidator apiTokenValidator;
 
     /**
      * Creates a new client using ORM persistence.

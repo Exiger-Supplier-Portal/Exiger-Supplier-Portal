@@ -1,15 +1,8 @@
 package com.exiger.supplierportal.service;
 
-import com.exiger.supplierportal.dto.clientsupplier.request.RegistrationRequest;
-import com.exiger.supplierportal.dto.clientsupplier.request.RelationshipRequest;
-import com.exiger.supplierportal.dto.clientsupplier.request.SupplierRequest;
-import com.exiger.supplierportal.dto.clientsupplier.response.RegistrationResponse;
 import com.exiger.supplierportal.exception.RegistrationException;
-import com.exiger.supplierportal.model.Supplier;
-import com.exiger.supplierportal.model.Registration;
+import com.exiger.supplierportal.repository.ClientSupplierRepository;
 import com.exiger.supplierportal.repository.RegistrationRepository;
-import com.exiger.supplierportal.repository.SupplierRepository;
-import com.exiger.supplierportal.enums.SupplierStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -19,11 +12,9 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
-import java.time.Instant;
+
 import java.util.Map;
 import java.util.HashMap;
-import java.util.Optional;
-import java.util.UUID;
 
 /**
  * Service class for managing supplier registrations
@@ -37,13 +28,13 @@ public class RegistrationService {
     private RegistrationRepository registrationRepository;
 
     @Autowired
-    private SupplierRepository supplierRepository;
+    private ClientSupplierRepository clientSupplierRepository;
 
     @Autowired
-    private SupplierService supplierService;
+    private UserAccountService userAccountService;
 
     @Autowired
-    private RelationshipService relationshipService;
+    private ClientSupplierService clientSupplierService;
 
     @Autowired
     private RestTemplate restTemplate;
@@ -62,54 +53,54 @@ public class RegistrationService {
      * @return RegistrationResponse with success status and supplier ID
      * @throws RegistrationException if token is invalid or expired
      */
-    public RegistrationResponse processRegistration(UUID token, RegistrationRequest request) {
-        // 1. Verify token is valid and not expired
-        Optional<Registration> registrationOpt = registrationRepository
-                .findByTokenAndExpirationAfter(token, Instant.now());
-        
-        if (registrationOpt.isEmpty()) {
-            throw new RegistrationException("Invalid or expired registration token");
-        }
-
-        Registration registration = registrationOpt.get();
-
-        // 2. Check if supplier already exists with this email
-        Optional<Supplier> existingSupplier = supplierRepository.findBySupplierEmail(request.getEmail());
-        
-        String supplierId;
-        if (existingSupplier.isPresent()) {
-            // Supplier already exists, use existing ID
-            supplierId = existingSupplier.get().getSupplierID();
-        } else {
-            // Create Okta account and get the user ID
-            supplierId = createOktaAccount(request.getEmail(), request.getSupplierName());
-            
-            // Create supplier record using SupplierService with Okta ID
-            SupplierRequest supplierRequest = new SupplierRequest();
-            supplierRequest.setSupplierID(supplierId);
-            supplierRequest.setSupplierName(request.getSupplierName());
-            supplierRequest.setSupplierEmail(request.getEmail());
-            
-            supplierService.createSupplier(supplierRequest);
-        }
-
-        // Create relationship between client and supplier
-        RelationshipRequest relationshipRequest = new RelationshipRequest();
-        relationshipRequest.setClientID(registration.getClient().getClientID());
-        relationshipRequest.setSupplierID(supplierId);
-        relationshipRequest.setStatus(SupplierStatus.ONBOARDING);
-        
-        relationshipService.createRelationship(relationshipRequest);
-
-        // Clean up: Delete the registration record since it's no longer needed
-        registrationRepository.deleteByToken(token);
-        
-        RegistrationResponse response = new RegistrationResponse();
-        response.setSuccess(true);
-        response.setMessage("Registration successful");
-        response.setSupplierId(supplierId);
-        return response;
-    }
+//    public RegistrationResponse processRegistration(UUID token, RegistrationRequest request) {
+//        // 1. Verify token is valid and not expired
+//        Optional<Registration> registrationOpt = registrationRepository
+//                .findByTokenAndExpirationAfter(token, Instant.now());
+//
+//        if (registrationOpt.isEmpty()) {
+//            throw new RegistrationException("Invalid or expired registration token");
+//        }
+//
+//        Registration registration = registrationOpt.get();
+//
+//        // 2. Check if supplier already exists with this email
+//        Optional<Supplier> existingSupplier = supplierRepository.findBySupplierEmail(request.getEmail());
+//
+//        String supplierId;
+//        if (existingSupplier.isPresent()) {
+//            // Supplier already exists, use existing ID
+//            supplierId = existingSupplier.get().getSupplierID();
+//        } else {
+//            // Create Okta account and get the user ID
+//            supplierId = createOktaAccount(request.getEmail(), request.getSupplierName());
+//
+//            // Create supplier record using UserAccountService with Okta ID
+//            SupplierRequest supplierRequest = new SupplierRequest();
+//            supplierRequest.setSupplierID(supplierId);
+//            supplierRequest.setSupplierName(request.getSupplierName());
+//            supplierRequest.setSupplierEmail(request.getEmail());
+//
+//            userAccountService.createSupplier(supplierRequest);
+//        }
+//
+//        // Create relationship between client and supplier
+//        ClientSupplierRequest clientSupplierRequest = new ClientSupplierRequest();
+//        clientSupplierRequest.setClientID(registration.getClient().getClientID());
+//        clientSupplierRequest.setSupplierID(supplierId);
+//        clientSupplierRequest.setStatus(SupplierStatus.ONBOARDING);
+//
+//        clientSupplierService.createRelationship(clientSupplierRequest);
+//
+//        // Clean up: Delete the registration record since it's no longer needed
+//        registrationRepository.deleteByToken(token);
+//
+//        RegistrationResponse response = new RegistrationResponse();
+//        response.setSuccess(true);
+//        response.setMessage("Registration successful");
+//        response.setSupplierId(supplierId);
+//        return response;
+//    }
 
     /**
      * Create Okta user account and return the Okta user ID.

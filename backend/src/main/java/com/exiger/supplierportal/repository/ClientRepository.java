@@ -15,6 +15,6 @@ import java.util.List;
 public interface ClientRepository extends JpaRepository<Client, String>{
 
     // Query to return a List of all the clientIDs
-    @Query("SELECT c.clientID from Client c")
-    List<String> findAllClientIDs();
+    @Query("SELECT c.clientId from Client c")
+    List<String> findAllClientIds();
 }

@@ -4,7 +4,7 @@ import com.exiger.supplierportal.dto.clientsupplier.request.ClientRequest;
 import com.exiger.supplierportal.dto.clientsupplier.response.ClientResponse;
 import com.exiger.supplierportal.model.Client;
 import com.exiger.supplierportal.repository.ClientRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
@@ -15,10 +15,10 @@ import java.util.List;
  */
 @Service
 @Transactional
+@RequiredArgsConstructor
 public class ClientService {
 
-    @Autowired
-    private ClientRepository clientRepository;
+    private final ClientRepository clientRepository;
 
     /**
      * Creates a new client using ORM persistence.
@@ -29,14 +29,14 @@ public class ClientService {
      */
     public ClientResponse createClient(ClientRequest request) {
         // Check if client already exists
-        if (clientRepository.existsById(request.getClientID())) {
+        if (clientRepository.existsById(request.getClientId())) {
             throw new IllegalArgumentException(
-                "Client already exists with ID: " + request.getClientID());
+                "Client already exists with ID: " + request.getClientId());
         }
 
         // Create new client entity
         Client client = new Client();
-        client.setClientID(request.getClientID());
+        client.setClientId(request.getClientId());
         client.setClientName(request.getClientName());
         client.setClientEmail(request.getClientEmail());
 
@@ -52,8 +52,8 @@ public class ClientService {
      *
      * @return A list of client IDs.
      */
-    public List<String> getAllClientIDs() {
-        return clientRepository.findAllClientIDs();
+    public List<String> getAllClientIds() {
+        return clientRepository.findAllClientIds();
     }
 
     /**
@@ -61,7 +61,7 @@ public class ClientService {
      */
     private ClientResponse convertToResponse(Client client) {
         ClientResponse response = new ClientResponse();
-        response.setClientID(client.getClientID());
+        response.setClientID(client.getClientId());
         response.setClientName(client.getClientName());
         response.setClientEmail(client.getClientEmail());
         return response;

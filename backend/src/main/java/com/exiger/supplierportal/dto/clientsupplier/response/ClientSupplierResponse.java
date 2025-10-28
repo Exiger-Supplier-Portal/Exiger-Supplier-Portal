@@ -2,7 +2,6 @@ package com.exiger.supplierportal.dto.clientsupplier.response;
 
 import com.exiger.supplierportal.enums.SupplierStatus;
 import lombok.Data;
-import jakarta.validation.constraints.NotNull;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 /**
@@ -11,16 +10,19 @@ import io.swagger.v3.oas.annotations.media.Schema;
  */
 @Schema(description = "Response object containing client and supplier relationship data")
 @Data
-public class RelationshipResponse {
+public class ClientSupplierResponse {
+    @Schema(description = "ID of the relationship")
+    private Long id;
+
     @Schema(description = "Unique identifer for the client", example = "[client-id]")
-    @NotNull
-    private String clientID;
+    private String clientId;
 
     @Schema(description = "Unique identifer for the supplier", example = "[supplier-id]")
-    @NotNull
-    private String supplierID;
+    private String supplierId;
 
     @Schema(description = "Status of the Client-Supplier relationship", example = "ONBOARDING")
-    @NotNull
     private SupplierStatus status;
+
+    @Schema(description = "Name of supplier company", example = "Home Depot")
+    private String supplierName;
 }

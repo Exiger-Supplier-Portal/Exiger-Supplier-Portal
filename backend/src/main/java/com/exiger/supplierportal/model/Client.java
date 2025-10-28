@@ -3,7 +3,6 @@ package com.exiger.supplierportal.model;
 import jakarta.persistence.*;
 import lombok.Data;
 
-
 /**
  * Represents a client.
  * Primary key is clientID.
@@ -15,7 +14,7 @@ import lombok.Data;
 public class Client {
     @Id
     @Column(name = "client_id")
-    private String clientID;
+    private String clientId;
 
     @Column(name = "client_name", nullable = false)
     private String clientName;
