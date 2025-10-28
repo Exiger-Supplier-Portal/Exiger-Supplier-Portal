@@ -3,19 +3,18 @@ package com.exiger.supplierportal.service;
 import com.exiger.supplierportal.dto.clientsupplier.request.ClientRequest;
 import com.exiger.supplierportal.dto.clientsupplier.response.ClientResponse;
 import com.exiger.supplierportal.repository.ClientRepository;
+import jakarta.persistence.EntityManager;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
-import org.springframework.context.annotation.Import;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-@DataJpaTest
-@Import(ClientService.class)
+@SpringBootTest
 @ActiveProfiles("test")
 @Transactional
 class ClientServiceTest {
@@ -27,13 +26,18 @@ class ClientServiceTest {
     private ClientRepository clientRepository;
 
     @Autowired
-    private TestEntityManager entityManager;
+    private EntityManager entityManager;
+
+    @BeforeEach
+    void setUp() {
+        clientRepository.deleteAll(); // clean slate for each test
+    }
 
     @Test
     void testCreateClient() {
         // Create client request
         ClientRequest request = new ClientRequest();
-        request.setClientID("C111");
+        request.setClientId("C111");
         request.setClientName("Test Client");
         request.setClientEmail("test@client.com");
 
@@ -54,14 +58,14 @@ class ClientServiceTest {
     void testCreateClient_WithDuplicateID_ShouldThrowException() {
         // First, create and persist a Client entity
         ClientRequest request1 = new ClientRequest();
-        request1.setClientID("C111");
+        request1.setClientId("C111");
         request1.setClientName("Test Client");
         request1.setClientEmail("test@client.com");
         clientService.createClient(request1);
 
         // Try to create another client with the same ID
         ClientRequest request2 = new ClientRequest();
-        request2.setClientID("C111");
+        request2.setClientId("C111");
         request2.setClientName("Another Client");
         request2.setClientEmail("another@client.com");
 
@@ -75,22 +79,22 @@ class ClientServiceTest {
     void testGetAllClientIDs() {
         // Create and persist multiple clients
         ClientRequest request1 = new ClientRequest();
-        request1.setClientID("C111");
+        request1.setClientId("C111");
         request1.setClientName("Test Client 1");
         request1.setClientEmail("test@client1.com");
         clientService.createClient(request1);
 
         ClientRequest request2 = new ClientRequest();
-        request2.setClientID("C222");
+        request2.setClientId("C222");
         request2.setClientName("Test Client 2");
         request2.setClientEmail("test@client2.com");
         clientService.createClient(request2);
 
         // Get all client IDs
-        var clientIDs = clientService.getAllClientIDs();
+        var clientIds = clientService.getAllClientIds();
 
         // Verify the results
-        assertThat(clientIDs).isNotNull()
+        assertThat(clientIds).isNotNull()
                 .hasSize(2)
                 .containsExactlyInAnyOrder("C111", "C222");
     }
