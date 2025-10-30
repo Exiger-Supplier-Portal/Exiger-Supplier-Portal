@@ -43,8 +43,7 @@ public class RegistrationService {
     @Autowired
     private UserAccountService userAccountService;
 
-    @Autowired
-    private ClientSupplierService clientSupplierService;
+    // Removed unused ClientSupplierService dependency
 
     @Autowired
     private UserAccessService userAccessService;
@@ -59,7 +58,18 @@ public class RegistrationService {
     private String oktaApiToken;
 
     /**
-     * Process registration: create user account, link access to ClientSupplier, create Okta user, cleanup token.
+     * Process a supplier registration using a one-time token.
+     * Steps:
+     * 1) Validate token and load the pending Registration
+     * 2) Create UserAccount from invite email and provided first/last name
+     * 3) Resolve ClientSupplier (clientId + supplierId) and create UserAccess linking the user
+     * 4) Create Okta user and send activation email
+     * 5) Delete the Registration row to prevent reuse
+     *
+     * @param token one-time registration token
+     * @param request first and last name captured from the form
+     * @return response containing success, message and Okta user ID
+     * @throws RegistrationException if token is invalid/expired or any step fails
      */
     public RegistrationResponse processRegistration(UUID token, RegistrationRequest request) {
         // 1) Validate token and load registration
@@ -97,13 +107,9 @@ public class RegistrationService {
         registrationRepository.deleteByToken(token);
 
         RegistrationResponse response = new RegistrationResponse();
-        // keep minimal fields; update DTO later if needed
-        // Using reflection-safe setters if uncommented in DTO later
-        try {
-            RegistrationResponse.class.getMethod("setSuccess", boolean.class).invoke(response, true);
-            RegistrationResponse.class.getMethod("setMessage", String.class).invoke(response, "Registration successful");
-            RegistrationResponse.class.getMethod("setSupplierId", String.class).invoke(response, oktaUserId);
-        } catch (Exception ignored) { }
+        response.setSuccess(true);
+        response.setMessage("Registration successful");
+        response.setSupplierId(oktaUserId);
         return response;
     }
     
@@ -115,6 +121,13 @@ public class RegistrationService {
      * @param supplierName The supplier name (used for first/last name)
      * @return Okta user ID
      * @throws RegistrationException if Okta account creation fails
+     */
+    /**
+     * Create an Okta user for the given email and name, then trigger activation email.
+     *
+     * @param email user email to provision in Okta
+     * @param supplierName used as first name for the Okta profile
+     * @return Okta user ID
      */
     private String createOktaAccount(String email, String supplierName) {
         try {
@@ -144,15 +157,15 @@ public class RegistrationService {
             // Make API call to Okta
             String oktaApiUrl = oktaOrgUrl + "/api/v1/users?activate=false";
             
-            ResponseEntity<Map> response = restTemplate.exchange(
+            ResponseEntity<java.util.Map<String, Object>> response = restTemplate.exchange(
                 oktaApiUrl, 
                 HttpMethod.POST, 
                 request, 
-                Map.class
+                (Class<java.util.Map<String, Object>>)(Class<?>)java.util.Map.class
             );
             
             if (response.getStatusCode().is2xxSuccessful() && response.getBody() != null) {
-                Map<String, Object> responseBody = (Map<String, Object>) response.getBody();
+                java.util.Map<String, Object> responseBody = response.getBody();
                 if (responseBody != null) {
                     String oktaUserId = (String) responseBody.get("id");
                     
@@ -160,7 +173,7 @@ public class RegistrationService {
                         // Automatically trigger activation email after user creation
                         String activateUrl = oktaOrgUrl + "/api/v1/users/" + oktaUserId + "/lifecycle/activate?sendEmail=true";
                         HttpEntity<Void> activateRequest = new HttpEntity<>(headers);
-                        restTemplate.postForObject(activateUrl, activateRequest, Map.class);
+                        restTemplate.postForObject(activateUrl, activateRequest, java.util.Map.class);
                         
                         return oktaUserId;
                     }
