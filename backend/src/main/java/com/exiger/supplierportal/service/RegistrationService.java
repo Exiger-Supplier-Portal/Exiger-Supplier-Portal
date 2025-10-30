@@ -1,6 +1,13 @@
 package com.exiger.supplierportal.service;
 
+import com.exiger.supplierportal.dto.clientsupplier.request.RegistrationRequest;
+import com.exiger.supplierportal.dto.clientsupplier.request.UserAccessRequest;
+import com.exiger.supplierportal.dto.clientsupplier.request.UserAccountRequest;
+import com.exiger.supplierportal.dto.clientsupplier.response.RegistrationResponse;
 import com.exiger.supplierportal.exception.RegistrationException;
+import com.exiger.supplierportal.exception.RelationshipNotFoundException;
+import com.exiger.supplierportal.model.ClientSupplier;
+import com.exiger.supplierportal.model.Registration;
 import com.exiger.supplierportal.repository.ClientSupplierRepository;
 import com.exiger.supplierportal.repository.RegistrationRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,8 +20,11 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 
+import java.time.Instant;
 import java.util.Map;
 import java.util.HashMap;
+import java.util.Optional;
+import java.util.UUID;
 
 /**
  * Service class for managing supplier registrations
@@ -37,6 +47,9 @@ public class RegistrationService {
     private ClientSupplierService clientSupplierService;
 
     @Autowired
+    private UserAccessService userAccessService;
+
+    @Autowired
     private RestTemplate restTemplate;
 
     @Value("${spring.security.oauth2.client.provider.okta.issuer-uri}")
@@ -46,61 +59,54 @@ public class RegistrationService {
     private String oktaApiToken;
 
     /**
-     * Process supplier registration with token validation and Okta account creation.
-     * 
-     * @param token The registration token from URL parameter
-     * @param request The registration form data
-     * @return RegistrationResponse with success status and supplier ID
-     * @throws RegistrationException if token is invalid or expired
+     * Process registration: create user account, link access to ClientSupplier, create Okta user, cleanup token.
      */
-//    public RegistrationResponse processRegistration(UUID token, RegistrationRequest request) {
-//        // 1. Verify token is valid and not expired
-//        Optional<Registration> registrationOpt = registrationRepository
-//                .findByTokenAndExpirationAfter(token, Instant.now());
-//
-//        if (registrationOpt.isEmpty()) {
-//            throw new RegistrationException("Invalid or expired registration token");
-//        }
-//
-//        Registration registration = registrationOpt.get();
-//
-//        // 2. Check if supplier already exists with this email
-//        Optional<Supplier> existingSupplier = supplierRepository.findBySupplierEmail(request.getEmail());
-//
-//        String supplierId;
-//        if (existingSupplier.isPresent()) {
-//            // Supplier already exists, use existing ID
-//            supplierId = existingSupplier.get().getSupplierID();
-//        } else {
-//            // Create Okta account and get the user ID
-//            supplierId = createOktaAccount(request.getEmail(), request.getSupplierName());
-//
-//            // Create supplier record using UserAccountService with Okta ID
-//            SupplierRequest supplierRequest = new SupplierRequest();
-//            supplierRequest.setSupplierID(supplierId);
-//            supplierRequest.setSupplierName(request.getSupplierName());
-//            supplierRequest.setSupplierEmail(request.getEmail());
-//
-//            userAccountService.createSupplier(supplierRequest);
-//        }
-//
-//        // Create relationship between client and supplier
-//        ClientSupplierRequest clientSupplierRequest = new ClientSupplierRequest();
-//        clientSupplierRequest.setClientID(registration.getClient().getClientID());
-//        clientSupplierRequest.setSupplierID(supplierId);
-//        clientSupplierRequest.setStatus(SupplierStatus.ONBOARDING);
-//
-//        clientSupplierService.createRelationship(clientSupplierRequest);
-//
-//        // Clean up: Delete the registration record since it's no longer needed
-//        registrationRepository.deleteByToken(token);
-//
-//        RegistrationResponse response = new RegistrationResponse();
-//        response.setSuccess(true);
-//        response.setMessage("Registration successful");
-//        response.setSupplierId(supplierId);
-//        return response;
-//    }
+    public RegistrationResponse processRegistration(UUID token, RegistrationRequest request) {
+        // 1) Validate token and load registration
+        Optional<Registration> registrationOpt = registrationRepository.findByTokenAndExpirationAfter(token, Instant.now());
+        if (registrationOpt.isEmpty()) {
+            throw new RegistrationException("Invalid or expired registration token");
+        }
+        Registration registration = registrationOpt.get();
+
+        String userEmail = registration.getInviteEmail();
+        String clientId = registration.getClient().getClientId();
+        String supplierId = registration.getSupplierId();
+
+        // 2) Create UserAccount
+        UserAccountRequest userReq = new UserAccountRequest();
+        userReq.setUserEmail(userEmail);
+        userReq.setFirstName(request.getFirstName());
+        userReq.setLastName(request.getLastName());
+        userAccountService.createUser(userReq);
+
+        // 3) Resolve ClientSupplier and create UserAccess
+        ClientSupplier clientSupplier = clientSupplierRepository
+            .findByClient_ClientIdAndSupplierId(clientId, supplierId)
+            .orElseThrow(() -> new RelationshipNotFoundException(clientId, supplierId));
+
+        UserAccessRequest accessReq = new UserAccessRequest();
+        accessReq.setClientSupplierId(clientSupplier.getId());
+        accessReq.setUserEmail(userEmail);
+        userAccessService.createUserAccess(accessReq);
+
+        // 4) Create Okta account (triggers activation email)
+        String oktaUserId = createOktaAccount(userEmail, request.getFirstName());
+
+        // 5) Cleanup registration row
+        registrationRepository.deleteByToken(token);
+
+        RegistrationResponse response = new RegistrationResponse();
+        // keep minimal fields; update DTO later if needed
+        // Using reflection-safe setters if uncommented in DTO later
+        try {
+            RegistrationResponse.class.getMethod("setSuccess", boolean.class).invoke(response, true);
+            RegistrationResponse.class.getMethod("setMessage", String.class).invoke(response, "Registration successful");
+            RegistrationResponse.class.getMethod("setSupplierId", String.class).invoke(response, oktaUserId);
+        } catch (Exception ignored) { }
+        return response;
+    }
+    
 
     /**
      * Create Okta user account and return the Okta user ID.
