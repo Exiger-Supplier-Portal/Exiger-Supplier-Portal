@@ -115,14 +115,6 @@ public class RegistrationService {
     
 
     /**
-     * Create Okta user account and return the Okta user ID.
-     * 
-     * @param email The user's email address
-     * @param supplierName The supplier name (used for first/last name)
-     * @return Okta user ID
-     * @throws RegistrationException if Okta account creation fails
-     */
-    /**
      * Create an Okta user for the given email and name, then trigger activation email.
      *
      * @param email user email to provision in Okta
