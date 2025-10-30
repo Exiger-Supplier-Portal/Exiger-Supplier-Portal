@@ -10,6 +10,8 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
+import org.springframework.security.web.savedrequest.HttpSessionRequestCache;
+import org.springframework.security.web.savedrequest.SavedRequest;
 import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
@@ -42,11 +44,14 @@ public class SecurityConfig {
         http
             .cors(cors -> cors.configurationSource(corsConfigurationSource()))
             .authorizeHttpRequests(req -> req
-                .requestMatchers("/", "/api/hello", "/api/relationship", "/api/relationship/status", "/api/clients", "/api/user", "/api/register", "/api/invite").permitAll()
+                .requestMatchers("/", "/api/hello", "/api/relationship", "/api/relationship/status", "/api/clients", "/api/user", "/api/register", "/api/invite", "/api/verify-email").permitAll()
                 .anyRequest().authenticated()
             )
             .oauth2Login(oauth2 -> oauth2
                     .successHandler(customAuthenticationSuccessHandler()))
+            .requestCache(cache -> cache
+                .requestCache(new HttpSessionRequestCache())
+            )
             .logout((logout) -> logout
                 .logoutSuccessHandler(oidcLogoutSuccessHandler(repo))
                 .invalidateHttpSession(true)
@@ -93,13 +98,29 @@ public class SecurityConfig {
     }
 
     /**
-     * Redirects user back to frontend dashboard after logging in successfully through Okta
-     * @return AuthenticationSuccessHandler - redirecting user to /dashboard
+     * Redirects user after successful Okta authentication.
+     * If the user was attempting to access /api/verify-email/connect, redirects back to that endpoint
+     * to complete registration process. Otherwise, redirects to the frontend dashboard.
+     * 
+     * @return AuthenticationSuccessHandler - redirecting user to /dashboard or /api/verify-email/connect endpoint
      */
     @Bean
     public AuthenticationSuccessHandler customAuthenticationSuccessHandler() {
         return (request, response, authentication) -> {
-            response.sendRedirect(dashboardUrl); // Redirect to frontend dashboard
+            SavedRequest savedRequest = new HttpSessionRequestCache()
+                .getRequest(request, response);
+            
+            if (savedRequest != null) {
+                String targetUrl = savedRequest.getRedirectUrl();
+                
+                // Only redirect back if it was the verify-email/connect endpoint
+                if (targetUrl.contains("/api/verify-email/connect")) {
+                    response.sendRedirect(targetUrl);
+                    return;
+                }
+            }
+            
+            response.sendRedirect(dashboardUrl); // Redirect to frontend dashboard in all other cases
         };
     }
 
