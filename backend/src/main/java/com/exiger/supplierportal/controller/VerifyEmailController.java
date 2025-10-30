@@ -2,7 +2,14 @@ package com.exiger.supplierportal.controller;
 
 import com.exiger.supplierportal.dto.clientsupplier.request.VerifyEmailRequest;
 import com.exiger.supplierportal.dto.clientsupplier.response.VerifyEmailResponse;
+import com.exiger.supplierportal.dto.clientsupplier.request.UserAccessRequest;
+import com.exiger.supplierportal.dto.clientsupplier.response.ClientSupplierResponse;
+import com.exiger.supplierportal.dto.clientsupplier.response.UserAccessResponse;
 import com.exiger.supplierportal.service.VerifyEmailService;
+import com.exiger.supplierportal.service.UserAccessService;
+import com.exiger.supplierportal.service.RegistrationService;
+import com.exiger.supplierportal.service.ClientSupplierService;
+import com.exiger.supplierportal.enums.SupplierStatus;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -32,6 +39,8 @@ public class VerifyEmailController {
     private final VerifyEmailService verifyEmailService;
 
     private final RegistrationService registrationService;
+    
+    private final ClientSupplierService clientSupplierService;
 
     /**
      * Checks whether the provided user email already exists.
@@ -61,7 +70,7 @@ public class VerifyEmailController {
 
         // Returns VerifyEmailResponse 
         VerifyEmailResponse response = new VerifyEmailResponse();
-        response.setToken(token)
+        response.setToken(token);
         response.setEmailExists(exists);
         return ResponseEntity.ok(response);
     }
@@ -79,7 +88,7 @@ public class VerifyEmailController {
         String regToken = request.getRegistrationToken();
 
         // TODO OKTA VERIFICAITON
-        
+
         // Make sure token is valid and not expired
         UUID registrationToken = UUID.fromString(regToken);
         verifyEmailService.validateRegistrationToken(registrationToken);
@@ -87,8 +96,25 @@ public class VerifyEmailController {
         // Get Registration from registrationToken
         Registration registration = registrationService.getRegistrationByToken(registrationToken);
 
-        UserAccessRequest userAccessRequest = new UserAccessRequest()
-        //TODO fill up request and then send to make a new row in UserAccess
+
+        // Extract client from registration
+        Client client = registration.getClient();
+
+        // Get the ClientSupplier relationship information
+        ClientSupplierResponse clientSupplierResponse = 
+                        clientSupplierService.getRelationshipByClientIdSupplierId(client.getClientId(), registration.getSupplierId());
+
+
+
+        // Create a UserAccessRequest to populate and use to add a row to UserAccess Table
+        UserAccessRequest userAccessRequest = new UserAccessRequest();
+
+        userAccessRequest.setClientSupplierId(clientSupplierResponse.getId());
+        userAccessRequest.setUserEmail(registration.getSupplierId());
+
+        userAccessService.createUserAccess(userAccessRequest);
+
+
 
         ConnectUserResponse response = new ConnectUserResponse();
         response.setConnectionSuccess(true);
