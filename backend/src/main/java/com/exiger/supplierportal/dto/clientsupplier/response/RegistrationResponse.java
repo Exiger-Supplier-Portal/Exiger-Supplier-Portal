@@ -10,13 +10,12 @@ import io.swagger.v3.oas.annotations.media.Schema;
 @Schema(description = "Response object containing registration result data from Post /api/register")
 @Data
 public class RegistrationResponse {
-    // TODO: update to reflect new registration flow
-//    @Schema(description = "Success status of the registration", example = "TRUE")
-//    private boolean success;
-//
-//    @Schema(description = "Registration message", example = "Registration successful")
-//    private String message;
-//
-//    @Schema(description = "Unique identifier for the supplier", example = "[supplier-id]")
-//    private String supplierId;
+    @Schema(description = "Success status of the registration", example = "true")
+    private boolean success;
+
+    @Schema(description = "Registration message", example = "Registration successful")
+    private String message;
+
+    @Schema(description = "Okta user ID created for the supplier", example = "00u1abcdEFG2HIJKL3p4")
+    private String supplierId;
 }
