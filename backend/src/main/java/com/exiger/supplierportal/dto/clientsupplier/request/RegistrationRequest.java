@@ -1,27 +1,25 @@
 package com.exiger.supplierportal.dto.clientsupplier.request;
 
-import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 /**
- * DTO for receiving registration form data to create a supplier account.
- * Requires email and supplier name from the registration form.
- * Password is handled by Okta through activation email - not collected by our API.
+ * Request body for supplier registration.
+ * Form collects first and last name; email is derived from the invite.
  */
-@Schema(description = "Request for receiving registration form data to create a supplier account")
+@Schema(description = "Supplier registration input containing first and last name")
 @Data
 public class RegistrationRequest {
-    // TODO: update to reflect new registration flow
-//    @Schema(description = "Unique email for the supplier", example = "test@supplier.com")
-//    @NotBlank
-//    @Email(message = "Email should be valid")
-//    private String email;
-//
-//    @Schema(description = "Name of the supplier", example = "Test Supplier")
-//    @NotBlank
-//    @Size(min = 2, max = 100, message = "Supplier name must be between 2 and 100 characters")
-//    private String supplierName;
+
+    @Schema(description = "User first name", example = "Jane")
+    @NotBlank
+    @Size(min = 1, max = 100, message = "First name must be between 1 and 100 characters")
+    private String firstName;
+
+    @Schema(description = "User last name", example = "Doe")
+    @NotBlank
+    @Size(min = 1, max = 100, message = "Last name must be between 1 and 100 characters")
+    private String lastName;
 }
