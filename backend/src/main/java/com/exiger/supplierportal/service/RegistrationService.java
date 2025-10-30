@@ -2,6 +2,7 @@ package com.exiger.supplierportal.service;
 
 import com.exiger.supplierportal.exception.RegistrationException;
 import com.exiger.supplierportal.repository.ClientSupplierRepository;
+import com.exiger.supplierportal.model.Registration;
 import com.exiger.supplierportal.repository.RegistrationRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -15,6 +16,7 @@ import org.springframework.http.ResponseEntity;
 
 import java.util.Map;
 import java.util.HashMap;
+import java.util.UUID;
 
 /**
  * Service class for managing supplier registrations
