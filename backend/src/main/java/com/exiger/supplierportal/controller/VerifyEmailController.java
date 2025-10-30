@@ -2,7 +2,11 @@ package com.exiger.supplierportal.controller;
 
 import com.exiger.supplierportal.dto.clientsupplier.request.VerifyEmailRequest;
 import com.exiger.supplierportal.dto.clientsupplier.response.VerifyEmailResponse;
+import com.exiger.supplierportal.dto.clientsupplier.request.ConnectUserRequest;
+import com.exiger.supplierportal.dto.clientsupplier.response.ConnectUserResponse;
 import com.exiger.supplierportal.service.VerifyEmailService;
+import com.exiger.supplierportal.service.UserAccessService;
+import com.exiger.supplierportal.service.RegistrationService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -61,7 +65,7 @@ public class VerifyEmailController {
 
         // Returns VerifyEmailResponse 
         VerifyEmailResponse response = new VerifyEmailResponse();
-        response.setToken(token)
+        response.setToken(token);
         response.setEmailExists(exists);
         return ResponseEntity.ok(response);
     }
