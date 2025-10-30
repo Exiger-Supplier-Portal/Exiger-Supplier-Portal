@@ -27,7 +27,11 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class VerifyEmailController {
 
+    private final UserAccessService userAccessService;
+
     private final VerifyEmailService verifyEmailService;
+
+    private final RegistrationService registrationService;
 
     /**
      * Checks whether the provided user email already exists.
@@ -55,8 +59,42 @@ public class VerifyEmailController {
         // Check if email exists
         boolean exists = verifyEmailService.emailExists(request.getUserEmail());
 
+        // Returns VerifyEmailResponse 
         VerifyEmailResponse response = new VerifyEmailResponse();
+        response.setToken(token)
         response.setEmailExists(exists);
         return ResponseEntity.ok(response);
     }
+
+    /**
+     * 
+     */
+    @PostMapping("/connect")
+        public ResponseEntity<ConnectUserResponse> connectExistingUserToClient(
+            @Parameter(description = "Registration token from URL", example = "550e8400-e29b-41d4-a716-446655440000")
+            @RequestParam("oktaToken") String oktaToken,
+            @Valid @RequestBody ConnectUserRequest request)
+        {
+
+        String regToken = request.getRegistrationToken();
+
+        // TODO OKTA VERIFICAITON
+        
+        // Make sure token is valid and not expired
+        UUID registrationToken = UUID.fromString(regToken);
+        verifyEmailService.validateRegistrationToken(registrationToken);
+
+        // Get Registration from registrationToken
+        Registration registration = registrationService.getRegistrationByToken(registrationToken);
+
+        UserAccessRequest userAccessRequest = new UserAccessRequest()
+        //TODO fill up request and then send to make a new row in UserAccess
+
+        ConnectUserResponse response = new ConnectUserResponse();
+        response.setConnectionSuccess(true);
+        return ResponseEntity.ok(response);
+    }
+
+
+
 }

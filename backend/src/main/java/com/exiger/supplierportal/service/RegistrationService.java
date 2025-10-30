@@ -168,4 +168,17 @@ public class RegistrationService {
         }
     }
 
+    /**
+     * Retrieve a registration record by its unique token.
+     *
+     * @param token The registration token
+     * @return The Registration entity if found
+     * @throws RegistrationException if token is invalid or not found
+     */
+    public Registration getRegistrationByToken(UUID token) {
+        return registrationRepository.findByToken(token)
+                .orElseThrow(() -> new RegistrationException("Registration not found for token: " + token));
+    }
+
+
 }

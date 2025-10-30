@@ -24,6 +24,16 @@ public interface RegistrationRepository extends JpaRepository<Registration, Long
      */
     Optional<Registration> findByTokenAndExpirationAfter(UUID token, Instant expiration);
 
+
+    /**
+     * Find a supplier registration by its unique token.
+     * Uses Spring Data JPA's automatic query generation.
+     *
+     * @param token The registration token
+     * @return Optional Registration if found
+     */
+    Optional<Registration> findByToken(UUID token);
+
     /**
      * Delete a supplier registration by token.
      * Uses Spring Data JPA's automatic query generation.
