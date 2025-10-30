@@ -71,6 +71,7 @@ public class VerifyEmailController {
         // Returns VerifyEmailResponse 
         VerifyEmailResponse response = new VerifyEmailResponse();
         response.setToken(token);
+        response.setToken(token);
         response.setEmailExists(exists);
         return ResponseEntity.ok(response);
     }
