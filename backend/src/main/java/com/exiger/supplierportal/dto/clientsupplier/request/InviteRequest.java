@@ -12,13 +12,16 @@ import lombok.Data;
 @Schema(description = "Request object containing data to create an invite link for a supplier")
 @Data
 public class InviteRequest {
-    // TODO: update to reflect new registration flow
-//    @Schema(description = "Unique identifier for the client", example = "[client-id]")
-//    @NotBlank(message = "Client ID is required")
-//    private String clientId;
-//
-//    @Schema(description = "Email of the supplier", example = "test@supplier.com")
-//    @NotBlank(message = "Supplier email is required")
-//    @Email(message = "Invalid email format")
-//    private String supplierEmail;
+   @Schema(description = "Unique identifier for the client", example = "[client-id]")
+   @NotBlank(message = "Client ID is required")
+   private String clientId;
+
+   @Schema(description = "Unique identifier for the client", example = "[supplier-id]")
+   @NotBlank(message = "Supplier ID is required")
+   private String supplierId;
+
+   @Schema(description = "Email of the supplier", example = "test@supplier.com")
+   @NotBlank(message = "Supplier email is required")
+   @Email(message = "Invalid email format")
+   private String supplierEmail;
 }
