@@ -15,6 +15,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -101,7 +103,7 @@ public class RegistrationService {
         userAccessService.createUserAccess(accessReq);
 
         // 4) Create Okta account (triggers activation email)
-        createOktaAccount(userEmail, request.getFirstName());
+        createOktaAccount(userEmail, request.getFirstName(), request.getLastName());
 
         // 5) Cleanup registration row
         registrationRepository.deleteByToken(token);
@@ -118,10 +120,11 @@ public class RegistrationService {
      * Create an Okta user for the given email and name, then trigger activation email.
      *
      * @param email user email to provision in Okta
-     * @param firstName used as first name for the Okta profile
-     * @throws RegistrationException if Okta account creation fails
+     * @param firstName first name for the Okta profile
+     * @param lastName last name for the Okta profile
+     * @throws RegistrationException if Okta account creation or activation fails
      */
-    private void createOktaAccount(String email, String firstName) {
+    private void createOktaAccount(String email, String firstName, String lastName) {
         try {
             // Extract Okta domain from issuer URI (remove /oauth2/default)
             String oktaOrgUrl = oktaDomain.replace("/oauth2/default", "");
@@ -131,7 +134,7 @@ public class RegistrationService {
             userProfile.put("email", email);
             userProfile.put("login", email);
             userProfile.put("firstName", firstName);
-            userProfile.put("lastName", "Supplier"); // Generic last name
+            userProfile.put("lastName", lastName);
             
             Map<String, Object> oktaUser = new HashMap<>();
             oktaUser.put("profile", userProfile);
@@ -146,36 +149,97 @@ public class RegistrationService {
             
             HttpEntity<Map<String, Object>> request = new HttpEntity<>(oktaUser, headers);
             
-            // Make API call to Okta
+            // Make API call to Okta to create user
             String oktaApiUrl = oktaOrgUrl + "/api/v1/users?activate=false";
             
-            ResponseEntity<java.util.Map<String, Object>> response = restTemplate.exchange(
-                oktaApiUrl, 
-                HttpMethod.POST, 
-                request, 
-                (Class<java.util.Map<String, Object>>)(Class<?>)java.util.Map.class
-            );
-            
-            if (response.getStatusCode().is2xxSuccessful() && response.getBody() != null) {
-                java.util.Map<String, Object> responseBody = response.getBody();
-                if (responseBody != null) {
-                    String oktaUserId = (String) responseBody.get("id");
-                    
-                    if (oktaUserId != null) {
-                        // Automatically trigger activation email after user creation
-                        String activateUrl = oktaOrgUrl + "/api/v1/users/" + oktaUserId + "/lifecycle/activate?sendEmail=true";
-                        HttpEntity<Void> activateRequest = new HttpEntity<>(headers);
-                        restTemplate.postForObject(activateUrl, activateRequest, java.util.Map.class);
-                        
-                        return;
-                    }
-                }
+            ResponseEntity<java.util.Map<String, Object>> response;
+            try {
+                response = restTemplate.exchange(
+                    oktaApiUrl, 
+                    HttpMethod.POST, 
+                    request, 
+                    (Class<java.util.Map<String, Object>>)(Class<?>)java.util.Map.class
+                );
+            } catch (HttpClientErrorException | HttpServerErrorException e) {
+                String errorDetails = extractOktaError(e.getResponseBodyAsString());
+                throw new RegistrationException(
+                    String.format("Failed to create Okta account: %d %s - %s", 
+                        e.getStatusCode().value(), e.getStatusText(), errorDetails), e);
             }
             
-            throw new RegistrationException("Failed to create Okta account: Invalid response");
+            if (!response.getStatusCode().is2xxSuccessful()) {
+                throw new RegistrationException(
+                    String.format("Failed to create Okta account: Unexpected status %s", 
+                        response.getStatusCode()));
+            }
             
+            java.util.Map<String, Object> responseBody = response.getBody();
+            if (responseBody == null) {
+                throw new RegistrationException("Failed to create Okta account: Empty response body");
+            }
+            
+            String oktaUserId = (String) responseBody.get("id");
+            if (oktaUserId == null) {
+                throw new RegistrationException("Failed to create Okta account: Missing user ID in response");
+            }
+            
+            // Trigger activation email after user creation
+            String activateUrl = oktaOrgUrl + "/api/v1/users/" + oktaUserId + "/lifecycle/activate?sendEmail=true";
+            HttpEntity<Void> activateRequest = new HttpEntity<>(headers);
+            
+            try {
+                ResponseEntity<java.util.Map<String, Object>> activateResponse = restTemplate.exchange(
+                    activateUrl,
+                    HttpMethod.POST,
+                    activateRequest,
+                    (Class<java.util.Map<String, Object>>)(Class<?>)java.util.Map.class
+                );
+                
+                if (!activateResponse.getStatusCode().is2xxSuccessful()) {
+                    throw new RegistrationException(
+                        String.format("Failed to activate Okta user: Unexpected status %s", 
+                            activateResponse.getStatusCode()));
+                }
+            } catch (HttpClientErrorException | HttpServerErrorException e) {
+                String errorDetails = extractOktaError(e.getResponseBodyAsString());
+                throw new RegistrationException(
+                    String.format("Failed to activate Okta user: %d %s - %s", 
+                        e.getStatusCode().value(), e.getStatusText(), errorDetails), e);
+            }
+            
+        } catch (RegistrationException e) {
+            throw e; // Re-throw RegistrationException as-is
         } catch (Exception e) {
             throw new RegistrationException("Failed to create Okta account: " + e.getMessage(), e);
+        }
+    }
+    
+    /**
+     * Extract error message from Okta API error response.
+     * 
+     * @param errorResponseBody JSON error response from Okta
+     * @return formatted error message
+     */
+    private String extractOktaError(String errorResponseBody) {
+        if (errorResponseBody == null || errorResponseBody.isEmpty()) {
+            return "Unknown error";
+        }
+        
+        try {
+            // Try to extract errorSummary from Okta error response
+            if (errorResponseBody.contains("\"errorSummary\"")) {
+                int summaryStart = errorResponseBody.indexOf("\"errorSummary\"") + 15;
+                int summaryEnd = errorResponseBody.indexOf("\"", summaryStart);
+                if (summaryEnd > summaryStart) {
+                    return errorResponseBody.substring(summaryStart, summaryEnd);
+                }
+            }
+            // Fallback to full error message (truncated if too long)
+            return errorResponseBody.length() > 200 
+                ? errorResponseBody.substring(0, 200) + "..." 
+                : errorResponseBody;
+        } catch (Exception e) {
+            return errorResponseBody;
         }
     }
 
