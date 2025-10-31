@@ -12,10 +12,9 @@ import java.time.Instant;
 @Schema(description = "Response object containing invite response data from POST /api/invite")
 @Data
 public class InviteResponse {
-    // TODO: update this as needed for new registration flow
-//    @Schema(description = "One-time unique link for the supplier to click on to register. Expires in 24 hours after creation", example = "https://supplierportal.exiger.com/api/register?token=abcdefg")
-//    private String registrationUrl;
-//
-//    @Schema(description = "Expiration date of registration link", example = "1970-01-01T00:00:00Z")
-//    private Instant expiresAt;
+   @Schema(description = "One-time unique link for the supplier to click on to register. Expires in 24 hours after creation", example = "https://supplierportal.exiger.com/api/register?token=abcdefg")
+   private String registrationUrl;
+
+   @Schema(description = "Expiration date of registration link", example = "1970-01-01T00:00:00Z")
+   private Instant expiresAt;
 }
