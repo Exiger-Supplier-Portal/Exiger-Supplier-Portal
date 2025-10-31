@@ -61,14 +61,14 @@ public class RegistrationService {
      * Process a supplier registration using a one-time token.
      * Steps:
      * 1) Validate token and load the pending Registration
-     * 2) Create UserAccount from invite email and provided first/last name
+     * 2) Create UserAccount from user-provided email and first/last name
      * 3) Resolve ClientSupplier (clientId + supplierId) and create UserAccess linking the user
      * 4) Create Okta user and send activation email
      * 5) Delete the Registration row to prevent reuse
      *
      * @param token one-time registration token
-     * @param request first and last name captured from the form
-     * @return response containing success, message and Okta user ID
+     * @param request user email and first/last name captured from the form
+     * @return response containing success, message and user email
      * @throws RegistrationException if token is invalid/expired or any step fails
      */
     public RegistrationResponse processRegistration(UUID token, RegistrationRequest request) {
@@ -79,7 +79,7 @@ public class RegistrationService {
         }
         Registration registration = registrationOpt.get();
 
-        String userEmail = registration.getInviteEmail();
+        String userEmail = request.getUserEmail();
         String clientId = registration.getClient().getClientId();
         String supplierId = registration.getSupplierId();
 
@@ -101,7 +101,7 @@ public class RegistrationService {
         userAccessService.createUserAccess(accessReq);
 
         // 4) Create Okta account (triggers activation email)
-        String oktaUserId = createOktaAccount(userEmail, request.getFirstName());
+        createOktaAccount(userEmail, request.getFirstName());
 
         // 5) Cleanup registration row
         registrationRepository.deleteByToken(token);
@@ -109,7 +109,7 @@ public class RegistrationService {
         RegistrationResponse response = new RegistrationResponse();
         response.setSuccess(true);
         response.setMessage("Registration successful");
-        response.setSupplierId(oktaUserId);
+        response.setUserEmail(userEmail);
         return response;
     }
     
@@ -118,10 +118,10 @@ public class RegistrationService {
      * Create an Okta user for the given email and name, then trigger activation email.
      *
      * @param email user email to provision in Okta
-     * @param supplierName used as first name for the Okta profile
-     * @return Okta user ID
+     * @param firstName used as first name for the Okta profile
+     * @throws RegistrationException if Okta account creation fails
      */
-    private String createOktaAccount(String email, String supplierName) {
+    private void createOktaAccount(String email, String firstName) {
         try {
             // Extract Okta domain from issuer URI (remove /oauth2/default)
             String oktaOrgUrl = oktaDomain.replace("/oauth2/default", "");
@@ -130,7 +130,7 @@ public class RegistrationService {
             Map<String, Object> userProfile = new HashMap<>();
             userProfile.put("email", email);
             userProfile.put("login", email);
-            userProfile.put("firstName", supplierName); // Using supplier name as first name
+            userProfile.put("firstName", firstName);
             userProfile.put("lastName", "Supplier"); // Generic last name
             
             Map<String, Object> oktaUser = new HashMap<>();
@@ -167,7 +167,7 @@ public class RegistrationService {
                         HttpEntity<Void> activateRequest = new HttpEntity<>(headers);
                         restTemplate.postForObject(activateUrl, activateRequest, java.util.Map.class);
                         
-                        return oktaUserId;
+                        return;
                     }
                 }
             }

@@ -37,8 +37,8 @@ public class RegistrationController {
      * Process supplier registration with token validation and Okta account creation.
      *
      * @param token Registration token from the URL
-     * @param request First and last name collected from the form
-     * @return RegistrationResponse with success, message, and Okta user ID
+     * @param request User email, first and last name collected from the form
+     * @return RegistrationResponse with success, message, and user email
      */
     @Operation(
         summary = "Register a supplier",
