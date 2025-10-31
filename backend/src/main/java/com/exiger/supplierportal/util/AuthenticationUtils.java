@@ -28,6 +28,6 @@ public class AuthenticationUtils {
      */
     public static String getUserEmail(Authentication authentication) {
         OidcUser oidcUser = (OidcUser) authentication.getPrincipal();
-        return oidcUser.getEmail();
+        return oidcUser.getAttribute("preferred_username");
     }
 }

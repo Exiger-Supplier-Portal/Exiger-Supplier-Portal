@@ -2,6 +2,7 @@ package com.exiger.supplierportal.service;
 
 import com.exiger.supplierportal.exception.RegistrationException;
 import com.exiger.supplierportal.repository.ClientSupplierRepository;
+import com.exiger.supplierportal.model.Registration;
 import com.exiger.supplierportal.repository.RegistrationRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -15,6 +16,7 @@ import org.springframework.http.ResponseEntity;
 
 import java.util.Map;
 import java.util.HashMap;
+import java.util.UUID;
 
 /**
  * Service class for managing supplier registrations
@@ -167,5 +169,21 @@ public class RegistrationService {
             throw new RegistrationException("Failed to create Okta account: " + e.getMessage(), e);
         }
     }
+
+    /**
+     * Retrieve a registration record by its unique token.
+     *
+     * @param token The registration token
+     * @return The Registration entity if found
+     * @throws RegistrationException if token is invalid or not found
+     */
+    public Registration getRegistrationByToken(UUID token) {
+        return registrationRepository.findByToken(token)
+                .orElseThrow(() -> new RegistrationException("Registration not found for token: " + token));
+    }
+
+    public void deleteRegistration(UUID token) {
+        registrationRepository.deleteByToken(token);
+    }   
 
 }
