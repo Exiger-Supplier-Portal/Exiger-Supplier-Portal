@@ -31,6 +31,7 @@ import java.util.UUID;
 @RequestMapping("/api/verify-email")
 @Validated
 @RequiredArgsConstructor
+@Tag(name = "Verify Email", description = "Endpoints for verifying user emails and linking users during invite registration flow.")
 public class VerifyEmailController {
 
     private final UserAccessService userAccessService;
@@ -49,6 +50,19 @@ public class VerifyEmailController {
      * @param request DTO containing the user email to verify
      * @return ResponseEntity containing a flag for whether the email exists
      */
+    @Operation(
+        summary = "Verify user email for an invite token",
+        description = "Validates the registration token and checks whether the provided email already exists in the system. "
+                    + "Used to determine whether a user should register or log in via Okta."
+    )
+    @ApiResponses({
+        @ApiResponse(responseCode = "200", description = "Email verification completed successfully",
+                     content = @Content(schema = @Schema(implementation = VerifyEmailResponse.class))),
+        @ApiResponse(responseCode = "400", description = "Invalid or expired registration token",
+                     content = @Content),
+        @ApiResponse(responseCode = "500", description = "Internal server error",
+                     content = @Content)
+    })
     @PostMapping
     public ResponseEntity<VerifyEmailResponse> verifyEmail(
             @RequestParam("token") 
@@ -83,6 +97,17 @@ public class VerifyEmailController {
      * @param response      Used for performing the frontend redirect
      * @throws IOException if redirect fails
      */
+    @Operation(
+        summary = "Connect existing user to client–supplier relationship",
+        description = "After Okta authentication, this endpoint validates the invitation token, retrieves the associated "
+                    + "registration and client, creates a UserAccess link for the authenticated user, and redirects them to the dashboard."
+    )
+    @ApiResponses({
+        @ApiResponse(responseCode = "302", description = "User successfully linked and redirected to dashboard"),
+        @ApiResponse(responseCode = "400", description = "Invalid or expired registration token", content = @Content),
+        @ApiResponse(responseCode = "401", description = "User not authenticated or session invalid", content = @Content),
+        @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content)
+    })
     @GetMapping("/connect") 
     public void connectExistingUserToClient(
         @Parameter(description = "Registration token from URL", example = "550e8400-e29b-41d4-a716-446655440000")
