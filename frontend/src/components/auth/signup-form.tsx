@@ -6,10 +6,10 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Field, FieldDescription, FieldGroup, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
-import { fetchWithAuth } from "@/lib/fetch";
 import { toast } from "sonner";
 import { Spinner } from "../ui/spinner";
 import SignInButton from "./SignInButton";
+import { fetchWithAuthClient } from "@/lib/fetch.client";
 
 // no need for form libraries here, just 2 states
 export function SignupForm({
@@ -27,7 +27,7 @@ export function SignupForm({
     setIsLoading(true);
 
     try {
-      const res = await fetchWithAuth<{
+      const res = await fetchWithAuthClient<{
         user: { id: string; email: string };
         token: string;
       }>({
