@@ -182,5 +182,8 @@ public class RegistrationService {
                 .orElseThrow(() -> new RegistrationException("Registration not found for token: " + token));
     }
 
+    public void deleteRegistration(UUID token) {
+        registrationRepository.deleteByToken(token);
+    }   
 
 }

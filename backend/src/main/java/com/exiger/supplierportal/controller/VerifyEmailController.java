@@ -116,6 +116,9 @@ public class VerifyEmailController {
         // Create the new UserAccess record in the system
         userAccessService.createUserAccess(userAccessRequest);
 
+        // Delete row from temp registration table
+        registrationService.deleteRegistration(registrationToken);
+
         // Once linked, redirect the user to the frontend dashboard
         response.sendRedirect(dashboardUrl);
     }
