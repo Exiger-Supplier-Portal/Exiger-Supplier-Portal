@@ -1,4 +1,13 @@
-type CompanyData = {
+export interface FetchWithAuthOptions {
+  path: string;
+  method?: string;
+  headers?: Record<string, string>;
+  body?: unknown;
+}
+
+export type FetchResult<T> = { ok: true; data: T } | { ok: false; error: string };
+
+export type CompanyData = {
   coreData: CoreData;
   tasks: Task[];
   orders: Order[];
@@ -8,7 +17,7 @@ type CompanyData = {
 /**
  * Core data about a company such as name and logo
  */
-type CoreData = {
+export type CoreData = {
   companyName: string;
   companyID: string;
   logoUrl?: string;
@@ -18,7 +27,7 @@ type CoreData = {
  * A task the user has been assigned
  * TODO: Expand as needed
  */
-type Task = {
+export type Task = {
   id: string;
   title: string;
   status: "not-started" | "completed" | "in-progress";
@@ -28,7 +37,7 @@ type Task = {
  * Order information
  * TODO: Expand as needed
  */
-type Order = {
+export type Order = {
   id: string;
   title: string;
   description: string;
@@ -49,7 +58,7 @@ type Order = {
   approvalStatus: "pending" | "approved";
 };
 
-type Relationship = {
+export type Relationship = {
   clientID: string;
   supplierID: string;
   status: "INVITED" | "ONBOARDED" | "APPROVED";
