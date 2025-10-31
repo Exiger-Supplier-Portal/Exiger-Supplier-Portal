@@ -1,4 +1,5 @@
 "use client";
+import { CompanyData, Relationship } from "@/lib/types";
 import { useRouter, useSearchParams } from "next/navigation";
 import { createContext, useContext, useState, ReactNode, useMemo } from "react";
 

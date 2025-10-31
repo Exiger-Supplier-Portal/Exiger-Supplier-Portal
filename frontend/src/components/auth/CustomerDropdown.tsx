@@ -21,7 +21,7 @@ function CustomerDropdown() {
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button variant="secondary" className="w-full justify-between">
-          {relationships.find((r) => r.clientID === selectedCompanyId)?.clientID ||
+          {relationships.find((r) => r.clientId === selectedCompanyId)?.clientId ||
             "Select Customer"}
           <ChevronDown className="h-4 w-4" />
         </Button>
@@ -32,8 +32,8 @@ function CustomerDropdown() {
           onValueChange={setSelectedCompany}
         >
           {relationships.map((relationship) => (
-            <DropdownMenuRadioItem key={relationship.clientID} value={relationship.clientID}>
-              {relationship.clientID}
+            <DropdownMenuRadioItem key={relationship.clientId} value={relationship.clientId}>
+              {relationship.clientId}
             </DropdownMenuRadioItem>
           ))}
         </DropdownMenuRadioGroup>
