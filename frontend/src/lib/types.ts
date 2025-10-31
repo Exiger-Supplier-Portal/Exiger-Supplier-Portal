@@ -59,7 +59,9 @@ export type Order = {
 };
 
 export type Relationship = {
-  clientID: string;
-  supplierID: string;
+  id: number;
+  clientId: string;
+  supplierId: string;
   status: "INVITED" | "ONBOARDED" | "APPROVED";
+  supplierName: string;
 };

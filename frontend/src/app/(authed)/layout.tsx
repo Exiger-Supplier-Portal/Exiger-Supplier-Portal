@@ -23,7 +23,7 @@ export default async function AuthedLayout({
   }
 
   const relationships = res.data;
-  const defaultCompanyId = relationships[0]?.clientID || null;
+  const defaultCompanyId = relationships[0]?.clientId || null;
 
   return (
     <CompanyProvider
