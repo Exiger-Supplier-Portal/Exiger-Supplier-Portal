@@ -32,15 +32,6 @@ class VerifyEmailControllerTest {
     @MockitoBean
     private VerifyEmailService verifyEmailService;
 
-    @MockitoBean
-    private RegistrationService registrationService;
-
-    @MockitoBean
-    private ClientSupplierService clientSupplierService;
-
-    @MockitoBean
-    private UserAccessService userAccessService;
-
     @Autowired
     private ObjectMapper objectMapper;
 
