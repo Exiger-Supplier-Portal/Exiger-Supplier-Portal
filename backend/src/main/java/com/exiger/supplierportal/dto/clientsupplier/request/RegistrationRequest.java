@@ -7,21 +7,25 @@ import lombok.Data;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 /**
- * DTO for receiving registration form data to create a supplier account.
- * Requires email and supplier name from the registration form.
- * Password is handled by Okta through activation email - not collected by our API.
+ * Request body for supplier registration.
+ * Form collects user email and first and last name for account creation.
  */
-@Schema(description = "Request for receiving registration form data to create a supplier account")
+@Schema(description = "Supplier registration input containing user email, first and last name")
 @Data
 public class RegistrationRequest {
-    // TODO: update to reflect new registration flow
-//    @Schema(description = "Unique email for the supplier", example = "test@supplier.com")
-//    @NotBlank
-//    @Email(message = "Email should be valid")
-//    private String email;
-//
-//    @Schema(description = "Name of the supplier", example = "Test Supplier")
-//    @NotBlank
-//    @Size(min = 2, max = 100, message = "Supplier name must be between 2 and 100 characters")
-//    private String supplierName;
+
+    @Schema(description = "User email address for account creation", example = "user@example.com")
+    @NotBlank(message = "User email is required")
+    @Email(message = "User email must be a valid email address")
+    private String userEmail;
+
+    @Schema(description = "User first name", example = "Jane")
+    @NotBlank
+    @Size(min = 1, max = 100, message = "First name must be between 1 and 100 characters")
+    private String firstName;
+
+    @Schema(description = "User last name", example = "Doe")
+    @NotBlank
+    @Size(min = 1, max = 100, message = "Last name must be between 1 and 100 characters")
+    private String lastName;
 }

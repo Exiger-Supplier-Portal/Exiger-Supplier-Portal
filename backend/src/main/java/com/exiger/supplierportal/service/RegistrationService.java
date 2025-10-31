@@ -1,6 +1,13 @@
 package com.exiger.supplierportal.service;
 
+import com.exiger.supplierportal.dto.clientsupplier.request.RegistrationRequest;
+import com.exiger.supplierportal.dto.clientsupplier.request.UserAccessRequest;
+import com.exiger.supplierportal.dto.clientsupplier.request.UserAccountRequest;
+import com.exiger.supplierportal.dto.clientsupplier.response.RegistrationResponse;
 import com.exiger.supplierportal.exception.RegistrationException;
+import com.exiger.supplierportal.exception.RelationshipNotFoundException;
+import com.exiger.supplierportal.model.ClientSupplier;
+import com.exiger.supplierportal.model.Registration;
 import com.exiger.supplierportal.repository.ClientSupplierRepository;
 import com.exiger.supplierportal.repository.RegistrationRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,13 +15,18 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 
+import java.time.Instant;
 import java.util.Map;
 import java.util.HashMap;
+import java.util.Optional;
+import java.util.UUID;
 
 /**
  * Service class for managing supplier registrations
@@ -33,8 +45,10 @@ public class RegistrationService {
     @Autowired
     private UserAccountService userAccountService;
 
+    // Removed unused ClientSupplierService dependency
+
     @Autowired
-    private ClientSupplierService clientSupplierService;
+    private UserAccessService userAccessService;
 
     @Autowired
     private RestTemplate restTemplate;
@@ -46,71 +60,71 @@ public class RegistrationService {
     private String oktaApiToken;
 
     /**
-     * Process supplier registration with token validation and Okta account creation.
-     * 
-     * @param token The registration token from URL parameter
-     * @param request The registration form data
-     * @return RegistrationResponse with success status and supplier ID
-     * @throws RegistrationException if token is invalid or expired
+     * Process a supplier registration using a one-time token.
+     * Steps:
+     * 1) Validate token and load the pending Registration
+     * 2) Create UserAccount from user-provided email and first/last name
+     * 3) Resolve ClientSupplier (clientId + supplierId) and create UserAccess linking the user
+     * 4) Create Okta user and send activation email
+     * 5) Delete the Registration row to prevent reuse
+     *
+     * @param token one-time registration token
+     * @param request user email and first/last name captured from the form
+     * @return response containing success, message and user email
+     * @throws RegistrationException if token is invalid/expired or any step fails
      */
-//    public RegistrationResponse processRegistration(UUID token, RegistrationRequest request) {
-//        // 1. Verify token is valid and not expired
-//        Optional<Registration> registrationOpt = registrationRepository
-//                .findByTokenAndExpirationAfter(token, Instant.now());
-//
-//        if (registrationOpt.isEmpty()) {
-//            throw new RegistrationException("Invalid or expired registration token");
-//        }
-//
-//        Registration registration = registrationOpt.get();
-//
-//        // 2. Check if supplier already exists with this email
-//        Optional<Supplier> existingSupplier = supplierRepository.findBySupplierEmail(request.getEmail());
-//
-//        String supplierId;
-//        if (existingSupplier.isPresent()) {
-//            // Supplier already exists, use existing ID
-//            supplierId = existingSupplier.get().getSupplierID();
-//        } else {
-//            // Create Okta account and get the user ID
-//            supplierId = createOktaAccount(request.getEmail(), request.getSupplierName());
-//
-//            // Create supplier record using UserAccountService with Okta ID
-//            SupplierRequest supplierRequest = new SupplierRequest();
-//            supplierRequest.setSupplierID(supplierId);
-//            supplierRequest.setSupplierName(request.getSupplierName());
-//            supplierRequest.setSupplierEmail(request.getEmail());
-//
-//            userAccountService.createSupplier(supplierRequest);
-//        }
-//
-//        // Create relationship between client and supplier
-//        ClientSupplierRequest clientSupplierRequest = new ClientSupplierRequest();
-//        clientSupplierRequest.setClientID(registration.getClient().getClientID());
-//        clientSupplierRequest.setSupplierID(supplierId);
-//        clientSupplierRequest.setStatus(SupplierStatus.ONBOARDING);
-//
-//        clientSupplierService.createRelationship(clientSupplierRequest);
-//
-//        // Clean up: Delete the registration record since it's no longer needed
-//        registrationRepository.deleteByToken(token);
-//
-//        RegistrationResponse response = new RegistrationResponse();
-//        response.setSuccess(true);
-//        response.setMessage("Registration successful");
-//        response.setSupplierId(supplierId);
-//        return response;
-//    }
+    public RegistrationResponse processRegistration(UUID token, RegistrationRequest request) {
+        // 1) Validate token and load registration
+        Optional<Registration> registrationOpt = registrationRepository.findByTokenAndExpirationAfter(token, Instant.now());
+        if (registrationOpt.isEmpty()) {
+            throw new RegistrationException("Invalid or expired registration token");
+        }
+        Registration registration = registrationOpt.get();
+
+        String userEmail = request.getUserEmail();
+        String clientId = registration.getClient().getClientId();
+        String supplierId = registration.getSupplierId();
+
+        // 2) Create UserAccount
+        UserAccountRequest userReq = new UserAccountRequest();
+        userReq.setUserEmail(userEmail);
+        userReq.setFirstName(request.getFirstName());
+        userReq.setLastName(request.getLastName());
+        userAccountService.createUser(userReq);
+
+        // 3) Resolve ClientSupplier and create UserAccess
+        ClientSupplier clientSupplier = clientSupplierRepository
+            .findByClient_ClientIdAndSupplierId(clientId, supplierId)
+            .orElseThrow(() -> new RelationshipNotFoundException(clientId, supplierId));
+
+        UserAccessRequest accessReq = new UserAccessRequest();
+        accessReq.setClientSupplierId(clientSupplier.getId());
+        accessReq.setUserEmail(userEmail);
+        userAccessService.createUserAccess(accessReq);
+
+        // 4) Create Okta account (triggers activation email)
+        createOktaAccount(userEmail, request.getFirstName(), request.getLastName());
+
+        // 5) Cleanup registration row
+        registrationRepository.deleteByToken(token);
+
+        RegistrationResponse response = new RegistrationResponse();
+        response.setSuccess(true);
+        response.setMessage("Registration successful");
+        response.setUserEmail(userEmail);
+        return response;
+    }
+    
 
     /**
-     * Create Okta user account and return the Okta user ID.
-     * 
-     * @param email The user's email address
-     * @param supplierName The supplier name (used for first/last name)
-     * @return Okta user ID
-     * @throws RegistrationException if Okta account creation fails
+     * Create an Okta user for the given email and name, then trigger activation email.
+     *
+     * @param email user email to provision in Okta
+     * @param firstName first name for the Okta profile
+     * @param lastName last name for the Okta profile
+     * @throws RegistrationException if Okta account creation or activation fails
      */
-    private String createOktaAccount(String email, String supplierName) {
+    private void createOktaAccount(String email, String firstName, String lastName) {
         try {
             // Extract Okta domain from issuer URI (remove /oauth2/default)
             String oktaOrgUrl = oktaDomain.replace("/oauth2/default", "");
@@ -119,8 +133,8 @@ public class RegistrationService {
             Map<String, Object> userProfile = new HashMap<>();
             userProfile.put("email", email);
             userProfile.put("login", email);
-            userProfile.put("firstName", supplierName); // Using supplier name as first name
-            userProfile.put("lastName", "Supplier"); // Generic last name
+            userProfile.put("firstName", firstName);
+            userProfile.put("lastName", lastName);
             
             Map<String, Object> oktaUser = new HashMap<>();
             oktaUser.put("profile", userProfile);
@@ -135,36 +149,97 @@ public class RegistrationService {
             
             HttpEntity<Map<String, Object>> request = new HttpEntity<>(oktaUser, headers);
             
-            // Make API call to Okta
+            // Make API call to Okta to create user
             String oktaApiUrl = oktaOrgUrl + "/api/v1/users?activate=false";
             
-            ResponseEntity<Map> response = restTemplate.exchange(
-                oktaApiUrl, 
-                HttpMethod.POST, 
-                request, 
-                Map.class
-            );
-            
-            if (response.getStatusCode().is2xxSuccessful() && response.getBody() != null) {
-                Map<String, Object> responseBody = (Map<String, Object>) response.getBody();
-                if (responseBody != null) {
-                    String oktaUserId = (String) responseBody.get("id");
-                    
-                    if (oktaUserId != null) {
-                        // Automatically trigger activation email after user creation
-                        String activateUrl = oktaOrgUrl + "/api/v1/users/" + oktaUserId + "/lifecycle/activate?sendEmail=true";
-                        HttpEntity<Void> activateRequest = new HttpEntity<>(headers);
-                        restTemplate.postForObject(activateUrl, activateRequest, Map.class);
-                        
-                        return oktaUserId;
-                    }
-                }
+            ResponseEntity<java.util.Map<String, Object>> response;
+            try {
+                response = restTemplate.exchange(
+                    oktaApiUrl, 
+                    HttpMethod.POST, 
+                    request, 
+                    (Class<java.util.Map<String, Object>>)(Class<?>)java.util.Map.class
+                );
+            } catch (HttpClientErrorException | HttpServerErrorException e) {
+                String errorDetails = extractOktaError(e.getResponseBodyAsString());
+                throw new RegistrationException(
+                    String.format("Failed to create Okta account: %d %s - %s", 
+                        e.getStatusCode().value(), e.getStatusText(), errorDetails), e);
             }
             
-            throw new RegistrationException("Failed to create Okta account: Invalid response");
+            if (!response.getStatusCode().is2xxSuccessful()) {
+                throw new RegistrationException(
+                    String.format("Failed to create Okta account: Unexpected status %s", 
+                        response.getStatusCode()));
+            }
             
+            java.util.Map<String, Object> responseBody = response.getBody();
+            if (responseBody == null) {
+                throw new RegistrationException("Failed to create Okta account: Empty response body");
+            }
+            
+            String oktaUserId = (String) responseBody.get("id");
+            if (oktaUserId == null) {
+                throw new RegistrationException("Failed to create Okta account: Missing user ID in response");
+            }
+            
+            // Trigger activation email after user creation
+            String activateUrl = oktaOrgUrl + "/api/v1/users/" + oktaUserId + "/lifecycle/activate?sendEmail=true";
+            HttpEntity<Void> activateRequest = new HttpEntity<>(headers);
+            
+            try {
+                ResponseEntity<java.util.Map<String, Object>> activateResponse = restTemplate.exchange(
+                    activateUrl,
+                    HttpMethod.POST,
+                    activateRequest,
+                    (Class<java.util.Map<String, Object>>)(Class<?>)java.util.Map.class
+                );
+                
+                if (!activateResponse.getStatusCode().is2xxSuccessful()) {
+                    throw new RegistrationException(
+                        String.format("Failed to activate Okta user: Unexpected status %s", 
+                            activateResponse.getStatusCode()));
+                }
+            } catch (HttpClientErrorException | HttpServerErrorException e) {
+                String errorDetails = extractOktaError(e.getResponseBodyAsString());
+                throw new RegistrationException(
+                    String.format("Failed to activate Okta user: %d %s - %s", 
+                        e.getStatusCode().value(), e.getStatusText(), errorDetails), e);
+            }
+            
+        } catch (RegistrationException e) {
+            throw e; // Re-throw RegistrationException as-is
         } catch (Exception e) {
             throw new RegistrationException("Failed to create Okta account: " + e.getMessage(), e);
+        }
+    }
+    
+    /**
+     * Extract error message from Okta API error response.
+     * 
+     * @param errorResponseBody JSON error response from Okta
+     * @return formatted error message
+     */
+    private String extractOktaError(String errorResponseBody) {
+        if (errorResponseBody == null || errorResponseBody.isEmpty()) {
+            return "Unknown error";
+        }
+        
+        try {
+            // Try to extract errorSummary from Okta error response
+            if (errorResponseBody.contains("\"errorSummary\"")) {
+                int summaryStart = errorResponseBody.indexOf("\"errorSummary\"") + 15;
+                int summaryEnd = errorResponseBody.indexOf("\"", summaryStart);
+                if (summaryEnd > summaryStart) {
+                    return errorResponseBody.substring(summaryStart, summaryEnd);
+                }
+            }
+            // Fallback to full error message (truncated if too long)
+            return errorResponseBody.length() > 200 
+                ? errorResponseBody.substring(0, 200) + "..." 
+                : errorResponseBody;
+        } catch (Exception e) {
+            return errorResponseBody;
         }
     }
 
