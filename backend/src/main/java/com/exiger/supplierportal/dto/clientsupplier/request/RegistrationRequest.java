@@ -1,5 +1,6 @@
 package com.exiger.supplierportal.dto.clientsupplier.request;
 
+import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
@@ -7,11 +8,16 @@ import io.swagger.v3.oas.annotations.media.Schema;
 
 /**
  * Request body for supplier registration.
- * Form collects first and last name; email is derived from the invite.
+ * Form collects user email and first and last name for account creation.
  */
-@Schema(description = "Supplier registration input containing first and last name")
+@Schema(description = "Supplier registration input containing user email, first and last name")
 @Data
 public class RegistrationRequest {
+
+    @Schema(description = "User email address for account creation", example = "user@example.com")
+    @NotBlank(message = "User email is required")
+    @Email(message = "User email must be a valid email address")
+    private String userEmail;
 
     @Schema(description = "User first name", example = "Jane")
     @NotBlank
