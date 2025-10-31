@@ -1,3 +1,5 @@
+version: "3.8"
+
 services:
   backend:
     build: ./backend
@@ -8,6 +10,8 @@ services:
       - ./backend/.env
     depends_on:
       - db
+    networks:
+      - app-network
 
   frontend:
     build: ./frontend
@@ -18,6 +22,8 @@ services:
       - ./frontend/.env
     depends_on:
       - backend
+    networks:
+      - app-network
 
   db:
     build:
@@ -31,6 +37,12 @@ services:
       - "5432:5432"
     volumes:
       - pgdata:/var/lib/postgresql/data
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
 
 volumes:
   pgdata:
