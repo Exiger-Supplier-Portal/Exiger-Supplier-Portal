@@ -1,11 +1,6 @@
 package com.exiger.supplierportal.controller;
 
 import com.exiger.supplierportal.dto.clientsupplier.request.VerifyEmailRequest;
-import com.exiger.supplierportal.dto.clientsupplier.response.VerifyEmailResponse;
-import com.exiger.supplierportal.dto.clientsupplier.request.UserAccessRequest;
-import com.exiger.supplierportal.dto.clientsupplier.response.ClientSupplierResponse;
-import com.exiger.supplierportal.model.Client;
-import com.exiger.supplierportal.model.Registration;
 import com.exiger.supplierportal.service.VerifyEmailService;
 import com.exiger.supplierportal.service.UserAccessService;
 import com.exiger.supplierportal.service.RegistrationService;
@@ -19,13 +14,9 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.security.core.Authentication;
 
-import java.time.Instant;
 import java.util.UUID;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
